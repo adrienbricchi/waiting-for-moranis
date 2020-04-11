@@ -15,8 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-package org.adrienbricchi.waitingformoranis;
+package org.adrienbricchi.waitingformoranis.components;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +25,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import org.adrienbricchi.waitingformoranis.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

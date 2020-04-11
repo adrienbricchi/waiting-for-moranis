@@ -8,7 +8,7 @@
 
     <fragment
             android:id="@+id/FirstFragment"
-            android:name="org.adrienbricchi.waitingformoranis.MovieListFragment"
+            android:name="org.adrienbricchi.waitingformoranis.components.MovieListFragment"
             android:label="@string/first_fragment_label"
             tools:layout="@layout/movie_list">
 
