@@ -58,12 +58,17 @@ public class TmdbService {
         StringRequest stringRequest = new StringRequest(
                 GET,
                 url,
-                new Response.Listener<String>() {
-                    @Override public void onResponse(String response) {
-                        TmdbPage<TmdbMovie> movies = new Gson()
-                                .fromJson(response, new TypeToken<TmdbPage<TmdbMovie>>() {}.getType());
-                        onSuccess.onResponse(movies.getResults());
-                    }
+                response -> {
+                    TmdbPage<TmdbMovie> movies = new Gson()
+                            .fromJson(response, new TypeToken<TmdbPage<TmdbMovie>>() {}.getType());
+
+                    movies.getResults()
+                          .forEach(m -> {
+                              m.setImageUrl("https://image.tmdb.org/t/p/w154" + m.getPosterPath());
+                              m.setReleaseDate(m.getOriginalReleaseDate());
+                          });
+
+                    onSuccess.onResponse(movies.getResults());
                 },
                 onError
         );

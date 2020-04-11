@@ -17,16 +17,21 @@
  */
 package org.adrienbricchi.waitingformoranis.models;
 
+import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 
 @Data
+@NoArgsConstructor
 public class Movie {
 
     public static final String TABLE_NAME = "movie";
 
-    protected @PrimaryKey String id;
+    protected @PrimaryKey @NonNull String id = UUID.randomUUID().toString();
     protected String title;
     protected String releaseDate;
     protected String imageUrl;

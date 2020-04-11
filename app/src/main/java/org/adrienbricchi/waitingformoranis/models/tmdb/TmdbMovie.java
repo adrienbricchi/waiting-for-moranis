@@ -18,9 +18,13 @@
 package org.adrienbricchi.waitingformoranis.models.tmdb;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
 
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class TmdbMovie extends Movie {
 
     private @SerializedName("original_title") String originalTitle;
