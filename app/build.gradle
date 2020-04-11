@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "org.adrienbricchi.waitingformoranis"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -26,6 +26,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
 }
 
@@ -33,9 +37,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     def lombok_version = "1.18.12"
-    //noinspection AnnotationProcessorOnCompilePath
-    compileOnly "org.projectlombok:lombok:${lombok_version}"
-    annotationProcessor "org.projectlombok:lombok:${lombok_version}"
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombok_version
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombok_version
 
 
     implementation 'com.google.code.gson:gson:2.8.6'

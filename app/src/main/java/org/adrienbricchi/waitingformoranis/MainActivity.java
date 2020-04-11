@@ -18,6 +18,7 @@
 package org.adrienbricchi.waitingformoranis;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -77,17 +78,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void onAddMovieFloatingButtonClicked() {
 
-        TmdbService.searchMovie(this, "wonder woman",
+        TmdbService.searchMovie(this, "black widow",
                                 new Response.Listener<List<? extends Movie>>() {
                                     @Override public void onResponse(List<? extends Movie> movies) {
                                         Log.i("Adrien", ">> " + movies);
                                     }
                                 },
-                                new Response.ErrorListener() {
-                                    @Override public void onErrorResponse(VolleyError error) {
-                                        Log.e("Adrien", "That didn't work! " + error.getMessage());
-                                    }
-                                }
+                                error -> Log.e("Adrien", "That didn't work! " + error.getMessage())
         );
     }
 
