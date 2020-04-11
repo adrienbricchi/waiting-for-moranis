@@ -17,7 +17,6 @@
  */
 package org.adrienbricchi.waitingformoranis;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,15 +24,13 @@ import android.view.MenuItem;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 
-import static com.android.volley.Request.Method.GET;
-import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -80,32 +77,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void onAddMovieFloatingButtonClicked() {
 
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = new Uri.Builder()
-                .scheme("https").authority("api.themoviedb.org")
-                .appendPath("3").appendPath("movie").appendPath("550")
-                .appendQueryParameter("api_key", TMDB_KEY)
-                .build().toString();
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(
-                GET,
-                url,
-                new Response.Listener<String>() {
-                    @Override public void onResponse(String response) {
-                        Log.i("Adrien", "Response is: " + response.substring(0, 500));
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override public void onErrorResponse(VolleyError error) {
-                        Log.e("Adrien", "That didn't work! " + error.getMessage());
-                    }
-                }
+        TmdbService.searchMovie(this, "wonder woman",
+                                new Response.Listener<List<? extends Movie>>() {
+                                    @Override public void onResponse(List<? extends Movie> movies) {
+                                        Log.i("Adrien", ">> " + movies);
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override public void onErrorResponse(VolleyError error) {
+                                        Log.e("Adrien", "That didn't work! " + error.getMessage());
+                                    }
+                                }
         );
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
     }
 
 }
