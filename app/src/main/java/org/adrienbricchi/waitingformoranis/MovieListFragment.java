@@ -41,7 +41,7 @@ public class MovieListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_first, container, false);
+        return inflater.inflate(R.layout.movie_list, container, false);
     }
 
 
@@ -53,22 +53,22 @@ public class MovieListFragment extends Fragment {
 
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("name", "James Bond");
-        hashMap.put("image", "");
+        hashMap.put("date", "02/12/20");
         arrayList.add(hashMap);
 
         HashMap<String, String> hashMap2 = new HashMap<>();
         hashMap2.put("name", "Avengers");
-        hashMap2.put("image", "");
+        hashMap2.put("date", "04/05/21");
         arrayList.add(hashMap2);
 
         HashMap<String, String> hashMap3 = new HashMap<>();
         hashMap3.put("name", "Star Wars");
-        hashMap3.put("image", "");
+        hashMap3.put("date", "09/08/21");
         arrayList.add(hashMap3);
 
 
-        String[] from = {"name"};
-        int[] to = {R.id.movieTitleTextView};
+        String[] from = {"name", "date"};
+        int[] to = {R.id.movieTitleTextView, R.id.movieDateTextView};
 
         SimpleAdapter simpleAdapter = new SimpleAdapter(
                 getContext(),
