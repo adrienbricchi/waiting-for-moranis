@@ -18,16 +18,24 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<FrameLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MovieListFragment">
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_green_light"
+        android:orientation="horizontal">
 
-    <ListView
-            android:id="@+id/list_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <ImageView
+            android:id="@+id/movieCoverImageView"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:padding="5dp" />
 
-</FrameLayout>
+    <TextView
+            android:id="@+id/movieTitleTextView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="#000" />
+
+</LinearLayout>
