@@ -37,7 +37,7 @@ public class Movie {
 
     protected @PrimaryKey @NonNull String id = UUID.randomUUID().toString();
     protected String title;
-    protected String releaseDate;
+    protected Long releaseDate;
     protected String imageUrl;
 
 }

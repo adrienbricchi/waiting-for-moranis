@@ -25,12 +25,14 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbMovie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbPage;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.android.volley.Request.Method.GET;
 import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
@@ -62,10 +64,16 @@ public class TmdbService {
                     TmdbPage<TmdbMovie> movies = new Gson()
                             .fromJson(response, new TypeToken<TmdbPage<TmdbMovie>>() {}.getType());
 
+                    GsonBuilder gsonBuilder = new GsonBuilder();
+                    gsonBuilder.setDateFormat("YYYY-MM-dd");
+                    Gson gson = gsonBuilder.create();
+
                     movies.getResults()
                           .forEach(m -> {
+                              // https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
                               m.setImageUrl("https://image.tmdb.org/t/p/w154" + m.getPosterPath());
-                              m.setReleaseDate(m.getOriginalReleaseDate());
+                              Optional.ofNullable(m.getOriginalReleaseDate())
+                                      .ifPresent(d -> m.setReleaseDate(d.getTime()));
                           });
 
                     onSuccess.onResponse(movies.getResults());

@@ -22,6 +22,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
+import java.util.Date;
+
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -29,7 +31,7 @@ public class TmdbMovie extends Movie {
 
     private @SerializedName("original_title") String originalTitle;
     private @SerializedName("original_language") String originalLanguage;
-    private @SerializedName("release_date") String originalReleaseDate;
+    private @SerializedName("release_date") Date originalReleaseDate;
     private String overview;
     private boolean video;
     private boolean adult;
