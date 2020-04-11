@@ -70,12 +70,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void onAddMovieFloatingButtonClicked() {
 
-        TmdbService.searchMovie(this, "black widow",
+        TmdbService.searchMovie(this, "no time to die",
                                 movies -> {
                                     new Thread(() -> {
                                         AppDatabase database = AppDatabase.getDatabase(getApplicationContext());
                                         movies.stream()
-                                              .filter(m -> TextUtils.equals("Black Widow", m.getTitle()))
+                                              .filter(m -> TextUtils.equals("Mourir peut attendre", m.getTitle()))
                                               .forEach(m -> database.movieDao().add(m));
                                     }).start();
                                 },

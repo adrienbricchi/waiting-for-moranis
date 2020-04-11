@@ -26,15 +26,22 @@ import android.widget.SimpleAdapter;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import org.adrienbricchi.waitingformoranis.R;
+import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.text.DateFormat.SHORT;
 
 
 public class MovieListFragment extends Fragment {
 
     private ListView movieListView;
+    ArrayList<Map<String, String>> movieListData = new ArrayList<>();
+    SimpleAdapter simpleAdapter;
 
 
     @Override
@@ -49,36 +56,34 @@ public class MovieListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         movieListView = view.findViewById(R.id.list_view);
-        ArrayList<Map<String, String>> arrayList = new ArrayList<>();
-
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("name", "James Bond");
-        hashMap.put("date", "02/12/20");
-        arrayList.add(hashMap);
-
-        HashMap<String, String> hashMap2 = new HashMap<>();
-        hashMap2.put("name", "Avengers");
-        hashMap2.put("date", "04/05/21");
-        arrayList.add(hashMap2);
-
-        HashMap<String, String> hashMap3 = new HashMap<>();
-        hashMap3.put("name", "Star Wars");
-        hashMap3.put("date", "09/08/21");
-        arrayList.add(hashMap3);
-
 
         String[] from = {"name", "date"};
         int[] to = {R.id.movieTitleTextView, R.id.movieDateTextView};
 
-        SimpleAdapter simpleAdapter = new SimpleAdapter(
+        simpleAdapter = new SimpleAdapter(
                 getContext(),
-                arrayList,
+                movieListData,
                 R.layout.movie_list_cell,
                 from,
                 to
         );
 
         movieListView.setAdapter(simpleAdapter);
+
+        new Thread(() -> {
+            AppDatabase database = AppDatabase.getDatabase(getContext());
+            movieListData.clear();
+            database.movieDao()
+                    .getAll()
+                    .forEach(m -> {
+                        Map<String, String> movieMap = new HashMap<>();
+                        movieMap.put("name", m.getTitle());
+                        movieMap.put("date", SimpleDateFormat.getDateInstance(SHORT).format(new Date(m.getReleaseDate())));
+                        movieMap.put("imageSrc", m.getImageUrl());
+                        movieListData.add(movieMap);
+                    });
+            simpleAdapter.notifyDataSetChanged();
+        }).start();
     }
 
 }
