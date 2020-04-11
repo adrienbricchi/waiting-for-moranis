@@ -66,8 +66,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
      * Create new views (invoked by the layout manager)
      */
     @Override
-    public @NonNull MovieListAdapter.MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        MovieListCellBinding binding = MovieListCellBinding.inflate(LayoutInflater.from(parent.getContext()));
+    public @NonNull MovieListAdapter.MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        MovieListCellBinding binding = MovieListCellBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new MovieViewHolder(binding);
     }
 

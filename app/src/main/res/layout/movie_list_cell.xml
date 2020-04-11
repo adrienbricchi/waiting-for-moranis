@@ -27,23 +27,38 @@
 
     <ImageView
             android:id="@+id/cover_image_view"
-            android:layout_width="56dp"
+            android:layout_width="88dp"
             android:layout_height="match_parent"
             android:contentDescription="@android:string/unknownName"
+            android:cropToPadding="true"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp" />
+            android:paddingVertical="8dp"
+            android:scaleType="centerCrop" />
 
-    <TextView
-            android:id="@+id/title_text_view"
+    <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@android:color/primary_text_light" />
+            android:orientation="vertical">
 
-    <TextView
-            android:id="@+id/date_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textColor="@android:color/secondary_text_light" />
+        <TextView
+                android:id="@+id/title_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:fontFamily="sans-serif"
+                android:gravity="bottom"
+                android:maxLines="1"
+                android:textColor="@android:color/primary_text_light"
+                android:textSize="16sp" />
+
+        <TextView
+                android:id="@+id/date_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:fontFamily="sans-serif"
+                android:textColor="@android:color/secondary_text_light"
+                android:textSize="14sp" />
+
+    </LinearLayout>
 
 </LinearLayout>
