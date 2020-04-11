@@ -18,72 +18,62 @@
 package org.adrienbricchi.waitingformoranis.components;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.text.DateFormat.SHORT;
 
 
 public class MovieListFragment extends Fragment {
 
-    private ListView movieListView;
-    ArrayList<Map<String, String>> movieListData = new ArrayList<>();
-    SimpleAdapter simpleAdapter;
+    private MovieListAdapter movieListAdapter;
+
+
+    // <editor-fold desc="LifeCycle">
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.movie_list, container, false);
     }
 
 
+    @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        movieListView = view.findViewById(R.id.list_view);
+        movieListAdapter = new MovieListAdapter(new ArrayList<>());
 
-        String[] from = {"name", "date"};
-        int[] to = {R.id.movieTitleTextView, R.id.movieDateTextView};
+        RecyclerView movieListView = view.findViewById(R.id.movie_list_recycler_view);
+        movieListView.setHasFixedSize(true);
+        movieListView.setLayoutManager(new LinearLayoutManager(getContext()));
+        movieListView.setAdapter(movieListAdapter);
+    }
 
-        simpleAdapter = new SimpleAdapter(
-                getContext(),
-                movieListData,
-                R.layout.movie_list_cell,
-                from,
-                to
-        );
 
-        movieListView.setAdapter(simpleAdapter);
+    @Override
+    public void onStart() {
+        super.onStart();
 
         new Thread(() -> {
             AppDatabase database = AppDatabase.getDatabase(getContext());
-            movieListData.clear();
-            database.movieDao()
-                    .getAll()
-                    .forEach(m -> {
-                        Map<String, String> movieMap = new HashMap<>();
-                        movieMap.put("name", m.getTitle());
-                        movieMap.put("date", SimpleDateFormat.getDateInstance(SHORT).format(new Date(m.getReleaseDate())));
-                        movieMap.put("imageSrc", m.getImageUrl());
-                        movieListData.add(movieMap);
-                    });
-            simpleAdapter.notifyDataSetChanged();
+            movieListAdapter.getDataSet().clear();
+            movieListAdapter.getDataSet().addAll(database.movieDao().getAll());
+            new Handler(Looper.getMainLooper()).post(() -> movieListAdapter.notifyDataSetChanged());
         }).start();
     }
+
+
+    // </editor-fold desc="LifeCycle">
 
 }
