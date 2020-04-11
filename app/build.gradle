@@ -40,6 +40,11 @@ dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: lombok_version
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombok_version
 
+    def room_version = "1.1.1"
+    implementation group: 'android.arch.lifecycle', name: 'extensions', version: room_version
+    implementation group: 'android.arch.persistence.room', name: 'runtime', version: room_version
+    annotationProcessor group: 'android.arch.lifecycle', name: 'common-java8', version: room_version
+    annotationProcessor group: 'android.arch.persistence.room', name: 'compiler', version: room_version
 
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.android.volley:volley:1.1.1'

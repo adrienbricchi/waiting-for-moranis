@@ -25,13 +25,9 @@ import android.view.MenuItem;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
-
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -79,10 +75,13 @@ public class MainActivity extends AppCompatActivity {
     private void onAddMovieFloatingButtonClicked() {
 
         TmdbService.searchMovie(this, "black widow",
-                                new Response.Listener<List<? extends Movie>>() {
-                                    @Override public void onResponse(List<? extends Movie> movies) {
-                                        Log.i("Adrien", ">> " + movies);
-                                    }
+                                movies -> {
+                                    new Thread(() -> {
+                                        AppDatabase database = AppDatabase.getDatabase(getApplicationContext());
+                                        movies.stream()
+                                              .filter(m -> TextUtils.equals("Black Widow", m.getTitle()))
+                                              .forEach(m -> database.movieDao().add(m));
+                                    }).start();
                                 },
                                 error -> Log.e("Adrien", "That didn't work! " + error.getMessage())
         );
