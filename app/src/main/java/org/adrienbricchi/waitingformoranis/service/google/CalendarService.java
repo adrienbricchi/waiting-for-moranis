@@ -20,6 +20,7 @@ package org.adrienbricchi.waitingformoranis.service.google;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
@@ -109,7 +110,6 @@ public class CalendarService {
         values.put(TITLE, movie.getTitle() + " #film");
         values.put(CALENDAR_ID, calendarId);
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getDisplayName());
-        values.put(SYNC_EVENTS, true);
 
         Uri uri = cr.insert(CONTENT_URI, values);
         if (uri == null) { return null; }
@@ -118,6 +118,29 @@ public class CalendarService {
         return Optional.ofNullable(uri.getLastPathSegment())
                        .map(Long::parseLong)
                        .orElse(null);
+    }
+
+
+    @SuppressLint("MissingPermission")
+    public static boolean editMovieInCalendar(@Nullable Activity activity, @Nullable Long calendarId, long entryId, @NonNull Movie movie) {
+
+        if ((activity == null) || (calendarId == null)) {
+            return false;
+        }
+
+        ContentResolver cr = activity.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(DTSTART, movie.getReleaseDate());
+        values.put(DTEND, movie.getReleaseDate());
+        values.put(ALL_DAY, true);
+        values.put(TITLE, movie.getTitle() + " #film");
+        values.put(CALENDAR_ID, calendarId);
+        values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
+
+        Uri updateUri = ContentUris.withAppendedId(CONTENT_URI, entryId);
+        int numRowsUpdated = cr.update(updateUri, values, null, null);
+
+        return (numRowsUpdated != 0);
     }
 
 }

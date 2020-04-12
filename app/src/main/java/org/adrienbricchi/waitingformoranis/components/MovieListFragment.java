@@ -119,10 +119,11 @@ public class MovieListFragment extends Fragment {
                            });
 
             refreshedMovies.stream()
+                           .filter(m -> (m.getCalendarEventId() != null))
                            .filter(Movie::isUpdateNeededInCalendar)
                            .forEach(m -> {
-                               // TODO : Refresh calendar
-                               m.setUpdateNeededInCalendar(false);
+                               boolean edited = CalendarService.editMovieInCalendar(getActivity(), calendarId, m.getCalendarEventId(), m);
+                               m.setUpdateNeededInCalendar(!edited);
                            });
 
             refreshedMovies.forEach(m -> database.movieDao().add(m));
