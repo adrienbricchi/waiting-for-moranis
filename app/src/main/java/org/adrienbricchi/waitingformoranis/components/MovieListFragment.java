@@ -131,6 +131,7 @@ public class MovieListFragment extends Fragment {
             database.movieDao().remove(movie.getId());
 
             new Handler(Looper.getMainLooper()).post(this::refreshListFromDb);
+
         }).start();
     }
 

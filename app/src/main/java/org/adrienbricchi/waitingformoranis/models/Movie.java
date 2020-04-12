@@ -40,5 +40,6 @@ public class Movie {
     protected Long releaseDate;
     protected String imageUrl;
     protected Long calendarEventId;
+    protected boolean isUpdateNeededInCalendar = false;
 
 }

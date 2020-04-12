@@ -71,14 +71,12 @@ public class MainActivity extends AppCompatActivity {
     private void onAddMovieFloatingButtonClicked() {
 
         TmdbService.searchMovie(this, "wonder woman",
-                                movies -> {
-                                    new Thread(() -> {
-                                        AppDatabase database = AppDatabase.getDatabase(getApplicationContext());
-                                        movies.stream()
-                                              .filter(m -> TextUtils.equals("Wonder Woman 1984", m.getTitle()))
-                                              .forEach(m -> database.movieDao().add(m));
-                                    }).start();
-                                },
+                                movies -> new Thread(() -> {
+                                    AppDatabase database = AppDatabase.getDatabase(getApplicationContext());
+                                    movies.stream()
+                                          .filter(m -> TextUtils.equals("Wonder Woman 1984", m.getTitle()))
+                                          .forEach(m -> database.movieDao().add(m));
+                                }).start(),
                                 error -> Log.e("Adrien", "That didn't work! " + error.getMessage())
         );
     }

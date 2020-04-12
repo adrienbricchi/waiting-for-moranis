@@ -19,9 +19,12 @@ package org.adrienbricchi.waitingformoranis.service.tmdb;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
@@ -31,9 +34,11 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbMovie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbPage;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import static com.android.volley.Request.Method.GET;
 import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
@@ -74,8 +79,9 @@ public class TmdbService {
                           .forEach(m -> {
                               // https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
                               m.setImageUrl("https://image.tmdb.org/t/p/w154" + m.getPosterPath());
-                              Optional.ofNullable(m.getOriginalReleaseDate())
-                                      .ifPresent(d -> m.setReleaseDate(d.getTime()));
+                              m.setReleaseDate(Optional.ofNullable(m.getOriginalReleaseDate())
+                                                       .map(Date::getTime)
+                                                       .orElse(null));
                           });
 
                     onSuccess.onResponse(movies.getResults());
@@ -87,5 +93,51 @@ public class TmdbService {
         queue.add(stringRequest);
     }
 
+
+    public static @Nullable Movie getMovie(@Nullable Context context,
+                                           @NonNull String id) {
+
+        if (context == null) { return null; }
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestFuture<String> future = RequestFuture.newFuture();
+
+        String url = new Uri.Builder()
+                .scheme("https").authority("api.themoviedb.org")
+                .appendPath("3").appendPath("movie").appendPath(id)
+                .appendQueryParameter("api_key", TMDB_KEY)
+                .appendQueryParameter("language", Locale.getDefault().toLanguageTag())
+                .build().toString();
+
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(GET, url, future, future);
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+
+        try {
+            String response = future.get();
+            Gson gson = new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd")
+                    .create();
+
+            TmdbMovie movie = gson.fromJson(response, TmdbMovie.class);
+
+            // https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
+            movie.setImageUrl("https://image.tmdb.org/t/p/w154" + movie.getPosterPath());
+            movie.setReleaseDate(Optional.ofNullable(movie.getOriginalReleaseDate())
+                                         .map(Date::getTime)
+                                         .orElse(null));
+
+            return movie;
+
+        }
+        catch (InterruptedException |
+                ExecutionException e) {
+            Log.e("Adrien", "Error on request : " + e.getLocalizedMessage());
+            return null;
+        }
+    }
 
 }
