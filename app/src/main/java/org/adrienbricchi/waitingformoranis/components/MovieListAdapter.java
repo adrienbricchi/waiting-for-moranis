@@ -42,8 +42,11 @@ import static java.text.DateFormat.SHORT;
 @EqualsAndHashCode(callSuper = true)
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder> {
 
+    private static final int TAG_MOVIE = 1315220905;
+
 
     private List<Movie> dataSet;
+    private OnMovieCellLongClicked longClickListener;
 
 
     /**
@@ -63,12 +66,26 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     }
 
 
+    public interface OnMovieCellLongClicked {
+
+        void onMovieCellLongClicked(Movie movie);
+
+    }
+
+
     /**
      * Create new views (invoked by the layout manager)
      */
     @Override
     public @NonNull MovieListAdapter.MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         MovieListCellBinding binding = MovieListCellBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
+        binding.getRoot().setLongClickable(true);
+        binding.getRoot().setOnLongClickListener(v -> {
+            longClickListener.onMovieCellLongClicked((Movie) v.getTag(TAG_MOVIE));
+            return false;
+        });
+
         return new MovieViewHolder(binding);
     }
 
@@ -84,6 +101,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                .placeholder(R.drawable.ic_local_movies_48dp)
                .into(holder.binding.coverImageView);
 
+        holder.binding.getRoot().setTag(TAG_MOVIE, dataSet.get(position));
         holder.binding.titleTextView.setText(dataSet.get(position).getTitle());
         holder.binding.dateTextView.setText(SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault())
                                                             .format(new Date(dataSet.get(position).getReleaseDate())));
@@ -97,4 +115,5 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     public int getItemCount() {
         return dataSet.size();
     }
+
 }

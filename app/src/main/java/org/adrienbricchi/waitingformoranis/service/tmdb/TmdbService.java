@@ -32,6 +32,7 @@ import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbMovie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbPage;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static com.android.volley.Request.Method.GET;
@@ -48,11 +49,12 @@ public class TmdbService {
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);
+
         String url = new Uri.Builder()
                 .scheme("https").authority("api.themoviedb.org")
                 .appendPath("3").appendPath("search").appendPath("movie")
                 .appendQueryParameter("api_key", TMDB_KEY)
-                .appendQueryParameter("language", "fr-FR")
+                .appendQueryParameter("language", Locale.getDefault().toLanguageTag())
                 .appendQueryParameter("query", searchTerm)
                 .build().toString();
 
@@ -61,12 +63,12 @@ public class TmdbService {
                 GET,
                 url,
                 response -> {
-                    TmdbPage<TmdbMovie> movies = new Gson()
-                            .fromJson(response, new TypeToken<TmdbPage<TmdbMovie>>() {}.getType());
 
-                    GsonBuilder gsonBuilder = new GsonBuilder();
-                    gsonBuilder.setDateFormat("YYYY-MM-dd");
-                    Gson gson = gsonBuilder.create();
+                    Gson gson = new GsonBuilder()
+                            .setDateFormat("yyyy-MM-dd")
+                            .create();
+
+                    TmdbPage<TmdbMovie> movies = gson.fromJson(response, new TypeToken<TmdbPage<TmdbMovie>>() {}.getType());
 
                     movies.getResults()
                           .forEach(m -> {

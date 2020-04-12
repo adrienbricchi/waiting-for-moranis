@@ -54,7 +54,10 @@ public class MovieListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        movieListAdapter = new MovieListAdapter(new ArrayList<>());
+        movieListAdapter = new MovieListAdapter(
+                new ArrayList<>(),
+                this::deleteMovieFromDb
+        );
 
         binding.movieListRecyclerView.setHasFixedSize(true);
         binding.movieListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -88,6 +91,17 @@ public class MovieListFragment extends Fragment {
                 binding.movieListSwipeRefreshLayout.setRefreshing(false);
             });
 
+        }).start();
+    }
+
+
+    private void deleteMovieFromDb(@NonNull Movie movie) {
+        new Thread(() -> {
+
+            AppDatabase database = AppDatabase.getDatabase(getContext());
+            database.movieDao().remove(movie.getId());
+
+            new Handler(Looper.getMainLooper()).post(this::refreshListFromDb);
         }).start();
     }
 

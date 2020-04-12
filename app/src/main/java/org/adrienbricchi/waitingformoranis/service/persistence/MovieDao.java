@@ -39,10 +39,13 @@ public interface MovieDao {
     List<Movie> getAll();
 
     @Query("select * from " + TABLE_NAME + " where id = :id limit 1")
-    List<Movie> get(long id);
+    List<Movie> get(String id);
 
     @Update(onConflict = REPLACE)
     void update(Movie user);
+
+    @Query("delete from " + TABLE_NAME + " where id = :id")
+    void remove(String id);
 
     @Query("delete from " + TABLE_NAME)
     void removeAll();
