@@ -24,10 +24,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.stream.Stream;
@@ -40,7 +40,6 @@ import static android.provider.CalendarContract.Calendars.ACCOUNT_NAME;
 import static android.provider.CalendarContract.Calendars.CALENDAR_DISPLAY_NAME;
 import static android.provider.CalendarContract.Calendars.OWNER_ACCOUNT;
 import static android.provider.CalendarContract.Calendars.SYNC_EVENTS;
-import static android.provider.CalendarContract.Calendars.VISIBLE;
 import static android.provider.CalendarContract.Events.CONTENT_URI;
 import static android.provider.CalendarContract.Events.*;
 import static androidx.core.app.ActivityCompat.requestPermissions;
@@ -96,30 +95,29 @@ public class CalendarService {
 
 
     @SuppressLint("MissingPermission")
-    public static void addMoviesToCalendar(Activity activity, long calendarId, List<Movie> movies) {
+    public static @Nullable Long addMovieToCalendar(@Nullable Activity activity, @Nullable Long calendarId, @NonNull Movie movie) {
 
-        movies.stream()
-              .filter(m -> m.getCalendarEventId() == null)
-              .forEach(m -> {
-                  ContentResolver cr = activity.getContentResolver();
-                  ContentValues values = new ContentValues();
-                  values.put(DTSTART, m.getReleaseDate());
-                  values.put(DTEND, m.getReleaseDate());
-                  values.put(ALL_DAY, true);
-                  values.put(TITLE, m.getTitle() + " #film");
-                  values.put(CALENDAR_ID, calendarId);
-                  values.put(EVENT_TIMEZONE, TimeZone.getDefault().getDisplayName());
+        if ((activity == null) || (calendarId == null)) {
+            return null;
+        }
 
-                  Uri uri = cr.insert(CONTENT_URI, values);
-                  if (uri == null) { return; }
+        ContentResolver cr = activity.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(DTSTART, movie.getReleaseDate());
+        values.put(DTEND, movie.getReleaseDate());
+        values.put(ALL_DAY, true);
+        values.put(TITLE, movie.getTitle() + " #film");
+        values.put(CALENDAR_ID, calendarId);
+        values.put(EVENT_TIMEZONE, TimeZone.getDefault().getDisplayName());
+        values.put(SYNC_EVENTS, true);
 
-                  // get the event ID that is the last element in the Uri
-                  Long eventId = Optional.ofNullable(uri.getLastPathSegment())
-                                         .map(Long::parseLong)
-                                         .orElse(null);
+        Uri uri = cr.insert(CONTENT_URI, values);
+        if (uri == null) { return null; }
 
-                  m.setCalendarEventId(eventId);
-              });
+        // Return the event Id that is the last element in the Uri
+        return Optional.ofNullable(uri.getLastPathSegment())
+                       .map(Long::parseLong)
+                       .orElse(null);
     }
 
 }

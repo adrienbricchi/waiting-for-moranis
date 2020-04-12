@@ -30,11 +30,16 @@ import org.adrienbricchi.waitingformoranis.databinding.MovieListBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
+import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.service.google.CalendarService.CALENDAR_PERMISSION_REQUEST_CODE;
+import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
 
 
 public class MovieListFragment extends Fragment {
@@ -89,19 +94,41 @@ public class MovieListFragment extends Fragment {
 
 
     private void onPullToRefresh() {
-
         new Thread(() -> {
 
-            Long calendarId = CalendarService.getCalendarId(getActivity());
-            if (calendarId != null) {
-                CalendarService.addMoviesToCalendar(getActivity(), calendarId, movieListAdapter.getDataSet());
+            AppDatabase database = AppDatabase.getDatabase(getContext());
+            Map<String, Movie> oldMoviesMap = database.movieDao()
+                                                      .getAll()
+                                                      .stream()
+                                                      .collect(toMap(Movie::getId, movie -> movie));
 
-                AppDatabase database = AppDatabase.getDatabase(getContext());
-                movieListAdapter.getDataSet()
-                                .forEach(m -> database.movieDao().update(m));
-            }
+            List<Movie> refreshedMovies = oldMoviesMap.values()
+                                                      .stream()
+                                                      .map(m -> TmdbService.getMovie(getActivity(), m.getId()))
+                                                      .collect(toList());
+
+            refreshedMovies.forEach(m -> m.setUpdateNeededInCalendar(checkForCalendarUpgradeNeed(oldMoviesMap.get(m.getId()), m)));
+
+            Long calendarId = CalendarService.getCalendarId(getActivity());
+
+            refreshedMovies.stream()
+                           .filter(m -> (m.getCalendarEventId() == null))
+                           .forEach(m -> {
+                               Long calendarEventId = CalendarService.addMovieToCalendar(getActivity(), calendarId, m);
+                               m.setUpdateNeededInCalendar(calendarEventId == null);
+                           });
+
+            refreshedMovies.stream()
+                           .filter(Movie::isUpdateNeededInCalendar)
+                           .forEach(m -> {
+                               // TODO : Refresh calendar
+                               m.setUpdateNeededInCalendar(false);
+                           });
+
+            refreshedMovies.forEach(m -> database.movieDao().add(m));
 
             new Handler(Looper.getMainLooper()).post(this::refreshListFromDb);
+
         }).start();
     }
 
