@@ -39,5 +39,6 @@ public class Movie {
     protected String title;
     protected Long releaseDate;
     protected String imageUrl;
+    protected Long calendarEventId;
 
 }

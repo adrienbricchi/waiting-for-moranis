@@ -26,7 +26,7 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 
 @Database(
         entities = {Movie.class},
-        version = 2,
+        version = 3,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {

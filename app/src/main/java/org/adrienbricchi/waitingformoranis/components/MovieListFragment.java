@@ -28,10 +28,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.adrienbricchi.waitingformoranis.service.google.CalendarService.CALENDAR_PERMISSION_REQUEST_CODE;
 
 
 public class MovieListFragment extends Fragment {
@@ -63,7 +66,7 @@ public class MovieListFragment extends Fragment {
         binding.movieListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.movieListRecyclerView.setAdapter(movieListAdapter);
 
-        binding.movieListSwipeRefreshLayout.setOnRefreshListener(this::refreshListFromDb);
+        binding.movieListSwipeRefreshLayout.setOnRefreshListener(this::onPullToRefresh);
     }
 
 
@@ -74,7 +77,33 @@ public class MovieListFragment extends Fragment {
     }
 
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == CALENDAR_PERMISSION_REQUEST_CODE) {
+            CalendarService.getCalendarId(getActivity());
+        }
+    }
+
+
     // </editor-fold desc="LifeCycle">
+
+
+    private void onPullToRefresh() {
+
+        new Thread(() -> {
+
+            Long calendarId = CalendarService.getCalendarId(getActivity());
+            if (calendarId != null) {
+                CalendarService.addMoviesToCalendar(getActivity(), calendarId, movieListAdapter.getDataSet());
+
+                AppDatabase database = AppDatabase.getDatabase(getContext());
+                movieListAdapter.getDataSet()
+                                .forEach(m -> database.movieDao().update(m));
+            }
+
+            new Handler(Looper.getMainLooper()).post(this::refreshListFromDb);
+        }).start();
+    }
 
 
     private void refreshListFromDb() {

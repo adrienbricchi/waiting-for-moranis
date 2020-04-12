@@ -28,8 +28,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 
-import java.util.Locale;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,12 +70,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void onAddMovieFloatingButtonClicked() {
 
-        TmdbService.searchMovie(this, "no time to die",
+        TmdbService.searchMovie(this, "wonder woman",
                                 movies -> {
                                     new Thread(() -> {
                                         AppDatabase database = AppDatabase.getDatabase(getApplicationContext());
                                         movies.stream()
-                                              .filter(m -> TextUtils.equals("Mourir peut attendre", m.getTitle()))
+                                              .filter(m -> TextUtils.equals("Wonder Woman 1984", m.getTitle()))
                                               .forEach(m -> database.movieDao().add(m));
                                     }).start();
                                 },
