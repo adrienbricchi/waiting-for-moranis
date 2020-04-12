@@ -25,6 +25,7 @@ import com.squareup.picasso.Picasso;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
@@ -80,6 +81,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
         Picasso.get()
                .load(dataSet.get(position).getImageUrl())
+               .placeholder(R.drawable.ic_local_movies_48dp)
                .into(holder.binding.coverImageView);
 
         holder.binding.titleTextView.setText(dataSet.get(position).getTitle());

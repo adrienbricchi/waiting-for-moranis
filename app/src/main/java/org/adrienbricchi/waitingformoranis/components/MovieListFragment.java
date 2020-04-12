@@ -26,25 +26,27 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import org.adrienbricchi.waitingformoranis.R;
+import org.adrienbricchi.waitingformoranis.databinding.MovieListBinding;
+import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MovieListFragment extends Fragment {
 
     private MovieListAdapter movieListAdapter;
+    private MovieListBinding binding;
 
 
     // <editor-fold desc="LifeCycle">
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.movie_list, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = MovieListBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
 
@@ -54,26 +56,39 @@ public class MovieListFragment extends Fragment {
 
         movieListAdapter = new MovieListAdapter(new ArrayList<>());
 
-        RecyclerView movieListView = view.findViewById(R.id.movie_list_recycler_view);
-        movieListView.setHasFixedSize(true);
-        movieListView.setLayoutManager(new LinearLayoutManager(getContext()));
-        movieListView.setAdapter(movieListAdapter);
+        binding.movieListRecyclerView.setHasFixedSize(true);
+        binding.movieListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.movieListRecyclerView.setAdapter(movieListAdapter);
+
+        binding.movieListSwipeRefreshLayout.setOnRefreshListener(this::refreshListFromDb);
     }
 
 
     @Override
     public void onStart() {
         super.onStart();
-
-        new Thread(() -> {
-            AppDatabase database = AppDatabase.getDatabase(getContext());
-            movieListAdapter.getDataSet().clear();
-            movieListAdapter.getDataSet().addAll(database.movieDao().getAll());
-            new Handler(Looper.getMainLooper()).post(() -> movieListAdapter.notifyDataSetChanged());
-        }).start();
+        refreshListFromDb();
     }
 
 
     // </editor-fold desc="LifeCycle">
+
+
+    private void refreshListFromDb() {
+        new Thread(() -> {
+
+            AppDatabase database = AppDatabase.getDatabase(getContext());
+            List<Movie> movies = database.movieDao().getAll();
+
+            movieListAdapter.getDataSet().clear();
+            movieListAdapter.getDataSet().addAll(movies);
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+                movieListAdapter.notifyDataSetChanged();
+                binding.movieListSwipeRefreshLayout.setRefreshing(false);
+            });
+
+        }).start();
+    }
 
 }
