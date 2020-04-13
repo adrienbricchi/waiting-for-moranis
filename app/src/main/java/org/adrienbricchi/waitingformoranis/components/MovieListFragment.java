@@ -35,6 +35,7 @@ import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -108,7 +109,13 @@ public class MovieListFragment extends Fragment {
                                                       .map(m -> TmdbService.getMovie(getActivity(), m.getId()))
                                                       .collect(toList());
 
-            refreshedMovies.forEach(m -> m.setUpdateNeededInCalendar(checkForCalendarUpgradeNeed(oldMoviesMap.get(m.getId()), m)));
+            refreshedMovies.forEach(m -> {
+                m.setUpdateNeededInCalendar(checkForCalendarUpgradeNeed(oldMoviesMap.get(m.getId()), m));
+                m.setCalendarEventId(Optional.ofNullable(oldMoviesMap.get(m.getId()))
+                                             .map(Movie::getCalendarEventId)
+                                             .orElse(null));
+            });
+
 
             Long calendarId = CalendarService.getCalendarId(getActivity());
 
@@ -116,7 +123,7 @@ public class MovieListFragment extends Fragment {
                            .filter(m -> (m.getCalendarEventId() == null))
                            .forEach(m -> {
                                Long calendarEventId = CalendarService.addMovieToCalendar(getActivity(), calendarId, m);
-                               m.setUpdateNeededInCalendar(calendarEventId == null);
+                               m.setCalendarEventId(calendarEventId);
                            });
 
             refreshedMovies.stream()
@@ -127,7 +134,7 @@ public class MovieListFragment extends Fragment {
                                m.setUpdateNeededInCalendar(!edited);
                            });
 
-            refreshedMovies.forEach(m -> database.movieDao().add(m));
+            refreshedMovies.forEach(m -> database.movieDao().update(m));
 
             new Handler(Looper.getMainLooper()).post(this::refreshListFromDb);
 
