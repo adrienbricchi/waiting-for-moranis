@@ -44,7 +44,8 @@ import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalen
 
 public class MovieListFragment extends Fragment {
 
-    private MovieListAdapter movieListAdapter;
+
+    private MovieListAdapter adapter;
     private MovieListBinding binding;
 
 
@@ -62,14 +63,14 @@ public class MovieListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        movieListAdapter = new MovieListAdapter(
+        adapter = new MovieListAdapter(
                 new ArrayList<>(),
                 this::deleteMovieFromDb
         );
 
         binding.movieListRecyclerView.setHasFixedSize(true);
         binding.movieListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.movieListRecyclerView.setAdapter(movieListAdapter);
+        binding.movieListRecyclerView.setAdapter(adapter);
 
         binding.movieListSwipeRefreshLayout.setOnRefreshListener(this::onPullToRefresh);
     }
@@ -140,11 +141,11 @@ public class MovieListFragment extends Fragment {
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Movie> movies = database.movieDao().getAll();
 
-            movieListAdapter.getDataSet().clear();
-            movieListAdapter.getDataSet().addAll(movies);
+            adapter.getDataSet().clear();
+            adapter.getDataSet().addAll(movies);
 
             new Handler(Looper.getMainLooper()).post(() -> {
-                movieListAdapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
                 binding.movieListSwipeRefreshLayout.setRefreshing(false);
             });
 

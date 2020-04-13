@@ -18,15 +18,12 @@
 package org.adrienbricchi.waitingformoranis;
 
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
-import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
+import org.adrienbricchi.waitingformoranis.components.AddMovieDialogFragment;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -69,16 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void onAddMovieFloatingButtonClicked() {
-
-        TmdbService.searchMovie(this, "wonder woman",
-                                movies -> new Thread(() -> {
-                                    AppDatabase database = AppDatabase.getDatabase(getApplicationContext());
-                                    movies.stream()
-                                          .filter(m -> TextUtils.equals("Wonder Woman 1984", m.getTitle()))
-                                          .forEach(m -> database.movieDao().add(m));
-                                }).start(),
-                                error -> Log.e("Adrien", "That didn't work! " + error.getMessage())
-        );
+        new AddMovieDialogFragment().show(this.getSupportFragmentManager(), AddMovieDialogFragment.TAG);
     }
 
 }
