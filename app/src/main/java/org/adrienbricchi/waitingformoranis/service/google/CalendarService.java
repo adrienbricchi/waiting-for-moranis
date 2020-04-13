@@ -40,7 +40,6 @@ import static android.provider.BaseColumns._ID;
 import static android.provider.CalendarContract.Calendars.ACCOUNT_NAME;
 import static android.provider.CalendarContract.Calendars.CALENDAR_DISPLAY_NAME;
 import static android.provider.CalendarContract.Calendars.OWNER_ACCOUNT;
-import static android.provider.CalendarContract.Calendars.SYNC_EVENTS;
 import static android.provider.CalendarContract.Events.CONTENT_URI;
 import static android.provider.CalendarContract.Events.*;
 import static androidx.core.app.ActivityCompat.requestPermissions;
@@ -109,7 +108,7 @@ public class CalendarService {
         values.put(ALL_DAY, true);
         values.put(TITLE, movie.getTitle() + " #film");
         values.put(CALENDAR_ID, calendarId);
-        values.put(EVENT_TIMEZONE, TimeZone.getDefault().getDisplayName());
+        values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
         Uri uri = cr.insert(CONTENT_URI, values);
         if (uri == null) { return null; }
