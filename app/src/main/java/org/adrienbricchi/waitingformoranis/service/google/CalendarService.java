@@ -25,10 +25,13 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.stream.Stream;
@@ -37,10 +40,7 @@ import static android.Manifest.permission.READ_CALENDAR;
 import static android.Manifest.permission.WRITE_CALENDAR;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 import static android.provider.BaseColumns._ID;
-import static android.provider.CalendarContract.Calendars.ACCOUNT_NAME;
 import static android.provider.CalendarContract.Calendars.CALENDAR_DISPLAY_NAME;
-import static android.provider.CalendarContract.Calendars.OWNER_ACCOUNT;
-import static android.provider.CalendarContract.Events.CONTENT_URI;
 import static android.provider.CalendarContract.Events.*;
 import static androidx.core.app.ActivityCompat.requestPermissions;
 import static androidx.core.content.ContextCompat.checkSelfPermission;
@@ -55,14 +55,13 @@ public class CalendarService {
      * Projection array. Creating indices for this array instead of doing
      * dynamic lookups improves performance.
      */
-    private static final String[] EVENT_PROJECTION = new String[]{
-            _ID, ACCOUNT_NAME, CALENDAR_DISPLAY_NAME, OWNER_ACCOUNT
-    };
+    private static final String[] CALENDAR_PROJECTION = new String[]{_ID, CALENDAR_DISPLAY_NAME};
+    private static final int PROJECTION_CALENDAR_ID_INDEX = 0;
+    private static final int PROJECTION_CALENDAR_DISPLAY_NAME_INDEX = 1;
 
-    private static final int PROJECTION_ID_INDEX = 0;
-    private static final int PROJECTION_ACCOUNT_NAME_INDEX = 1;
-    private static final int PROJECTION_DISPLAY_NAME_INDEX = 2;
-    private static final int PROJECTION_OWNER_ACCOUNT_INDEX = 3;
+    private static final String[] EVENT_PROJECTION = new String[]{_ID, DESCRIPTION};
+    private static final int PROJECTION_EVENT_ID_INDEX = 0;
+    private static final int PROJECTION_EVENT_DESCRIPTION = 1;
 
 
     public static @Nullable Long getCalendarId(Activity activity) {
@@ -80,17 +79,49 @@ public class CalendarService {
         String selection = "(" + CALENDAR_DISPLAY_NAME + " = ?)";
         String[] selectionArgs = new String[]{CURRENT_CALENDAR_DISPLAY_NAME};
         Cursor cursor = activity.getContentResolver()
-                                .query(CalendarContract.Calendars.CONTENT_URI, EVENT_PROJECTION, selection, selectionArgs, null);
+                                .query(CalendarContract.Calendars.CONTENT_URI, CALENDAR_PROJECTION, selection, selectionArgs, null);
 
         // Use the cursor to step through the returned records
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                resultId = cursor.getLong(PROJECTION_ID_INDEX);
+                resultId = cursor.getLong(PROJECTION_CALENDAR_ID_INDEX);
             }
             cursor.close();
         }
 
         return resultId;
+    }
+
+
+    @SuppressLint("MissingPermission")
+    public static @NonNull Map<String, Long> getEvents(Activity activity, @Nullable Long calendarId) {
+        Map<String, Long> result = new HashMap<>();
+
+        if ((activity == null) || (calendarId == null)) {
+            return result;
+        }
+
+        // Run query
+        String selection = "(" + CALENDAR_ID + " = ?)";
+        String[] selectionArgs = new String[]{calendarId.toString()};
+        Cursor cursor = activity.getContentResolver()
+                                .query(CalendarContract.Events.CONTENT_URI, EVENT_PROJECTION, selection, selectionArgs, null);
+
+        // Use the cursor to step through the returned records
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+
+                long eventId = cursor.getLong(PROJECTION_EVENT_ID_INDEX);
+                String movieId = cursor.getString(PROJECTION_EVENT_DESCRIPTION);
+
+                if (!TextUtils.isEmpty(movieId)) {
+                    result.put(movieId, eventId);
+                }
+            }
+            cursor.close();
+        }
+
+        return result;
     }
 
 
@@ -108,9 +139,10 @@ public class CalendarService {
         values.put(ALL_DAY, true);
         values.put(TITLE, movie.getTitle() + " #film");
         values.put(CALENDAR_ID, calendarId);
+        values.put(DESCRIPTION, movie.getId());
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
-        Uri uri = cr.insert(CONTENT_URI, values);
+        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
         if (uri == null) { return null; }
 
         // Return the event Id that is the last element in the Uri
@@ -136,7 +168,7 @@ public class CalendarService {
         values.put(CALENDAR_ID, calendarId);
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
-        Uri updateUri = ContentUris.withAppendedId(CONTENT_URI, entryId);
+        Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, entryId);
         int numRowsUpdated = cr.update(updateUri, values, null, null);
 
         return (numRowsUpdated != 0);

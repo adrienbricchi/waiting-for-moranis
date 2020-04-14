@@ -104,6 +104,15 @@ public class MovieListFragment extends Fragment {
                                                       .stream()
                                                       .collect(toMap(Movie::getId, movie -> movie));
 
+            Long calendarId = CalendarService.getCalendarId(getActivity());
+            Map<String, Long> existingEvents = CalendarService.getEvents(getActivity(), calendarId);
+            // Movies that are in the Calendar and the DB, but not mapped together
+            oldMoviesMap.entrySet()
+                        .stream()
+                        .filter(m -> m.getValue().getCalendarEventId() == null)
+                        .filter(m -> existingEvents.get(m.getKey()) != null)
+                        .forEach(m -> m.getValue().setCalendarEventId(existingEvents.get(m.getKey())));
+
             List<Movie> refreshedMovies = oldMoviesMap.values()
                                                       .stream()
                                                       .map(m -> TmdbService.getMovie(getActivity(), m.getId()))
@@ -115,9 +124,6 @@ public class MovieListFragment extends Fragment {
                                              .map(Movie::getCalendarEventId)
                                              .orElse(null));
             });
-
-
-            Long calendarId = CalendarService.getCalendarId(getActivity());
 
             refreshedMovies.stream()
                            .filter(m -> (m.getCalendarEventId() == null))
