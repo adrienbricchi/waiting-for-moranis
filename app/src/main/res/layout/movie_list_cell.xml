@@ -50,7 +50,7 @@
                 android:fontFamily="sans-serif"
                 android:gravity="bottom"
                 android:maxLines="1"
-                android:textColor="@android:color/primary_text_light"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp" />
 
         <TextView
@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
                 android:fontFamily="sans-serif"
-                android:textColor="@android:color/secondary_text_light"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp" />
 
     </LinearLayout>

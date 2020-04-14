@@ -30,7 +30,6 @@
             android:id="@+id/movie_list_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/background_light"
             android:clipToPadding="false"
             android:paddingVertical="8dp" />
 

@@ -44,30 +44,11 @@
     <!--information on color palettes and their application color -->
     <!--theme attributes, see https://www.youtube.com/watch?v=Owkf8DhAOSo-->
 
-    <color name="colorPrimary">@color/teal_800</color>
-    <color name="colorPrimaryDark">@color/teal_800_dark</color>
-    <color name="colorAccent">@color/red_900</color>
+    <color name="colorPrimary">@color/green_800</color>
+    <color name="colorPrimaryDark">@color/green_800_dark</color>
+    <color name="statusBarColor">@color/colorPrimaryDark</color>
+    <color name="colorAccent">@color/brown_600</color>
 
-    <!--Color palette-->
-
-    <color name="teal_200">#80cbc4</color> <!--Color primary (dark)-->
-    <color name="teal_800">#00695c</color> <!--Color primary (light)-->
-    <color name="teal_200_dark">#4f9a94</color> <!--Color primary variant (dark)-->
-    <color name="teal_800_dark">#003d33</color> <!--Color primary variant (light)-->
-
-    <color name="red_900">#b71c1c</color> <!--Color secondary-->
-    <color name="red_900_dark">#7f0000</color> <!--Color secondary variant-->
-
-    <color name="red_200">#cf6679</color> <!--Color error (dark)-->
-    <color name="red_600">#b00020</color> <!--Color error (light)-->
-
-    <!--Color surface (light), color on error (light), -->
-    <!--color on surface (dark), color on surface (dark)-->
-    <color name="white_50">#ffffff</color>
-
-    <color name="black_800">#121212</color> <!--Color surface (dark)-->
-    <!--Color on secondary (light), color on background (light),-->
-    <!--color on surface (light)-->
-    <color name="black_900">#000000</color>
+    <color name="movieIconColor">@color/colorPrimaryDark</color>
 
 </resources>
