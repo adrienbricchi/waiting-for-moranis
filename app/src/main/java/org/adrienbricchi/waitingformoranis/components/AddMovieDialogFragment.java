@@ -19,6 +19,7 @@ package org.adrienbricchi.waitingformoranis.components;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -35,12 +36,14 @@ import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH;
 
 
 public class AddMovieDialogFragment extends DialogFragment {
 
+    public static final int REQUEST_CODE = 10404;
     public static final String TAG = "AddMovieDialogFragment";
 
     private AddMovieDialogListAdapter adapter;
@@ -76,6 +79,14 @@ public class AddMovieDialogFragment extends DialogFragment {
                 .ifPresent(w -> w.getAttributes().gravity = Gravity.TOP);
 
         return dialog;
+    }
+
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        Optional.ofNullable(getTargetFragment())
+                .ifPresent(f -> f.onActivityResult(REQUEST_CODE, RESULT_OK, null));
     }
 
 

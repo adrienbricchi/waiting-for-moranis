@@ -18,26 +18,33 @@
 package org.adrienbricchi.waitingformoranis;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.fragment.NavHostFragment;
 import org.adrienbricchi.waitingformoranis.components.AddMovieDialogFragment;
+import org.adrienbricchi.waitingformoranis.components.MovieListFragment;
+import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 
 
 public class MainActivity extends AppCompatActivity {
 
 
+    private ActivityMainBinding binding;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        ExtendedFloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> onAddMovieFloatingButtonClicked());
+        binding = ActivityMainBinding.inflate(LayoutInflater.from(this));
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
+
+        binding.fab.setOnClickListener(view -> onAddMovieFloatingButtonClicked());
     }
 
 
@@ -66,7 +73,20 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void onAddMovieFloatingButtonClicked() {
-        new AddMovieDialogFragment().show(this.getSupportFragmentManager(), AddMovieDialogFragment.TAG);
+
+        FragmentContainerView fragmentContainerView = binding.contentMain.navHostFragmentContainerView;
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(fragmentContainerView.getId());
+
+        if (navHostFragment == null) {
+            return;
+        }
+
+        FragmentManager navFragmentManager = navHostFragment.getChildFragmentManager();
+        MovieListFragment targetFragment = (MovieListFragment) navFragmentManager.getFragments().get(0);
+
+        AddMovieDialogFragment fragment = new AddMovieDialogFragment();
+        fragment.setTargetFragment(targetFragment, AddMovieDialogFragment.REQUEST_CODE);
+        fragment.show(navFragmentManager, AddMovieDialogFragment.TAG);
     }
 
 }
