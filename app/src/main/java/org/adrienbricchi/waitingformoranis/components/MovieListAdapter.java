@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static java.text.DateFormat.SHORT;
 
@@ -96,15 +97,20 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
 
+        Movie currentMovie = dataSet.get(position);
+
         Picasso.get()
                .load(dataSet.get(position).getImageUrl())
                .placeholder(R.drawable.ic_local_movies_48dp)
                .into(holder.binding.coverImageView);
 
-        holder.binding.getRoot().setTag(TAG_MOVIE, dataSet.get(position));
-        holder.binding.titleTextView.setText(dataSet.get(position).getTitle());
-        holder.binding.dateTextView.setText(SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault())
-                                                            .format(new Date(dataSet.get(position).getReleaseDate())));
+        holder.binding.getRoot().setTag(TAG_MOVIE, currentMovie);
+        holder.binding.titleTextView.setText(currentMovie.getTitle());
+        holder.binding.dateTextView.setText(
+                Optional.ofNullable(currentMovie.getReleaseDate())
+                        .map(Date::new)
+                        .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
+                        .orElse("(unknown)"));
     }
 
 

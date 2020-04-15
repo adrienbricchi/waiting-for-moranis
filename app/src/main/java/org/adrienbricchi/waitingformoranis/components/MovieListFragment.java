@@ -139,6 +139,7 @@ public class MovieListFragment extends Fragment {
 
             refreshedMovies.stream()
                            .filter(m -> (m.getCalendarEventId() == null))
+                           .filter(m -> (m.getReleaseDate() != null))
                            .forEach(m -> {
                                Long calendarEventId = CalendarService.addMovieToCalendar(getActivity(), calendarId, m);
                                m.setCalendarEventId(calendarEventId);
