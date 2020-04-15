@@ -20,6 +20,7 @@
 
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:background="?android:attr/selectableItemBackground"
@@ -41,15 +42,17 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingEnd="16dp"
+            tools:ignore="RtlSymmetry">
 
         <TextView
                 android:id="@+id/title_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:fontFamily="sans-serif"
+                android:ellipsize="end"
                 android:gravity="bottom"
-                android:maxLines="1"
+                android:singleLine="true"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp" />
 
@@ -57,7 +60,6 @@
                 android:id="@+id/date_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:fontFamily="sans-serif"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp" />
 

@@ -35,4 +35,11 @@ public class MovieUtils {
     }
 
 
+    public static int compareReleaseDate(@NonNull Movie o1, @NonNull Movie o2) {
+        if ((o1.getReleaseDate() == null) && (o2.getReleaseDate() == null)) { return 0; }
+        if (o1.getReleaseDate() == null) { return 1; }
+        if (o2.getReleaseDate() == null) { return -1; }
+        return Long.compare(o1.getReleaseDate(), o2.getReleaseDate());
+    }
+
 }

@@ -33,6 +33,7 @@ import com.google.gson.reflect.TypeToken;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbMovie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbPage;
+import org.adrienbricchi.waitingformoranis.utils.TmdbDateDeserializer;
 
 import java.util.Date;
 import java.util.List;
@@ -70,7 +71,7 @@ public class TmdbService {
                 response -> {
 
                     Gson gson = new GsonBuilder()
-                            .setDateFormat("yyyy-MM-dd")
+                            .registerTypeAdapter(Date.class, new TmdbDateDeserializer())
                             .create();
 
                     TmdbPage<TmdbMovie> movies = gson.fromJson(response, new TypeToken<TmdbPage<TmdbMovie>>() {}.getType());
@@ -119,7 +120,7 @@ public class TmdbService {
         try {
             String response = future.get();
             Gson gson = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd")
+                    .registerTypeAdapter(Date.class, new TmdbDateDeserializer())
                     .create();
 
             TmdbMovie movie = gson.fromJson(response, TmdbMovie.class);

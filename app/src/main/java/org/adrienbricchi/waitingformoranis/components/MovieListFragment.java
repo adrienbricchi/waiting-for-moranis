@@ -31,6 +31,7 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
+import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,6 +165,7 @@ public class MovieListFragment extends Fragment {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Movie> movies = database.movieDao().getAll();
+            movies.sort(MovieUtils::compareReleaseDate);
 
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(movies);

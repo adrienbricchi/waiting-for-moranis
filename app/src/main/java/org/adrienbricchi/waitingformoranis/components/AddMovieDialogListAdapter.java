@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static java.text.DateFormat.SHORT;
 
@@ -101,8 +102,11 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
 
         holder.binding.getRoot().setTag(TAG_MOVIE, currentMovie);
         holder.binding.addMovieTitleTextView.setText(currentMovie.getTitle());
-        holder.binding.addMovieDateTextView.setText(SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault())
-                                                                    .format(new Date(currentMovie.getReleaseDate())));
+        holder.binding.addMovieDateTextView.setText(
+                Optional.ofNullable(currentMovie.getReleaseDate())
+                        .map(Date::new)
+                        .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
+                        .orElse("(unknown)"));
     }
 
 
