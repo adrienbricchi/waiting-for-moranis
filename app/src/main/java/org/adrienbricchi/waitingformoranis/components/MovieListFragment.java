@@ -106,6 +106,17 @@ public class MovieListFragment extends Fragment {
 
             Long calendarId = CalendarService.getCalendarId(getActivity());
             Map<String, Long> existingEvents = CalendarService.getEvents(getActivity(), calendarId);
+
+            // Movies that are in the Calendar, but not in the DB
+            existingEvents.entrySet()
+                          .stream()
+                          .filter(e -> oldMoviesMap.get(e.getKey()) == null)
+                          .forEach(e -> {
+                              Movie m = new Movie(e.getKey(), null, null, null, e.getValue(), true);
+                              oldMoviesMap.put(e.getKey(), m);
+                              database.movieDao().add(m);
+                          });
+
             // Movies that are in the Calendar and the DB, but not mapped together
             oldMoviesMap.entrySet()
                         .stream()
