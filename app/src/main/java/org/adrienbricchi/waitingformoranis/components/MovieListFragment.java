@@ -67,7 +67,7 @@ public class MovieListFragment extends Fragment {
 
         adapter = new MovieListAdapter(
                 new ArrayList<>(),
-                this::deleteMovieFromDb
+                this::deleteMovie
         );
 
         binding.movieListRecyclerView.setHasFixedSize(true);
@@ -149,7 +149,7 @@ public class MovieListFragment extends Fragment {
                            .filter(m -> (m.getCalendarEventId() != null))
                            .filter(Movie::isUpdateNeededInCalendar)
                            .forEach(m -> {
-                               boolean edited = CalendarService.editMovieInCalendar(getActivity(), calendarId, m.getCalendarEventId(), m);
+                               boolean edited = CalendarService.editMovieInCalendar(getActivity(), calendarId, m);
                                m.setUpdateNeededInCalendar(!edited);
                            });
 
@@ -180,8 +180,11 @@ public class MovieListFragment extends Fragment {
     }
 
 
-    private void deleteMovieFromDb(@NonNull Movie movie) {
+    private void deleteMovie(@NonNull Movie movie) {
         new Thread(() -> {
+
+            Long calendarId = CalendarService.getCalendarId(getActivity());
+            CalendarService.deleteMovieInCalendar(getActivity(), calendarId, movie);
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             database.movieDao().remove(movie.getId());

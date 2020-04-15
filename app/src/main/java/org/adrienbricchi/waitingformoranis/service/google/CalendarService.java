@@ -153,9 +153,9 @@ public class CalendarService {
 
 
     @SuppressLint("MissingPermission")
-    public static boolean editMovieInCalendar(@Nullable Activity activity, @Nullable Long calendarId, long entryId, @NonNull Movie movie) {
+    public static boolean editMovieInCalendar(@Nullable Activity activity, @Nullable Long calendarId, @NonNull Movie movie) {
 
-        if ((activity == null) || (calendarId == null)) {
+        if ((activity == null) || (calendarId == null) || (movie.getReleaseDate() == null)) {
             return false;
         }
 
@@ -168,8 +168,23 @@ public class CalendarService {
         values.put(CALENDAR_ID, calendarId);
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
-        Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, entryId);
+        Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, movie.getCalendarEventId());
         int numRowsUpdated = cr.update(updateUri, values, null, null);
+
+        return (numRowsUpdated != 0);
+    }
+
+
+    @SuppressLint("MissingPermission")
+    public static boolean deleteMovieInCalendar(@Nullable Activity activity, @Nullable Long calendarId, @NonNull Movie movie) {
+
+        if ((activity == null) || (calendarId == null) || (movie.getReleaseDate() == null)) {
+            return false;
+        }
+
+        ContentResolver cr = activity.getContentResolver();
+        Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, movie.getCalendarEventId());
+        int numRowsUpdated = cr.delete(updateUri, null, null);
 
         return (numRowsUpdated != 0);
     }
