@@ -22,23 +22,21 @@ import android.net.Uri;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbMovie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbPage;
-import org.adrienbricchi.waitingformoranis.utils.TmdbDateDeserializer;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static com.android.volley.Request.Method.GET;
@@ -80,23 +78,14 @@ public class TmdbService {
                 GET,
                 url,
                 response -> {
-
-                    Gson gson = new GsonBuilder()
-                            .registerTypeAdapter(Date.class, new TmdbDateDeserializer())
-                            .create();
-
-                    TmdbPage<TmdbMovie> movies = gson.fromJson(response, new TypeToken<TmdbPage<TmdbMovie>>() {}.getType());
-
-                    movies.getResults()
-                          .forEach(m -> {
-                              // https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
-                              m.setImageUrl("https://image.tmdb.org/t/p/w154" + m.getPosterPath());
-                              m.setReleaseDate(Optional.ofNullable(m.getOriginalReleaseDate())
-                                                       .map(Date::getTime)
-                                                       .orElse(null));
-                          });
-
-                    onSuccess.onResponse(movies.getResults());
+                    ObjectMapper mapper = new ObjectMapper();
+                    try {
+                        TmdbPage<TmdbMovie> movieList = mapper.readValue(response, new TypeReference<TmdbPage<TmdbMovie>>() {});
+                        onSuccess.onResponse(movieList.getResults());
+                    }
+                    catch (JsonProcessingException e) {
+                        onError.onErrorResponse(new ParseError(e));
+                    }
                 },
                 onError
         );
@@ -130,22 +119,10 @@ public class TmdbService {
 
         try {
             String response = future.get();
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Date.class, new TmdbDateDeserializer())
-                    .create();
-
-            TmdbMovie movie = gson.fromJson(response, TmdbMovie.class);
-
-            // https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
-            movie.setImageUrl("https://image.tmdb.org/t/p/w154" + movie.getPosterPath());
-            movie.setReleaseDate(Optional.ofNullable(movie.getOriginalReleaseDate())
-                                         .map(Date::getTime)
-                                         .orElse(null));
-
-            return movie;
-
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(response, TmdbMovie.class);
         }
-        catch (InterruptedException | ExecutionException e) {
+        catch (InterruptedException | ExecutionException | JsonProcessingException e) {
             Log.e("Adrien", "Error on request : " + e.getLocalizedMessage());
             return null;
         }

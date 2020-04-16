@@ -17,18 +17,20 @@
  */
 package org.adrienbricchi.waitingformoranis.models.tmdb;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.util.List;
 
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TmdbPage<T> {
 
     private int page;
     private List<T> results;
-    private @SerializedName("total_results") int totalResults;
-    private @SerializedName("total_pages") int totalPages;
+    private @JsonAlias("total_results") int totalResults;
+    private @JsonAlias("total_pages") int totalPages;
 
 }

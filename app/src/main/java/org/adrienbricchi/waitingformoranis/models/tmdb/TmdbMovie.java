@@ -17,31 +17,57 @@
  */
 package org.adrienbricchi.waitingformoranis.models.tmdb;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Optional;
 
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(callSuper = true)
 public class TmdbMovie extends Movie {
 
     public static final String COVER_URL = "https://image.tmdb.org/t/p/w154%s";
 
 
-    private @SerializedName("original_title") String originalTitle;
-    private @SerializedName("original_language") String originalLanguage;
-    private @SerializedName("release_date") Date originalReleaseDate;
+    private @JsonAlias("original_title") String originalTitle;
+    private @JsonAlias("original_language") String originalLanguage;
     private String overview;
     private boolean video;
     private boolean adult;
-    private @SerializedName("poster_path") String posterPath;
-    private @SerializedName("backdrop_path") String backdropPath;
+    private @JsonAlias("backdrop_path") String backdropPath;
     private float popularity;
-    private @SerializedName("vote_count") int voteCount;
-    private @SerializedName("vote_average") float voteAverage;
+    private @JsonAlias("vote_count") int voteCount;
+    private @JsonAlias("vote_average") float voteAverage;
+
+
+    @JsonAlias("release_date")
+    private void setReleaseDate(String date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            releaseDate = Optional.ofNullable(format.parse(date))
+                                  .map(Date::getTime)
+                                  // We add 12 hours to it, to ease everything.
+                                  // We're getting the right date, at 00:00, and GMT+/-1 tends to change the day.
+                                  .map(t -> t + (12 * 60 * 60 * 1000))
+                                  .orElse(null);
+        }
+        catch (ParseException exp) { /* Not used */ }
+    }
+
+
+    @JsonAlias("poster_path")
+    private void setPosterPath(String posterPath) {
+        // https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
+        imageUrl = String.format(COVER_URL, posterPath);
+    }
 
 }
