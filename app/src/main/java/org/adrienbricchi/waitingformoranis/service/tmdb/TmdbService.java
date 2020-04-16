@@ -19,27 +19,22 @@ package org.adrienbricchi.waitingformoranis.service.tmdb;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.android.volley.ParseError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.RequestFuture;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbMovie;
 import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbPage;
+import org.adrienbricchi.waitingformoranis.utils.JacksonRequest;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-import static com.android.volley.Request.Method.GET;
 import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
 
 
@@ -73,25 +68,16 @@ public class TmdbService {
                 .appendQueryParameter(QUERY_PARAM, searchTerm)
                 .build().toString();
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(
-                GET,
+        // Request response from the provided URL.
+        JacksonRequest<TmdbPage<TmdbMovie>> jacksonRequest = new JacksonRequest<>(
                 url,
-                response -> {
-                    ObjectMapper mapper = new ObjectMapper();
-                    try {
-                        TmdbPage<TmdbMovie> movieList = mapper.readValue(response, new TypeReference<TmdbPage<TmdbMovie>>() {});
-                        onSuccess.onResponse(movieList.getResults());
-                    }
-                    catch (JsonProcessingException e) {
-                        onError.onErrorResponse(new ParseError(e));
-                    }
-                },
+                new TypeReference<TmdbPage<TmdbMovie>>() {},
+                response -> onSuccess.onResponse(response.getResults()),
                 onError
         );
 
         // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        queue.add(jacksonRequest);
     }
 
 
@@ -102,7 +88,7 @@ public class TmdbService {
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);
-        RequestFuture<String> future = RequestFuture.newFuture();
+        RequestFuture<TmdbMovie> future = RequestFuture.newFuture();
 
         String url = new Uri.Builder()
                 .scheme(HTTPS).authority(URL)
@@ -111,19 +97,21 @@ public class TmdbService {
                 .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
                 .build().toString();
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(GET, url, future, future);
+        // Request from the provided URL.
+        JacksonRequest<TmdbMovie> jacksonRequest = new JacksonRequest<>(
+                url,
+                new TypeReference<TmdbMovie>() {},
+                future,
+                future
+        );
 
         // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        queue.add(jacksonRequest);
 
         try {
-            String response = future.get();
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(response, TmdbMovie.class);
+            return future.get();
         }
-        catch (InterruptedException | ExecutionException | JsonProcessingException e) {
-            Log.e("Adrien", "Error on request : " + e.getLocalizedMessage());
+        catch (InterruptedException | ExecutionException e) {
             return null;
         }
     }
