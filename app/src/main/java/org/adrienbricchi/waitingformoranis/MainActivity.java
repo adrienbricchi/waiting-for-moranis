@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +28,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.navigation.fragment.NavHostFragment;
 import org.adrienbricchi.waitingformoranis.components.AddMovieDialogFragment;
 import org.adrienbricchi.waitingformoranis.components.MovieListFragment;
+import org.adrienbricchi.waitingformoranis.components.preferences.SettingsActivity;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 
 
@@ -66,8 +68,11 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+
             return true;
         }
 
