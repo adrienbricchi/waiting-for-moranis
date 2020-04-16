@@ -26,6 +26,7 @@
     <color name="statusBarColor">@color/black</color>
     <color name="colorAccent">@color/green_200</color>
 
-    <color name="movieIconColor">@color/grey_700</color>
+    <color name="movieIconColor">@color/grey_400</color>
+    <color name="movieIconColorBackground">@color/grey_800</color>
 
 </resources>

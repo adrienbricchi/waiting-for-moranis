@@ -21,13 +21,13 @@
 
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/movieIconColor" />
+            <solid android:color="@color/movieIconColorBackground" />
             <size
                     android:width="48dp"
                     android:height="48dp" />
         </shape>
     </item>
 
-    <item android:drawable="@drawable/ic_local_movies_white_36dp" />
+    <item android:drawable="@drawable/ic_local_movies_color_36dp" />
 
 </layer-list>

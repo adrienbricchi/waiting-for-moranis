@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
 
+    // <editor-fold desc="LifeCycle">
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    // </editor-fold desc="LifeCycle">
 
 
     private void onAddMovieFloatingButtonClicked() {

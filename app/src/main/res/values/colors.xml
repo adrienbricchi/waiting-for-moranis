@@ -49,6 +49,7 @@
     <color name="statusBarColor">@color/colorPrimaryDark</color>
     <color name="colorAccent">@color/brown_600</color>
 
-    <color name="movieIconColor">@color/colorPrimaryDark</color>
+    <color name="movieIconColor">@color/white</color>
+    <color name="movieIconColorBackground">@color/colorPrimaryDark</color>
 
 </resources>
