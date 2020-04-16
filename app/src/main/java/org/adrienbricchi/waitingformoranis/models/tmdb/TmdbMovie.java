@@ -29,6 +29,9 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 public class TmdbMovie extends Movie {
 
+    public static final String COVER_URL = "https://image.tmdb.org/t/p/w154%s";
+
+
     private @SerializedName("original_title") String originalTitle;
     private @SerializedName("original_language") String originalLanguage;
     private @SerializedName("release_date") Date originalReleaseDate;

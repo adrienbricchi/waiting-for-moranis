@@ -47,6 +47,17 @@ import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
 
 public class TmdbService {
 
+    private static final String HTTPS = "https";
+    private static final String API = "3";
+    private static final String URL = "api.themoviedb.org";
+
+    private static final String PATH_SEARCH = "search";
+    private static final String PATH_MOVIE = "movie";
+
+    private static final String API_KEY_PARAM = "api_key";
+    private static final String LANGUAGE_PARAM = "language";
+    private static final String QUERY_PARAM = "query";
+
 
     public static void searchMovie(@NonNull Context context,
                                    @NonNull String searchTerm,
@@ -57,11 +68,11 @@ public class TmdbService {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         String url = new Uri.Builder()
-                .scheme("https").authority("api.themoviedb.org")
-                .appendPath("3").appendPath("search").appendPath("movie")
-                .appendQueryParameter("api_key", TMDB_KEY)
-                .appendQueryParameter("language", Locale.getDefault().toLanguageTag())
-                .appendQueryParameter("query", searchTerm)
+                .scheme(HTTPS).authority(URL)
+                .appendPath(API).appendPath(PATH_SEARCH).appendPath(PATH_MOVIE)
+                .appendQueryParameter(API_KEY_PARAM, TMDB_KEY)
+                .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
+                .appendQueryParameter(QUERY_PARAM, searchTerm)
                 .build().toString();
 
         // Request a string response from the provided URL.
@@ -105,10 +116,10 @@ public class TmdbService {
         RequestFuture<String> future = RequestFuture.newFuture();
 
         String url = new Uri.Builder()
-                .scheme("https").authority("api.themoviedb.org")
-                .appendPath("3").appendPath("movie").appendPath(id)
-                .appendQueryParameter("api_key", TMDB_KEY)
-                .appendQueryParameter("language", Locale.getDefault().toLanguageTag())
+                .scheme(HTTPS).authority(URL)
+                .appendPath(API).appendPath(PATH_MOVIE).appendPath(id)
+                .appendQueryParameter(API_KEY_PARAM, TMDB_KEY)
+                .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
                 .build().toString();
 
         // Request a string response from the provided URL.
@@ -134,8 +145,7 @@ public class TmdbService {
             return movie;
 
         }
-        catch (InterruptedException |
-                ExecutionException e) {
+        catch (InterruptedException | ExecutionException e) {
             Log.e("Adrien", "Error on request : " + e.getLocalizedMessage());
             return null;
         }
