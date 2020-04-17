@@ -37,7 +37,7 @@
         <item name="colorPrimaryDark">@color/settingsColorPrimaryDark</item>
         <item name="android:statusBarColor">@color/settingsStatusBarColor</item>
         <item name="android:windowLightStatusBar">@bool/settingsWindowLightStatusBar</item>
-        <item name="colorAccent">@color/settingsColorAccent</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

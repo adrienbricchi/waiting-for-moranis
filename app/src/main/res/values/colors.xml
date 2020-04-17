@@ -56,8 +56,5 @@
     <color name="settingsColorPrimary">@color/grey_100</color>
     <color name="settingsColorPrimaryDark">@color/grey_100_dark</color>
     <color name="settingsStatusBarColor">@color/settingsColorPrimary</color>
-    <color name="settingsColorAccent">@color/brown_600</color>
-
-    <color name="preferencesIconColor">@color/black</color>
 
 </resources>

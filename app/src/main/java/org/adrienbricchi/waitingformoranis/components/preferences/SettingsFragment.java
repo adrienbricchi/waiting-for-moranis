@@ -17,16 +17,36 @@
  */
 package org.adrienbricchi.waitingformoranis.components.preferences;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import org.adrienbricchi.waitingformoranis.R;
+
+import java.util.Optional;
+
+import static android.content.Intent.ACTION_VIEW;
 
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
+
+    private final String GITHUB_URL = "https://github.com/adrienbricchi/waiting-for-moranis";
+
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        Optional.ofNullable((Preference) findPreference("github"))
+                .ifPresent(p -> p.setOnPreferenceClickListener(preference -> {
+                    Intent i = new Intent(ACTION_VIEW);
+                    i.setData(Uri.parse(GITHUB_URL));
+                    startActivity(i);
+                    return true;
+                }));
     }
+
 
 }
