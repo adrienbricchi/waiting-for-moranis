@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <!--
   Waiting For Moranis
   Copyright (C) 2020
@@ -18,22 +16,10 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<PreferenceScreen
+<layer-list
         xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <EditTextPreference
-            android:icon="@drawable/ic_tmdb_square_color_24dp_w40dp"
-            android:key="tmdb_key"
-            android:summary="Use your own API key, in case the general one is limited"
-            android:title="TMDB API key" />
-
-    <Preference
-            android:icon="@drawable/ic_copyright_color_24dp_w40dp"
-            android:key="licences"
-            android:title="Open-source Licences">
-        <intent
-                android:targetClass="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-                android:targetPackage="org.adrienbricchi.waitingformoranis" />
-    </Preference>
-
-</PreferenceScreen>
+    <item
+            android:drawable="@drawable/ic_tmdb_square_color_24dp"
+            android:left="8dp"
+            android:right="8dp" />
+</layer-list>
