@@ -118,24 +118,28 @@ public class MovieListFragment extends Fragment {
                                                       .collect(toMap(Movie::getId, movie -> movie));
 
             Long calendarId = CalendarService.getCalendarId(getActivity());
-            Map<String, Long> existingEvents = CalendarService.getEvents(getActivity(), calendarId);
+            if (calendarId != null) {
 
-            // Movies that are in the Calendar, but not in the DB
-            existingEvents.entrySet()
-                          .stream()
-                          .filter(e -> oldMoviesMap.get(e.getKey()) == null)
-                          .forEach(e -> {
-                              Movie m = new Movie(e.getKey(), null, null, null, e.getValue(), true);
-                              oldMoviesMap.put(e.getKey(), m);
-                              database.movieDao().add(m);
-                          });
+                Map<String, Long> existingEvents = CalendarService.getEvents(getActivity(), calendarId);
 
-            // Movies that are in the Calendar and the DB, but not mapped together
-            oldMoviesMap.entrySet()
-                        .stream()
-                        .filter(m -> m.getValue().getCalendarEventId() == null)
-                        .filter(m -> existingEvents.get(m.getKey()) != null)
-                        .forEach(m -> m.getValue().setCalendarEventId(existingEvents.get(m.getKey())));
+                // Movies that are in the Calendar, but not in the DB
+                existingEvents.entrySet()
+                              .stream()
+                              .filter(e -> oldMoviesMap.get(e.getKey()) == null)
+                              .forEach(e -> {
+                                  Movie m = new Movie(e.getKey(), null, null, null, e.getValue(), true);
+                                  oldMoviesMap.put(e.getKey(), m);
+                                  database.movieDao().add(m);
+                              });
+
+                // Movies that are in the Calendar and the DB, but not mapped together
+                oldMoviesMap.entrySet()
+                            .stream()
+                            .filter(m -> m.getValue().getCalendarEventId() == null)
+                            .filter(m -> existingEvents.get(m.getKey()) != null)
+                            .forEach(m -> m.getValue().setCalendarEventId(existingEvents.get(m.getKey())));
+
+            }
 
             List<Movie> refreshedMovies = oldMoviesMap.values()
                                                       .stream()
@@ -149,21 +153,25 @@ public class MovieListFragment extends Fragment {
                                              .orElse(null));
             });
 
-            refreshedMovies.stream()
-                           .filter(m -> (m.getCalendarEventId() == null))
-                           .filter(m -> (m.getReleaseDate() != null))
-                           .forEach(m -> {
-                               Long calendarEventId = CalendarService.addMovieToCalendar(getActivity(), calendarId, m);
-                               m.setCalendarEventId(calendarEventId);
-                           });
+            if (calendarId != null) {
 
-            refreshedMovies.stream()
-                           .filter(m -> (m.getCalendarEventId() != null))
-                           .filter(Movie::isUpdateNeededInCalendar)
-                           .forEach(m -> {
-                               boolean edited = CalendarService.editMovieInCalendar(getActivity(), calendarId, m);
-                               m.setUpdateNeededInCalendar(!edited);
-                           });
+                refreshedMovies.stream()
+                               .filter(m -> (m.getCalendarEventId() == null))
+                               .filter(m -> (m.getReleaseDate() != null))
+                               .forEach(m -> {
+                                   Long calendarEventId = CalendarService.addMovieToCalendar(getActivity(), calendarId, m);
+                                   m.setCalendarEventId(calendarEventId);
+                               });
+
+                refreshedMovies.stream()
+                               .filter(m -> (m.getCalendarEventId() != null))
+                               .filter(Movie::isUpdateNeededInCalendar)
+                               .forEach(m -> {
+                                   boolean edited = CalendarService.editMovieInCalendar(getActivity(), calendarId, m);
+                                   m.setUpdateNeededInCalendar(!edited);
+                               });
+
+            }
 
             refreshedMovies.forEach(m -> database.movieDao().update(m));
 
@@ -196,7 +204,8 @@ public class MovieListFragment extends Fragment {
         new Thread(() -> {
 
             Long calendarId = CalendarService.getCalendarId(getActivity());
-            CalendarService.deleteMovieInCalendar(getActivity(), calendarId, movie);
+            //noinspection unused
+            boolean done = CalendarService.deleteMovieInCalendar(getActivity(), calendarId, movie);
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             database.movieDao().remove(movie.getId());

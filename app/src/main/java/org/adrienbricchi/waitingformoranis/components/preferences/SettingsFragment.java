@@ -20,15 +20,20 @@ package org.adrienbricchi.waitingformoranis.components.preferences;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import org.adrienbricchi.waitingformoranis.R;
+import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static android.content.Intent.ACTION_VIEW;
+import static java.util.stream.Collectors.toList;
 
 
+@SuppressWarnings("unused")
 public class SettingsFragment extends PreferenceFragmentCompat {
 
 
@@ -39,6 +44,31 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
+        Optional.ofNullable((ListPreference) findPreference("google_calendar"))
+                .ifPresent(p -> {
+
+                    Map<Long, String> calendars = CalendarService.getCalendarIds(getActivity());
+                    if (calendars == null) {
+                        return;
+                    }
+
+                    calendars.put(-1L, "Disabled");
+
+                    p.setEntryValues(calendars.keySet()
+                                              .stream()
+                                              .map(Object::toString)
+                                              .collect(toList())
+                                              .toArray(new String[]{}));
+
+                    p.setEntries(calendars.values()
+                                          .toArray(new String[]{}));
+
+                    p.setOnPreferenceChangeListener((preference, newValue) -> {
+                        CalendarService.setCalendarId(getActivity(), Long.parseLong(newValue.toString()));
+                        return true;
+                    });
+                });
+
         Optional.ofNullable((Preference) findPreference("github"))
                 .ifPresent(p -> p.setOnPreferenceClickListener(preference -> {
                     Intent i = new Intent(ACTION_VIEW);
@@ -47,6 +77,5 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 }));
     }
-
 
 }

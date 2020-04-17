@@ -19,6 +19,7 @@ package org.adrienbricchi.waitingformoranis.service.tmdb;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.android.volley.RequestQueue;
@@ -39,6 +40,8 @@ import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
 
 
 public class TmdbService {
+
+    private static final String LOG_TAG = "TmdbService";
 
     private static final String HTTPS = "https";
     private static final String API = "3";
@@ -83,6 +86,7 @@ public class TmdbService {
 
     public static @Nullable Movie getMovie(@Nullable Context context,
                                            @NonNull String id) {
+        Log.v(LOG_TAG, "getMovie id:" + id);
 
         if (context == null) { return null; }
 
