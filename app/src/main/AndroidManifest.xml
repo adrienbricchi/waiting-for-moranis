@@ -44,6 +44,7 @@
         </activity>
         <activity
                 android:name=".components.preferences.SettingsActivity"
+                android:label="@string/action_settings"
                 android:theme="@style/AppTheme.Settings" />
         <activity
                 android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"

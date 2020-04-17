@@ -31,10 +31,10 @@
             android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/settings_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/AppTheme" />
+                app:popupTheme="@style/AppTheme.Settings" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -20,7 +20,7 @@ package org.adrienbricchi.waitingformoranis.components.preferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import androidx.appcompat.app.AppCompatActivity;
-import org.adrienbricchi.waitingformoranis.databinding.SettingsContentMainBinding;
+import org.adrienbricchi.waitingformoranis.databinding.SettingsActivityMainBinding;
 
 
 public class SettingsActivity extends AppCompatActivity {
@@ -30,9 +30,9 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SettingsContentMainBinding binding = SettingsContentMainBinding.inflate(LayoutInflater.from(this));
+        SettingsActivityMainBinding binding = SettingsActivityMainBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
-        setSupportActionBar(binding.toolbar);
+        setSupportActionBar(binding.settingsToolbar);
     }
 
 }
