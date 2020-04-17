@@ -32,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         SettingsContentMainBinding binding = SettingsContentMainBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
-        setSupportActionBar(binding.settingsToolbar);
+        setSupportActionBar(binding.toolbar);
     }
 
 }
