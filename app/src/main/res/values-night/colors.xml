@@ -29,4 +29,12 @@
     <color name="movieIconColor">@color/grey_400</color>
     <color name="movieIconColorBackground">@color/grey_800</color>
 
+
+    <color name="settingsColorPrimary">@color/black</color>
+    <color name="settingsColorPrimaryDark">@color/black</color>
+    <color name="settingsStatusBarColor">@color/black</color>
+    <color name="settingsColorAccent">@color/green_200</color>
+
+    <color name="preferencesIconColor">@color/grey_400</color>
+
 </resources>

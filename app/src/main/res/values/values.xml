@@ -18,20 +18,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
-    <SwitchPreferenceCompat
-            android:key="notifications"
-            android:title="Enable message notifications" />
+    <bool name="settingsWindowLightStatusBar">true</bool>
 
-    <Preference
-            android:icon="@drawable/ic_copyright_color_24dp_w40dp"
-            android:key="licences"
-            android:title="Open-source Licences">
-        <intent
-                android:targetClass="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-                android:targetPackage="org.adrienbricchi.waitingformoranis" />
-    </Preference>
-
-</PreferenceScreen>
+</resources>

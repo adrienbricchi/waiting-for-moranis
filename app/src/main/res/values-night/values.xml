@@ -18,16 +18,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<PreferenceScreen
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+<resources>
 
-    <SwitchPreferenceCompat
-            app:key="notifications"
-            app:title="Enable message notifications" />
+    <bool name="settingsWindowLightStatusBar">false</bool>
 
-    <Preference
-            app:key="feedback"
-            app:summary="Report technical issues or suggest new features"
-            app:title="Send feedback" />
-
-</PreferenceScreen>
+</resources>
