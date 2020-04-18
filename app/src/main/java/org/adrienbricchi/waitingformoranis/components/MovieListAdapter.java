@@ -17,9 +17,11 @@
  */
 package org.adrienbricchi.waitingformoranis.components;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
@@ -35,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static java.text.DateFormat.FULL;
 
@@ -114,5 +117,34 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     public int getItemCount() {
         return dataSet.size();
     }
+
+
+    // <editor-fold desc="Utils">
+
+
+    @Nullable Movie getMovie(@NonNull String id) {
+        return dataSet.stream()
+                      .filter(m -> TextUtils.equals(id, m.getId()))
+                      .findFirst()
+                      .orElse(null);
+    }
+
+
+    @Nullable String getMovieId(int position) {
+        return Optional.ofNullable(dataSet.get(position))
+                       .map(Movie::getId)
+                       .orElse(null);
+    }
+
+
+    int getPosition(@NonNull String movieId) {
+        return IntStream.range(0, dataSet.size())
+                        .filter(i -> TextUtils.equals(movieId, dataSet.get(i).getId()))
+                        .findFirst()
+                        .orElse(-1);
+    }
+
+
+    // <editor-fold desc="Utils">
 
 }

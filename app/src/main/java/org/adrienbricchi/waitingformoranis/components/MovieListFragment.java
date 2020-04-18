@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
@@ -40,11 +39,8 @@ import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.IntStream;
+import java.util.*;
+import java.util.stream.StreamSupport;
 
 import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static java.util.stream.Collectors.toList;
@@ -55,6 +51,7 @@ import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalen
 
 public class MovieListFragment extends Fragment {
 
+    private static final String LOG_TAG = "MovieListFragment";
     private static final String SELECTION_ID_MOVIES_ID = "selection_id_movies_id";
 
     private MovieListAdapter adapter;
@@ -86,48 +83,8 @@ public class MovieListFragment extends Fragment {
         adapter.setSelectionTracker(new SelectionTracker.Builder<>(
                 SELECTION_ID_MOVIES_ID,
                 binding.movieListRecyclerView,
-                new ItemKeyProvider<String>(SCOPE_MAPPED) {
-
-                    @Override
-                    public @Nullable String getKey(int position) {
-                        return Optional.ofNullable(adapter.getDataSet().get(position))
-                                       .map(Movie::getId)
-                                       .orElse(null);
-                    }
-
-
-                    @Override
-                    public int getPosition(@NonNull String key) {
-                        return IntStream.range(0, adapter.getDataSet().size())
-                                        .filter(i -> TextUtils.equals(key, adapter.getDataSet().get(i).getId()))
-                                        .findFirst()
-                                        .orElse(-1);
-                    }
-
-                },
-                new ItemDetailsLookup<String>() {
-
-                    @Override
-                    public @Nullable ItemDetails<String> getItemDetails(@NonNull MotionEvent e) {
-                        return Optional.ofNullable(binding.movieListRecyclerView.findChildViewUnder(e.getX(), e.getY()))
-                                       .map(v -> new ItemDetailsLookup.ItemDetails<String>() {
-
-                                           @Override
-                                           public int getPosition() {
-                                               return binding.movieListRecyclerView.getChildViewHolder(v).getAdapterPosition();
-                                           }
-
-
-                                           @Override
-                                           public String getSelectionKey() {
-                                               return adapter.getDataSet().get(getPosition()).getId();
-                                           }
-
-                                       })
-                                       .orElse(null);
-                    }
-
-                },
+                buildAdapterMovieItemKeyProvider(),
+                buildAdapterMovieItemDetailsLookup(),
                 StorageStrategy.createStringStorage()
         ).build());
 
@@ -137,59 +94,15 @@ public class MovieListFragment extends Fragment {
                 if (getActivity() == null) { return; }
 
                 int rowsSelected = adapter.getSelectionTracker().getSelection().size();
-
                 if (rowsSelected == 0) {
                     Optional.ofNullable(actionMode)
                             .ifPresent(ActionMode::finish);
                 } else if (actionMode != null) {
                     actionMode.setTitle("" + rowsSelected + " items selected");
                 } else {
-
-                    actionMode = getActivity().startActionMode(new ActionMode.Callback() {
-
-                        // Called when the action mode is created; startActionMode() was called
-                        @Override
-                        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                            // Inflate a menu resource providing context menu items
-                            MenuInflater inflater = mode.getMenuInflater();
-                            inflater.inflate(R.menu.action_mode, menu);
-                            return true;
-                        }
-
-
-                        // Called each time the action mode is shown. Always called after onCreateActionMode, but
-                        // may be called multiple times if the mode is invalidated.
-                        @Override
-                        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                            return false; // Return false if nothing is done
-                        }
-
-
-                        // Called when the user selects a contextual menu item
-                        @Override
-                        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.delete:
-                                    Log.i("Adrien", "delete this : " + adapter.getSelectionTracker().getSelection());
-                                    mode.finish(); // Action picked, so close the CAB
-                                    return true;
-                                default:
-                                    return false;
-                            }
-                        }
-
-
-                        // Called when the user exits the action mode
-                        @Override
-                        public void onDestroyActionMode(ActionMode mode) {
-                            Log.i("Adrien", "On destroy action mode");
-                            adapter.getSelectionTracker().clearSelection();
-                            actionMode = null;
-                        }
-
-                    });
-
-                    actionMode.setTitle("0 item selected");
+                    actionMode = getActivity().startActionMode(buildActionModeCallback());
+                    Optional.ofNullable(actionMode)
+                            .ifPresent(m -> m.setTitle("0 item selected"));
                 }
             }
         });
@@ -224,6 +137,105 @@ public class MovieListFragment extends Fragment {
 
 
     // </editor-fold desc="LifeCycle">
+
+
+    // <editor-fold desc="Setup">
+
+
+    private @NonNull ItemKeyProvider<String> buildAdapterMovieItemKeyProvider() {
+
+        return new ItemKeyProvider<String>(SCOPE_MAPPED) {
+
+            @Override
+            public @Nullable String getKey(int position) {
+                return adapter.getMovieId(position);
+            }
+
+
+            @Override
+            public int getPosition(@NonNull String key) {
+                return adapter.getPosition(key);
+            }
+
+        };
+    }
+
+
+    private @NonNull ItemDetailsLookup<String> buildAdapterMovieItemDetailsLookup() {
+
+        return new ItemDetailsLookup<String>() {
+
+            @Override
+            public @Nullable ItemDetails<String> getItemDetails(@NonNull MotionEvent e) {
+                return Optional.ofNullable(binding.movieListRecyclerView.findChildViewUnder(e.getX(), e.getY()))
+                               .map(v -> new ItemDetailsLookup.ItemDetails<String>() {
+
+                                   @Override
+                                   public int getPosition() {
+                                       return binding.movieListRecyclerView.getChildViewHolder(v).getAdapterPosition();
+                                   }
+
+
+                                   @Override
+                                   public String getSelectionKey() {
+                                       return adapter.getDataSet().get(getPosition()).getId();
+                                   }
+
+                               })
+                               .orElse(null);
+            }
+
+        };
+    }
+
+
+    private @NonNull ActionMode.Callback buildActionModeCallback() {
+        return new ActionMode.Callback() {
+
+            // Called when the action mode is created; startActionMode() was called
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                // Inflate a menu resource providing context menu items
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.action_mode, menu);
+                return true;
+            }
+
+
+            // Called each time the action mode is shown. Always called after onCreateActionMode, but
+            // may be called multiple times if the mode is invalidated.
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false; // Return false if nothing is done
+            }
+
+
+            // Called when the user selects a contextual menu item
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                if (item.getItemId() == R.id.delete) {
+
+                    deleteMovies(adapter.getSelectionTracker().getSelection().spliterator());
+                    mode.finish(); // Action picked, so close the CAB
+                    return true;
+                }
+                return false;
+            }
+
+
+            // Called when the user exits the action mode
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                Log.i(LOG_TAG, "On destroy action mode");
+                adapter.getSelectionTracker().clearSelection();
+                actionMode = null;
+            }
+
+        };
+    }
+
+
+    // </editor-fold desc="Setup">
 
 
     private void onPullToRefresh() {
@@ -318,15 +330,21 @@ public class MovieListFragment extends Fragment {
     }
 
 
-    private void deleteMovie(@NonNull Movie movie) {
+    private void deleteMovies(@NonNull Spliterator<String> movieIdsIterator) {
         new Thread(() -> {
 
             Long calendarId = CalendarService.getCalendarId(getActivity());
-            //noinspection unused
-            boolean done = CalendarService.deleteMovieInCalendar(getActivity(), calendarId, movie);
 
-            AppDatabase database = AppDatabase.getDatabase(getContext());
-            database.movieDao().remove(movie.getId());
+            StreamSupport.stream(movieIdsIterator, false)
+                         .map(id -> adapter.getMovie(id))
+                         .filter(Objects::nonNull)
+                         .forEach(m -> {
+                             // Wrong "may be null" warning on Android Studio 3.6.2
+                             //noinspection ConstantConditions
+                             CalendarService.deleteMovieInCalendar(getActivity(), calendarId, m);
+                             AppDatabase database = AppDatabase.getDatabase(getContext());
+                             database.movieDao().remove(m.getId());
+                         });
 
             new Handler(Looper.getMainLooper()).post(this::refreshListFromDb);
 
