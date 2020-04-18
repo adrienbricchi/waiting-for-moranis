@@ -21,12 +21,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.selection.ItemDetailsLookup;
+import androidx.recyclerview.selection.ItemKeyProvider;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
@@ -39,7 +45,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
+import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.service.google.CalendarService.CALENDAR_PERMISSION_REQUEST_CODE;
@@ -48,6 +56,7 @@ import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalen
 
 public class MovieListFragment extends Fragment {
 
+    private static final String SELECTION_ID_MOVIES_ID = "selection_id_movies_id";
 
     private MovieListAdapter adapter;
     private MovieListBinding binding;
@@ -67,14 +76,60 @@ public class MovieListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        adapter = new MovieListAdapter(
-                new ArrayList<>(),
-                this::deleteMovie
-        );
+        adapter = new MovieListAdapter(new ArrayList<>());
 
         binding.movieListRecyclerView.setHasFixedSize(true);
         binding.movieListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.movieListRecyclerView.setAdapter(adapter);
+
+        // The RecyclerList must have an Adapter set before the SelectionTracker creation
+        adapter.setSelectionTracker(new SelectionTracker.Builder<>(
+                SELECTION_ID_MOVIES_ID,
+                binding.movieListRecyclerView,
+                new ItemKeyProvider<String>(SCOPE_MAPPED) {
+
+                    @Override
+                    public @Nullable String getKey(int position) {
+                        return Optional.ofNullable(adapter.getDataSet().get(position))
+                                       .map(Movie::getId)
+                                       .orElse(null);
+                    }
+
+
+                    @Override
+                    public int getPosition(@NonNull String key) {
+                        return IntStream.range(0, adapter.getDataSet().size())
+                                        .filter(i -> TextUtils.equals(key, adapter.getDataSet().get(i).getId()))
+                                        .findFirst()
+                                        .orElse(-1);
+                    }
+
+                },
+                new ItemDetailsLookup<String>() {
+
+                    @Override
+                    public @Nullable ItemDetails<String> getItemDetails(@NonNull MotionEvent e) {
+                        return Optional.ofNullable(binding.movieListRecyclerView.findChildViewUnder(e.getX(), e.getY()))
+                                       .map(v -> new ItemDetailsLookup.ItemDetails<String>() {
+
+                                           @Override
+                                           public int getPosition() {
+                                               return binding.movieListRecyclerView.getChildViewHolder(v).getAdapterPosition();
+                                           }
+
+
+                                           @Override
+                                           public String getSelectionKey() {
+                                               return adapter.getDataSet().get(getPosition()).getId();
+                                           }
+
+                                       })
+                                       .orElse(null);
+                    }
+
+                },
+                StorageStrategy.createStringStorage()
+        ).build());
 
         binding.movieListSwipeRefreshLayout.setOnRefreshListener(this::onPullToRefresh);
     }

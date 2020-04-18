@@ -20,11 +20,12 @@ package org.adrienbricchi.waitingformoranis.components;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
@@ -35,19 +36,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static java.text.DateFormat.SHORT;
+import static java.text.DateFormat.FULL;
 
 
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder> {
 
     private static final int TAG_MOVIE = 1315220905;
 
 
-    private List<Movie> dataSet;
-    private OnMovieCellLongClicked longClickListener;
+    private @NonNull List<Movie> dataSet;
+    private SelectionTracker<String> selectionTracker;
 
 
     /**
@@ -67,26 +68,12 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     }
 
 
-    public interface OnMovieCellLongClicked {
-
-        void onMovieCellLongClicked(Movie movie);
-
-    }
-
-
     /**
      * Create new views (invoked by the layout manager)
      */
     @Override
     public @NonNull MovieListAdapter.MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         MovieListCellBinding binding = MovieListCellBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-
-        binding.getRoot().setLongClickable(true);
-        binding.getRoot().setOnLongClickListener(v -> {
-            longClickListener.onMovieCellLongClicked((Movie) v.getTag(TAG_MOVIE));
-            return false;
-        });
-
         return new MovieViewHolder(binding);
     }
 
@@ -109,8 +96,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         holder.binding.dateTextView.setText(
                 Optional.ofNullable(currentMovie.getReleaseDate())
                         .map(Date::new)
-                        .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
+                        .map(d -> SimpleDateFormat.getDateInstance(FULL, Locale.getDefault()).format(d))
                         .orElse("(unknown)"));
+
+        if (selectionTracker.isSelected(currentMovie.getId())) {
+            holder.binding.getRoot().setActivated(true);
+        } else {
+            holder.binding.getRoot().setActivated(false);
+        }
     }
 
 

@@ -42,6 +42,7 @@ import static java.text.DateFormat.SHORT;
 @EqualsAndHashCode(callSuper = true)
 public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDialogListAdapter.MovieViewHolder> {
 
+
     private static final int TAG_MOVIE = 1315220905;
 
 

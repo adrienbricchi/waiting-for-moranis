@@ -54,7 +54,6 @@ public class CalendarService {
     private static final String LOG_TAG = "CalendarService";
 
     private static final String SHARED_PREFERENCES_CURRENT_GOOGLE_CALENDAR_ID_KEY = "current_google_calendar_id";
-    private static final String CURRENT_CALENDAR_DISPLAY_NAME = "Films";
     public static final int CALENDAR_PERMISSION_REQUEST_CODE = 30112;
 
     /**
@@ -117,10 +116,8 @@ public class CalendarService {
         Map<Long, String> result = new HashMap<>();
 
         // Run query
-        String selection = "(" + CALENDAR_DISPLAY_NAME + " = ?)";
-        String[] selectionArgs = new String[]{CURRENT_CALENDAR_DISPLAY_NAME};
         Cursor cursor = activity.getContentResolver()
-                                .query(CalendarContract.Calendars.CONTENT_URI, CALENDAR_PROJECTION, selection, selectionArgs, null);
+                                .query(CalendarContract.Calendars.CONTENT_URI, CALENDAR_PROJECTION, null, null, null);
 
         // Use the cursor to step through the returned records
         if (cursor != null) {
