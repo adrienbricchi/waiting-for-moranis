@@ -65,6 +65,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
             super(binding.getRoot());
             this.binding = binding;
         }
+
     }
 
 
@@ -99,11 +100,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                         .map(d -> SimpleDateFormat.getDateInstance(FULL, Locale.getDefault()).format(d))
                         .orElse("(unknown)"));
 
-        if (selectionTracker.isSelected(currentMovie.getId())) {
-            holder.binding.getRoot().setActivated(true);
-        } else {
-            holder.binding.getRoot().setActivated(false);
-        }
+        holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentMovie.getId()));
     }
 
 
