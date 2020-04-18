@@ -198,6 +198,10 @@ public class MovieListFragment extends Fragment {
                 // Inflate a menu resource providing context menu items
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.action_mode, menu);
+
+                Optional.ofNullable(getActivity())
+                        .ifPresent(a -> a.getWindow().setStatusBarColor(getActivity().getColor(R.color.black)));
+
                 return true;
             }
 
@@ -228,6 +232,10 @@ public class MovieListFragment extends Fragment {
             public void onDestroyActionMode(ActionMode mode) {
                 Log.i(LOG_TAG, "On destroy action mode");
                 adapter.getSelectionTracker().clearSelection();
+
+                Optional.ofNullable(getActivity())
+                        .ifPresent(a -> a.getWindow().setStatusBarColor(getActivity().getColor(R.color.statusBarColor)));
+
                 actionMode = null;
             }
 

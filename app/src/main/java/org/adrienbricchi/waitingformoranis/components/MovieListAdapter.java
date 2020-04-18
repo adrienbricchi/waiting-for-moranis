@@ -33,10 +33,7 @@ import org.adrienbricchi.waitingformoranis.databinding.MovieListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static java.text.DateFormat.FULL;
@@ -139,6 +136,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     int getPosition(@NonNull String movieId) {
         return IntStream.range(0, dataSet.size())
+                        .filter(Objects::nonNull)
                         .filter(i -> TextUtils.equals(movieId, dataSet.get(i).getId()))
                         .findFirst()
                         .orElse(-1);
