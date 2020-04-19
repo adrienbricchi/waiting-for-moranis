@@ -41,7 +41,6 @@ import java.util.stream.Stream;
 import static android.Manifest.permission.READ_CALENDAR;
 import static android.Manifest.permission.WRITE_CALENDAR;
 import static android.content.Context.MODE_PRIVATE;
-import static android.content.pm.PackageManager.PERMISSION_DENIED;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.provider.BaseColumns._ID;
 import static android.provider.CalendarContract.Calendars.CALENDAR_DISPLAY_NAME;
@@ -87,20 +86,12 @@ public class CalendarService {
 
     public static @Nullable Long getCalendarId(@Nullable Activity activity) {
 
-        if (activity == null) {
+        if ((activity == null) || !hasPermissions(activity)) {
             return null;
         }
 
         long calendarId = activity.getSharedPreferences(activity.getString(R.string.app_name), MODE_PRIVATE)
                                   .getLong(SHARED_PREFERENCES_CURRENT_GOOGLE_CALENDAR_ID_KEY, -1);
-
-        if ((calendarId > 0) && Stream.of(READ_CALENDAR, WRITE_CALENDAR)
-                                      .map(p -> checkSelfPermission(activity, p))
-                                      .anyMatch(p -> p == PERMISSION_DENIED)) {
-
-            requestPermissions(activity, new String[]{READ_CALENDAR, WRITE_CALENDAR}, PERMISSION_REQUEST_CODE);
-            return null;
-        }
 
         return (calendarId > 0) ? calendarId : null;
     }
@@ -108,7 +99,7 @@ public class CalendarService {
 
     public static void setCalendarId(@Nullable Activity activity, long calendarId) {
 
-        if (activity == null) {
+        if ((activity == null) || !hasPermissions(activity)) {
             return;
         }
 
@@ -149,7 +140,7 @@ public class CalendarService {
     public static @NonNull Map<String, Long> getEvents(Activity activity, @Nullable Long calendarId) {
         Map<String, Long> result = new HashMap<>();
 
-        if ((activity == null) || (calendarId == null)) {
+        if ((activity == null) || (calendarId == null) || !hasPermissions(activity)) {
             return result;
         }
 
@@ -180,7 +171,7 @@ public class CalendarService {
     public static @Nullable Long addMovieToCalendar(@Nullable Activity activity, @Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "addMovieToCalendar title:" + movie.getTitle());
 
-        if ((activity == null) || (calendarId == null)) {
+        if ((activity == null) || (calendarId == null) || !hasPermissions(activity)) {
             return null;
         }
 
@@ -207,7 +198,7 @@ public class CalendarService {
     public static boolean editMovieInCalendar(@Nullable Activity activity, @Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "editMovieInCalendar title:" + movie.getTitle());
 
-        if ((activity == null) || (calendarId == null) || (movie.getReleaseDate() == null)) {
+        if ((activity == null) || (calendarId == null) || (movie.getReleaseDate() == null) || !hasPermissions(activity)) {
             return false;
         }
 
@@ -230,7 +221,7 @@ public class CalendarService {
     public static boolean deleteMovieInCalendar(@Nullable Activity activity, @Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "deleteMovieInCalendar title:" + movie.getTitle());
 
-        if ((activity == null) || (calendarId == null) || (movie.getReleaseDate() == null)) {
+        if ((activity == null) || (calendarId == null) || (movie.getReleaseDate() == null) || !hasPermissions(activity)) {
             return false;
         }
 
