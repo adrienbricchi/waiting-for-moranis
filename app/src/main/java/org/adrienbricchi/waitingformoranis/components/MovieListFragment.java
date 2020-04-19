@@ -45,7 +45,7 @@ import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static androidx.recyclerview.selection.StorageStrategy.createStringStorage;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.adrienbricchi.waitingformoranis.service.google.CalendarService.CALENDAR_PERMISSION_REQUEST_CODE;
+import static org.adrienbricchi.waitingformoranis.service.google.CalendarService.PERMISSION_REQUEST_CODE;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
 
 
@@ -113,7 +113,7 @@ public class MovieListFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == CALENDAR_PERMISSION_REQUEST_CODE) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
             CalendarService.getCalendarId(getActivity());
         }
     }

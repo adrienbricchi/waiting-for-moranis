@@ -42,6 +42,7 @@ import static android.Manifest.permission.READ_CALENDAR;
 import static android.Manifest.permission.WRITE_CALENDAR;
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.provider.BaseColumns._ID;
 import static android.provider.CalendarContract.Calendars.CALENDAR_DISPLAY_NAME;
 import static android.provider.CalendarContract.Events.*;
@@ -49,12 +50,15 @@ import static androidx.core.app.ActivityCompat.requestPermissions;
 import static androidx.core.content.ContextCompat.checkSelfPermission;
 
 
+@SuppressLint("MissingPermission")
 public class CalendarService {
 
     private static final String LOG_TAG = "CalendarService";
 
+    public static final int PERMISSION_REQUEST_CODE = 30112;
+    private static final String[] PERMISSIONS = new String[]{READ_CALENDAR, WRITE_CALENDAR};
+
     private static final String SHARED_PREFERENCES_CURRENT_GOOGLE_CALENDAR_ID_KEY = "current_google_calendar_id";
-    public static final int CALENDAR_PERMISSION_REQUEST_CODE = 30112;
 
     /**
      * Projection array. Creating indices for this array instead of doing
@@ -67,6 +71,18 @@ public class CalendarService {
     private static final String[] EVENT_PROJECTION = new String[]{_ID, DESCRIPTION};
     private static final int PROJECTION_EVENT_ID_INDEX = 0;
     private static final int PROJECTION_EVENT_DESCRIPTION = 1;
+
+
+    public static boolean hasPermissions(@NonNull Activity activity) {
+        return Stream.of(PERMISSIONS)
+                     .map(p -> checkSelfPermission(activity, p))
+                     .allMatch(p -> p == PERMISSION_GRANTED);
+    }
+
+
+    public static void askPermissions(@NonNull Activity activity) {
+        requestPermissions(activity, PERMISSIONS, PERMISSION_REQUEST_CODE);
+    }
 
 
     public static @Nullable Long getCalendarId(@Nullable Activity activity) {
@@ -82,7 +98,7 @@ public class CalendarService {
                                       .map(p -> checkSelfPermission(activity, p))
                                       .anyMatch(p -> p == PERMISSION_DENIED)) {
 
-            requestPermissions(activity, new String[]{READ_CALENDAR, WRITE_CALENDAR}, CALENDAR_PERMISSION_REQUEST_CODE);
+            requestPermissions(activity, new String[]{READ_CALENDAR, WRITE_CALENDAR}, PERMISSION_REQUEST_CODE);
             return null;
         }
 
@@ -103,13 +119,9 @@ public class CalendarService {
     }
 
 
-    public static @Nullable Map<Long, String> getCalendarIds(Activity activity) {
+    public static @Nullable Map<Long, String> getCalendarIds(@Nullable Activity activity) {
 
-        if (Stream.of(READ_CALENDAR, WRITE_CALENDAR)
-                  .map(p -> checkSelfPermission(activity, p))
-                  .anyMatch(p -> p == PERMISSION_DENIED)) {
-
-            requestPermissions(activity, new String[]{READ_CALENDAR, WRITE_CALENDAR}, CALENDAR_PERMISSION_REQUEST_CODE);
+        if ((activity == null) || !hasPermissions(activity)) {
             return null;
         }
 
@@ -134,7 +146,6 @@ public class CalendarService {
     }
 
 
-    @SuppressLint("MissingPermission")
     public static @NonNull Map<String, Long> getEvents(Activity activity, @Nullable Long calendarId) {
         Map<String, Long> result = new HashMap<>();
 
@@ -166,7 +177,6 @@ public class CalendarService {
     }
 
 
-    @SuppressLint("MissingPermission")
     public static @Nullable Long addMovieToCalendar(@Nullable Activity activity, @Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "addMovieToCalendar title:" + movie.getTitle());
 
@@ -194,7 +204,6 @@ public class CalendarService {
     }
 
 
-    @SuppressLint("MissingPermission")
     public static boolean editMovieInCalendar(@Nullable Activity activity, @Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "editMovieInCalendar title:" + movie.getTitle());
 
@@ -218,7 +227,6 @@ public class CalendarService {
     }
 
 
-    @SuppressLint("MissingPermission")
     public static boolean deleteMovieInCalendar(@Nullable Activity activity, @Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "deleteMovieInCalendar title:" + movie.getTitle());
 

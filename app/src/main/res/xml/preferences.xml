@@ -19,28 +19,31 @@
 -->
 
 <PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="External services">
-
-        <ListPreference
-                android:icon="@drawable/ic_google_calendar_24dp_w40dp"
-                android:key="google_calendar"
-                android:summary="Choose the registered events' parent"
-                android:title="Google Calendar" />
+    <PreferenceCategory
+            android:title="External services"
+            app:key="@string/key_external_services">
 
         <EditTextPreference
                 android:icon="@drawable/ic_tmdb_square_color_24dp_w40dp"
-                android:key="tmdb_key"
+                android:key="@string/key_tmdb_key"
                 android:summary="Set your own, if the general key is limited"
                 android:title="TMDB API key" />
 
         <EditTextPreference
                 android:enabled="false"
                 android:icon="@drawable/ic_library_books_color_24dp_w40dp"
-                android:key="isbndb_key"
+                android:key="@string/key_isbndb_key"
                 android:summary="Mandatory to unlock the books\nNot yet implemented"
                 android:title="ISBNdb API key" />
+
+        <Preference
+                android:icon="@drawable/ic_google_calendar_24dp_w40dp"
+                android:key="@string/key_google_calendar_no_permission"
+                android:summary="Choose the registered events' parent"
+                android:title="Google Calendar" />
 
     </PreferenceCategory>
 
@@ -48,19 +51,17 @@
 
         <Preference
                 android:icon="@drawable/ic_info_outline_color_24dp_w40dp"
-                android:key="about"
                 android:summary="Copyright © 2020\nLicensed under the terms of the Affero GNU General Public License"
                 android:title="@string/app_name" />
 
         <Preference
                 android:icon="@drawable/ic_github_color_22dp_w40dp"
-                android:key="github"
+                android:key="@string/key_github"
                 android:summary="Contribute, or create an issue"
                 android:title="Source code" />
 
         <Preference
                 android:icon="@drawable/ic_copyright_color_24dp_w40dp"
-                android:key="licences"
                 android:title="Open-source licences">
             <intent
                     android:targetClass="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
