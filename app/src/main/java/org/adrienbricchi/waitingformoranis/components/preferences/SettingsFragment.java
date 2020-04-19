@@ -112,14 +112,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         ListPreference listPref = new ListPreference(getActivity());
         populateGoogleCalendarList(listPref);
         listPref.setKey(getString(R.string.key_google_calendar));
+        listPref.setIcon(R.drawable.ic_google_calendar_24dp_w40dp);
+        listPref.setTitle("Google Calendar");
+        listPref.setDialogTitle("Google Calendar");
         listPref.setOnPreferenceChangeListener((preference, newValue) -> {
             CalendarService.setCalendarId(getActivity(), Long.parseLong(newValue.toString()));
             populateGoogleCalendarList(listPref);
             return true;
         });
-
-        listPref.setIcon(R.drawable.ic_google_calendar_24dp_w40dp);
-        listPref.setTitle("Google Calendar");
 
         Optional.ofNullable((PreferenceCategory) findPreference(getString(R.string.key_external_services)))
                 .ifPresent(c -> c.addPreference(listPref));
