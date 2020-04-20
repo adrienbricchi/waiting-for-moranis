@@ -41,8 +41,8 @@
 
         <Preference
                 android:icon="@drawable/ic_google_calendar_24dp_w40dp"
-                android:key="@string/key_google_calendar_no_permission"
-                android:summary="Choose the registered events' parent"
+                android:key="@string/key_google_calendar"
+                android:summary="Allow events to be synchronized"
                 android:title="Google Calendar" />
 
     </PreferenceCategory>

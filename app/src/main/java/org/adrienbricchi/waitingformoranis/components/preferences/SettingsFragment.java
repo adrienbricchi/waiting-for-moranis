@@ -20,26 +20,21 @@ package org.adrienbricchi.waitingformoranis.components.preferences;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.preference.ListPreference;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 
-import java.util.Map;
 import java.util.Optional;
 
 import static android.content.Intent.ACTION_VIEW;
-import static java.util.stream.Collectors.toList;
 
 
 @SuppressWarnings("unused")
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    private final String GITHUB_URL = "https://github.com/adrienbricchi/waiting-for-moranis";
+    private static final String LOG_TAG = "SettingsFragment";
+    private static final String GITHUB_URL = "https://github.com/adrienbricchi/waiting-for-moranis";
 
 
     // <editor-fold desc="LifeCycle">
@@ -51,8 +46,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         if (getActivity() == null) { return; }
 
-        buildGoogleCalendarPref();
-
         Optional.ofNullable((Preference) findPreference(getString(R.string.key_github)))
                 .ifPresent(p -> p.setOnPreferenceClickListener(preference -> {
                     Intent i = new Intent(ACTION_VIEW);
@@ -61,95 +54,44 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 }));
 
-        Optional.ofNullable((Preference) findPreference(getString(R.string.key_google_calendar_no_permission)))
-                .ifPresent(p -> p.setOnPreferenceClickListener(preference -> {
-                    CalendarService.askPermissions(getActivity());
-                    return false;
-                }));
+        refreshGoogleCalendarPreference();
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        buildGoogleCalendarPref();
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == CalendarService.PERMISSION_REQUEST_CODE) {
-            buildGoogleCalendarPref();
-        }
+        refreshGoogleCalendarPreference();
     }
 
 
     // </editor-fold desc="LifeCycle">
 
 
-    private void buildGoogleCalendarPref() {
+    private void refreshGoogleCalendarPreference() {
         if (getActivity() == null) { return; }
-
         boolean hasPermissions = CalendarService.hasPermissions(getActivity());
-        if (!hasPermissions) {
-            return;
-        }
 
-        // Remove previous ones
-
-        Optional.ofNullable((PreferenceCategory) findPreference(getString(R.string.key_external_services)))
-                .ifPresent(c -> {
-                    Optional.ofNullable((Preference) findPreference(getString(R.string.key_google_calendar_no_permission)))
-                            .ifPresent(c::removePreference);
-                    Optional.ofNullable((Preference) findPreference(getString(R.string.key_google_calendar)))
-                            .ifPresent(c::removePreference);
-                });
-
-        // Populate new one
-
-        ListPreference listPref = new ListPreference(getActivity());
-        populateGoogleCalendarList(listPref);
-        listPref.setKey(getString(R.string.key_google_calendar));
-        listPref.setIcon(R.drawable.ic_google_calendar_24dp_w40dp);
-        listPref.setTitle("Google Calendar");
-        listPref.setDialogTitle("Google Calendar");
-        listPref.setOnPreferenceChangeListener((preference, newValue) -> {
-            CalendarService.setCalendarId(getActivity(), Long.parseLong(newValue.toString()));
-            populateGoogleCalendarList(listPref);
-            return true;
-        });
-
-        Optional.ofNullable((PreferenceCategory) findPreference(getString(R.string.key_external_services)))
-                .ifPresent(c -> c.addPreference(listPref));
-    }
-
-
-    private void populateGoogleCalendarList(@NonNull ListPreference preference) {
-
-        Map<Long, String> calendars = CalendarService.getCalendarIds(getActivity());
-        if (calendars == null) { return; }
-
-        calendars.put(-1L, "Disabled");
-
-        // Display the currently selected calendar
-
-        Long calendar = Optional.ofNullable(CalendarService.getCalendarId(getActivity()))
-                                .orElse(-1L);
-
-        preference.setSummary(calendars.get(calendar));
-
-        // Build list
-
-        preference.setEntryValues(calendars.keySet()
-                                           .stream()
-                                           .map(Object::toString)
-                                           .collect(toList())
-                                           .toArray(new String[]{}));
-
-        preference.setEntries(calendars.values()
-                                       .toArray(new String[]{}));
+        Optional.ofNullable((Preference) findPreference(getString(R.string.key_google_calendar)))
+                .ifPresent(p -> {
+                               if (hasPermissions) {
+                                   p.setSummary(Optional.ofNullable(CalendarService.getAccount(getActivity()))
+                                                        .orElse("Choose a Google Account to synchronize"));
+                                   p.setOnPreferenceClickListener(preference -> {
+                                       CalendarService.askAccount(getActivity());
+                                       return false;
+                                   });
+                               } else {
+                                   p.setOnPreferenceClickListener(preference -> {
+                                       getActivity().requestPermissions(
+                                               CalendarService.PERMISSIONS.toArray(new String[]{}),
+                                               CalendarService.PERMISSION_REQUEST_CODE
+                                       );
+                                       return false;
+                                   });
+                               }
+                           }
+                );
     }
 
 }

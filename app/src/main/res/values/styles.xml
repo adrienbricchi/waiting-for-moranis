@@ -42,14 +42,7 @@
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
         <item name="colorSurface">@color/grey_900</item>
         <item name="colorOnPrimary">@color/colorAccent</item>
-        <item name="alertDialogTheme">@style/AppTheme.Settings.Dialog</item>
         <item name="colorOnSurface">@color/colorAccent</item>
-    </style>
-
-    <!-- For some reason, MaterialComponents.DayNight.Dialog's color are bad, -->
-    <!-- So we use the AppCompat.DayNight.Dialog theme -->
-    <style name="AppTheme.Settings.Dialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
-        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
 </resources>

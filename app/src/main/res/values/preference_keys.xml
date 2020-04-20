@@ -25,7 +25,6 @@
     <string name="key_tmdb_key">tmdb_key</string>
     <string name="key_isbndb_key">isbndb_key</string>
     <string name="key_google_calendar">google_calendar</string>
-    <string name="key_google_calendar_no_permission">google_calendar_no_permission</string>
 
     <string name="key_github">github</string>
 
