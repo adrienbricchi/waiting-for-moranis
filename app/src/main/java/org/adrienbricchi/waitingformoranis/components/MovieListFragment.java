@@ -115,7 +115,7 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            CalendarService.getCalendarId(getActivity());
+            CalendarService.getCurrentCalendarId(getActivity());
         }
     }
 
@@ -263,7 +263,7 @@ public class MovieListFragment extends Fragment {
                                                       .stream()
                                                       .collect(toMap(Movie::getId, movie -> movie));
 
-            Long calendarId = CalendarService.getCalendarId(getActivity());
+            Long calendarId = CalendarService.getCurrentCalendarId(getActivity());
             if (calendarId != null) {
 
                 Map<String, Long> existingEvents = CalendarService.getEvents(getActivity(), calendarId);
@@ -349,7 +349,7 @@ public class MovieListFragment extends Fragment {
     private void deleteMovies(@NonNull Spliterator<String> movieIdsIterator) {
         new Thread(() -> {
 
-            Long calendarId = CalendarService.getCalendarId(getActivity());
+            Long calendarId = CalendarService.getCurrentCalendarId(getActivity());
 
             StreamSupport.stream(movieIdsIterator, false)
                          .map(id -> adapter.getMovie(id))

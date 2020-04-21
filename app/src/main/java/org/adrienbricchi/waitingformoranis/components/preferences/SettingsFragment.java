@@ -137,7 +137,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         // Display the currently selected calendar
 
-        Long calendar = Optional.ofNullable(CalendarService.getCalendarId(getActivity()))
+        Long calendar = Optional.ofNullable(CalendarService.getCurrentCalendarId(getActivity()))
                                 .orElse(-1L);
 
         preference.setSummary(calendars.get(calendar));

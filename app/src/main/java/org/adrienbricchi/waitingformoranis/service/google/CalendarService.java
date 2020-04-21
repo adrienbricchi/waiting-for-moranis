@@ -32,59 +32,48 @@ import androidx.annotation.Nullable;
 import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TimeZone;
-import java.util.stream.Stream;
+import java.util.*;
 
 import static android.Manifest.permission.READ_CALENDAR;
 import static android.Manifest.permission.WRITE_CALENDAR;
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.provider.BaseColumns._ID;
+import static android.provider.CalendarContract.ACCOUNT_TYPE_LOCAL;
 import static android.provider.CalendarContract.Calendars.CALENDAR_DISPLAY_NAME;
 import static android.provider.CalendarContract.Events.*;
 import static androidx.core.app.ActivityCompat.requestPermissions;
 import static androidx.core.content.ContextCompat.checkSelfPermission;
+import static java.lang.Boolean.TRUE;
+import static java.util.Arrays.asList;
 
 
 @SuppressLint("MissingPermission")
 public class CalendarService {
 
+    public static final int PERMISSION_REQUEST_CODE = 30112;
+    public static final List<String> PERMISSIONS = asList(READ_CALENDAR, WRITE_CALENDAR);
+
     private static final String LOG_TAG = "CalendarService";
 
-    public static final int PERMISSION_REQUEST_CODE = 30112;
-    private static final String[] PERMISSIONS = new String[]{READ_CALENDAR, WRITE_CALENDAR};
-
     private static final String SHARED_PREFERENCES_CURRENT_GOOGLE_CALENDAR_ID_KEY = "current_google_calendar_id";
-
-    /**
-     * Projection array. Creating indices for this array instead of doing
-     * dynamic lookups improves performance.
-     */
-    private static final String[] CALENDAR_PROJECTION = new String[]{_ID, CALENDAR_DISPLAY_NAME};
-    private static final int PROJECTION_CALENDAR_ID_INDEX = 0;
-    private static final int PROJECTION_CALENDAR_DISPLAY_NAME_INDEX = 1;
-
-    private static final String[] EVENT_PROJECTION = new String[]{_ID, DESCRIPTION};
-    private static final int PROJECTION_EVENT_ID_INDEX = 0;
-    private static final int PROJECTION_EVENT_DESCRIPTION = 1;
+    private static final List<String> CALENDAR_PROJECTION = asList(_ID, CALENDAR_DISPLAY_NAME, OWNER_ACCOUNT);
+    private static final List<String> EVENT_PROJECTION = asList(_ID, DESCRIPTION);
 
 
     public static boolean hasPermissions(@NonNull Activity activity) {
-        return Stream.of(PERMISSIONS)
-                     .map(p -> checkSelfPermission(activity, p))
-                     .allMatch(p -> p == PERMISSION_GRANTED);
+        return PERMISSIONS.stream()
+                          .map(p -> checkSelfPermission(activity, p))
+                          .allMatch(p -> p == PERMISSION_GRANTED);
     }
 
 
     public static void askPermissions(@NonNull Activity activity) {
-        requestPermissions(activity, PERMISSIONS, PERMISSION_REQUEST_CODE);
+        requestPermissions(activity, PERMISSIONS.toArray(new String[]{}), PERMISSION_REQUEST_CODE);
     }
 
 
-    public static @Nullable Long getCalendarId(@Nullable Activity activity) {
+    public static @Nullable Long getCurrentCalendarId(@Nullable Activity activity) {
 
         if ((activity == null) || !hasPermissions(activity)) {
             return null;
@@ -119,15 +108,24 @@ public class CalendarService {
         Map<Long, String> result = new HashMap<>();
 
         // Run query
+
+        String selection = "(" + CalendarContract.Calendars.OWNER_ACCOUNT + " NOT LIKE ?)";
+        String[] selectionArgs = new String[]{"%@group.v.calendar.google.com"};
         Cursor cursor = activity.getContentResolver()
-                                .query(CalendarContract.Calendars.CONTENT_URI, CALENDAR_PROJECTION, null, null, null);
+                                .query(
+                                        CalendarContract.Calendars.CONTENT_URI,
+                                        CALENDAR_PROJECTION.toArray(new String[]{}),
+                                        selection,
+                                        selectionArgs,
+                                        null
+                                );
 
         // Use the cursor to step through the returned records
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 result.put(
-                        cursor.getLong(PROJECTION_CALENDAR_ID_INDEX),
-                        cursor.getString(PROJECTION_CALENDAR_DISPLAY_NAME_INDEX)
+                        cursor.getLong(CALENDAR_PROJECTION.indexOf(_ID)),
+                        cursor.getString(CALENDAR_PROJECTION.indexOf(CALENDAR_DISPLAY_NAME))
                 );
             }
             cursor.close();
@@ -148,14 +146,20 @@ public class CalendarService {
         String selection = "(" + CALENDAR_ID + " = ?)";
         String[] selectionArgs = new String[]{calendarId.toString()};
         Cursor cursor = activity.getContentResolver()
-                                .query(CalendarContract.Events.CONTENT_URI, EVENT_PROJECTION, selection, selectionArgs, null);
+                                .query(
+                                        CalendarContract.Events.CONTENT_URI,
+                                        EVENT_PROJECTION.toArray(new String[]{}),
+                                        selection,
+                                        selectionArgs,
+                                        null
+                                );
 
         // Use the cursor to step through the returned records
         if (cursor != null) {
             while (cursor.moveToNext()) {
 
-                long eventId = cursor.getLong(PROJECTION_EVENT_ID_INDEX);
-                String movieId = cursor.getString(PROJECTION_EVENT_DESCRIPTION);
+                long eventId = cursor.getLong(EVENT_PROJECTION.indexOf(_ID));
+                String movieId = cursor.getString(EVENT_PROJECTION.indexOf(DESCRIPTION));
 
                 if (!TextUtils.isEmpty(movieId)) {
                     result.put(movieId, eventId);
