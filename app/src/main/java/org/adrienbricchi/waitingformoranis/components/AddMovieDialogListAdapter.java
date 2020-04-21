@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.components;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -35,6 +36,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static java.text.DateFormat.SHORT;
+import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_parenthesis;
 
 
 @Data
@@ -99,7 +101,9 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
      */
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
+
         Movie currentMovie = dataSet.get(position);
+        Context currentContext = holder.binding.getRoot().getContext();
 
         holder.binding.getRoot().setTag(TAG_MOVIE, currentMovie);
         holder.binding.addMovieTitleTextView.setText(currentMovie.getTitle());
@@ -107,7 +111,7 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
                 Optional.ofNullable(currentMovie.getReleaseDate())
                         .map(Date::new)
                         .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
-                        .orElse("(unknown)"));
+                        .orElse(currentContext.getString(unknown_between_parenthesis)));
     }
 
 

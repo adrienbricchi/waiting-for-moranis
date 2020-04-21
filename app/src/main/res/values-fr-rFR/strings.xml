@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Waiting For Moranis
+  Copyright (C) 2020
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<resources>
+
+    <string name="app_name">Waiting For Moranis</string>
+
+    <string name="settings">Préférences</string>
+    <string name="delete">Supprimer</string>
+    <string name="disabled">Désactivé</string>
+
+    <string name="movie_list">Liste de films</string>
+    <string name="search_movie_title_hint">Titre du film</string>
+    <string name="unknown_between_parenthesis">(inconnu)</string>
+
+    <plurals name="n_selected_items">
+        <item quantity="one">%d item sélectionné</item>
+        <item quantity="other">%d items sélectionnés</item>
+    </plurals>
+
+    <!-- <editor-fold desc="Settings" -->
+
+    <string name="external_services">Services externes</string>
+    <string name="about">À propos</string>
+    <string name="app_copyright">Copyright © 2020\nLicensed under the terms of the Affero GNU General Public License</string>
+
+    <string name="settings_tmdb_key_title">Clé d\'API TMDB</string>
+    <string name="settings_tmdb_key_summary">Renseigner une clé personnelle, si celle par défaut est limitée</string>
+    <string name="settings_isbndb_key_title">Clé d\'API ISBNdb</string>
+    <string name="settings_isbndb_key_summary">Obligatoire pour débloquer les livres\nPas encore implémenté</string>
+    <string name="settings_google_calendar_title">Google Calendar</string>
+    <string name="settings_google_calendar_summary">Choisir le calendrier qui reçevra les évènements</string>
+    <string name="settings_github_title">Code source</string>
+    <string name="settings_github_summary">Contribuer, ou signaler un bug</string>
+    <string name="settings_open_source_licenses_title">Licences open source</string>
+
+    <!-- </editor-fold desc="Settings" -->
+
+</resources>

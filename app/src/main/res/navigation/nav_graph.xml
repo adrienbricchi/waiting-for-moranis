@@ -28,7 +28,7 @@
     <fragment
             android:id="@+id/movie_list_fragment"
             android:name="org.adrienbricchi.waitingformoranis.components.MovieListFragment"
-            android:label="@string/first_fragment_label"
+            android:label="@string/movie_list"
             tools:layout="@layout/movie_list" />
 
 </navigation>

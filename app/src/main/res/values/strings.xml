@@ -19,14 +19,39 @@
 -->
 
 <resources>
-    <string name="app_name">Waiting For Moranis</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="app_name">Waiting For Moranis</string>
+
+    <string name="settings">Settings</string>
+    <string name="delete">Delete</string>
+    <string name="disabled">Disabled</string>
+
+    <string name="movie_list">Movie list</string>
+    <string name="search_movie_title_hint">Movie title</string>
+    <string name="unknown_between_parenthesis">(unknown)</string>
+
+    <plurals name="n_selected_items">
+        <item quantity="zero">0 items selected</item>
+        <item quantity="one">1 item selected</item>
+        <item quantity="other">%d items selected</item>
+    </plurals>
+
+    <!-- <editor-fold desc="Settings" -->
+
+    <string name="external_services">External services</string>
+    <string name="about">About</string>
+    <string name="app_copyright">Copyright © 2020\nLicensed under the terms of the Affero GNU General Public License</string>
+
+    <string name="settings_tmdb_key_title">TMDB API key</string>
+    <string name="settings_tmdb_key_summary">Set your own, if the general key is limited</string>
+    <string name="settings_isbndb_key_title">ISBNdb API key</string>
+    <string name="settings_isbndb_key_summary">Mandatory to unlock the books\nNot yet implemented</string>
+    <string name="settings_google_calendar_title">Google Calendar</string>
+    <string name="settings_google_calendar_summary">Choose the registered events\' parent</string>
+    <string name="settings_github_title">Source code</string>
+    <string name="settings_github_summary">Contribute, or create an issue</string>
+    <string name="settings_open_source_licenses_title">Open-source licenses</string>
+
+    <!-- </editor-fold desc="Settings" -->
+
 </resources>

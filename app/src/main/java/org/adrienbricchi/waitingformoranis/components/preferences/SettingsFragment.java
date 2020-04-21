@@ -26,7 +26,6 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 
 import java.util.Map;
@@ -34,6 +33,9 @@ import java.util.Optional;
 
 import static android.content.Intent.ACTION_VIEW;
 import static java.util.stream.Collectors.toList;
+import static org.adrienbricchi.waitingformoranis.R.drawable.ic_google_calendar_24dp_w40dp;
+import static org.adrienbricchi.waitingformoranis.R.string.*;
+import static org.adrienbricchi.waitingformoranis.R.xml.preferences;
 
 
 @SuppressWarnings("unused")
@@ -47,13 +49,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        setPreferencesFromResource(R.xml.preferences, rootKey);
+        setPreferencesFromResource(preferences, rootKey);
 
         if (getActivity() == null) { return; }
 
         buildGoogleCalendarPref();
 
-        Optional.ofNullable((Preference) findPreference(getString(R.string.key_github)))
+        Optional.ofNullable((Preference) findPreference(getString(key_github)))
                 .ifPresent(p -> p.setOnPreferenceClickListener(preference -> {
                     Intent i = new Intent(ACTION_VIEW);
                     i.setData(Uri.parse(GITHUB_URL));
@@ -61,7 +63,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     return true;
                 }));
 
-        Optional.ofNullable((Preference) findPreference(getString(R.string.key_google_calendar_no_permission)))
+        Optional.ofNullable((Preference) findPreference(getString(key_google_calendar_no_permission)))
                 .ifPresent(p -> p.setOnPreferenceClickListener(preference -> {
                     CalendarService.askPermissions(getActivity());
                     return false;
@@ -99,11 +101,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         // Remove previous ones
 
-        Optional.ofNullable((PreferenceCategory) findPreference(getString(R.string.key_external_services)))
+        Optional.ofNullable((PreferenceCategory) findPreference(getString(key_external_services)))
                 .ifPresent(c -> {
-                    Optional.ofNullable((Preference) findPreference(getString(R.string.key_google_calendar_no_permission)))
+                    Optional.ofNullable((Preference) findPreference(getString(key_google_calendar_no_permission)))
                             .ifPresent(c::removePreference);
-                    Optional.ofNullable((Preference) findPreference(getString(R.string.key_google_calendar)))
+                    Optional.ofNullable((Preference) findPreference(getString(key_google_calendar)))
                             .ifPresent(c::removePreference);
                 });
 
@@ -111,17 +113,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         ListPreference listPref = new ListPreference(getActivity());
         populateGoogleCalendarList(listPref);
-        listPref.setKey(getString(R.string.key_google_calendar));
-        listPref.setIcon(R.drawable.ic_google_calendar_24dp_w40dp);
-        listPref.setTitle("Google Calendar");
-        listPref.setDialogTitle("Google Calendar");
+        listPref.setKey(getString(key_google_calendar));
+        listPref.setIcon(ic_google_calendar_24dp_w40dp);
+        listPref.setTitle(settings_google_calendar_title);
+        listPref.setDialogTitle(settings_google_calendar_title);
         listPref.setOnPreferenceChangeListener((preference, newValue) -> {
             CalendarService.setCalendarId(getActivity(), Long.parseLong(newValue.toString()));
             populateGoogleCalendarList(listPref);
             return true;
         });
 
-        Optional.ofNullable((PreferenceCategory) findPreference(getString(R.string.key_external_services)))
+        Optional.ofNullable((PreferenceCategory) findPreference(getString(key_external_services)))
                 .ifPresent(c -> c.addPreference(listPref));
     }
 
@@ -131,7 +133,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         Map<Long, String> calendars = CalendarService.getCalendarIds(getActivity());
         if (calendars == null) { return; }
 
-        calendars.put(-1L, "Disabled");
+        calendars.put(-1L, getString(disabled));
 
         // Display the currently selected calendar
 

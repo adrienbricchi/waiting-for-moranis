@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.components;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -28,7 +29,6 @@ import com.squareup.picasso.Picasso;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
@@ -37,6 +37,8 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 import static java.text.DateFormat.FULL;
+import static org.adrienbricchi.waitingformoranis.R.drawable.ic_local_movies_48dp;
+import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_parenthesis;
 
 
 @Data
@@ -86,19 +88,21 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     public void onBindViewHolder(MovieViewHolder holder, int position) {
 
         Movie currentMovie = dataSet.get(position);
+        Context currentContext = holder.binding.getRoot().getContext();
 
         Picasso.get()
                .load(dataSet.get(position).getImageUrl())
-               .placeholder(R.drawable.ic_local_movies_48dp)
+               .placeholder(ic_local_movies_48dp)
                .into(holder.binding.coverImageView);
 
         holder.binding.getRoot().setTag(TAG_MOVIE, currentMovie);
+        holder.binding.coverImageView.setContentDescription(currentMovie.getTitle());
         holder.binding.titleTextView.setText(currentMovie.getTitle());
         holder.binding.dateTextView.setText(
                 Optional.ofNullable(currentMovie.getReleaseDate())
                         .map(Date::new)
                         .map(d -> SimpleDateFormat.getDateInstance(FULL, Locale.getDefault()).format(d))
-                        .orElse("(unknown)"));
+                        .orElse(currentContext.getString(unknown_between_parenthesis)));
 
         holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentMovie.getId()));
     }

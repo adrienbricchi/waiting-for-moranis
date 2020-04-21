@@ -45,6 +45,7 @@ import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static androidx.recyclerview.selection.StorageStrategy.createStringStorage;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
 import static org.adrienbricchi.waitingformoranis.service.google.CalendarService.PERMISSION_REQUEST_CODE;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
 
@@ -238,12 +239,11 @@ public class MovieListFragment extends Fragment {
                 if (rowsSelected == 0) {
                     Optional.ofNullable(actionMode)
                             .ifPresent(ActionMode::finish);
-                } else if (actionMode != null) {
-                    actionMode.setTitle("" + rowsSelected + " items selected");
                 } else {
-                    actionMode = getActivity().startActionMode(buildActionModeCallback());
-                    Optional.ofNullable(actionMode)
-                            .ifPresent(m -> m.setTitle("0 item selected"));
+                    ActionMode actMode = Optional.ofNullable(actionMode)
+                                                 .orElseGet(() -> getActivity().startActionMode(buildActionModeCallback()));
+                    Optional.ofNullable(actMode)
+                            .ifPresent(a -> a.setTitle(getResources().getQuantityString(n_selected_items, rowsSelected, rowsSelected)));
                 }
             }
 
