@@ -75,22 +75,19 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
     public @NonNull AddMovieDialogListAdapter.MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         AddMovieListCellBinding binding = AddMovieListCellBinding.inflate(
-                LayoutInflater.from(parent.getContext()),
-                parent,
-                false
+                LayoutInflater.from(parent.getContext()), parent, false
         );
 
-        binding.addMovieMaterialCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            new Thread(() -> {
-                Movie movie = (Movie) binding.getRoot().getTag(TAG_MOVIE);
-                AppDatabase database = AppDatabase.getDatabase(buttonView.getContext());
-                if (isChecked) {
-                    database.movieDao().add(movie);
-                } else {
-                    database.movieDao().remove(movie.getId());
-                }
-            }).start();
-        });
+        binding.addMovieMaterialCheckBox.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> new Thread(() -> {
+                    Movie movie = (Movie) binding.getRoot().getTag(TAG_MOVIE);
+                    AppDatabase database = AppDatabase.getDatabase(buttonView.getContext());
+                    if (isChecked) {
+                        database.movieDao().add(movie);
+                    } else {
+                        database.movieDao().remove(movie.getId());
+                    }
+                }).start());
 
         return new MovieViewHolder(binding);
     }

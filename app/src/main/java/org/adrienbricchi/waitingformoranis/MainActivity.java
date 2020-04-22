@@ -31,6 +31,9 @@ import org.adrienbricchi.waitingformoranis.components.MovieListFragment;
 import org.adrienbricchi.waitingformoranis.components.preferences.SettingsActivity;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 
+import static org.adrienbricchi.waitingformoranis.R.id.action_settings;
+import static org.adrienbricchi.waitingformoranis.R.menu.menu_main;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(menu_main, menu);
         return true;
     }
 
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == action_settings) {
 
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
