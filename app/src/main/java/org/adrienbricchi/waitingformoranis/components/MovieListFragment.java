@@ -47,7 +47,6 @@ import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
-import static org.adrienbricchi.waitingformoranis.service.google.CalendarService.PERMISSION_REQUEST_CODE;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
 
 
@@ -109,16 +108,6 @@ public class MovieListFragment extends Fragment {
 
         if (requestCode == AddMovieDialogFragment.REQUEST_CODE) {
             refreshListFromDb();
-        }
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            // TODO
-            CalendarService.init(getActivity())
-                           .ifPresent(CalendarService::getCurrentCalendarId);
         }
     }
 
@@ -362,24 +351,25 @@ public class MovieListFragment extends Fragment {
 
 
     private void deleteMovies(@NonNull Spliterator<String> movieIdsIterator) {
+        List<String> selectedIds = StreamSupport.stream(movieIdsIterator, false).collect(toList());
+
         new Thread(() -> {
 
             Long calendarId = CalendarService.init(getActivity())
                                              .map(CalendarService::getCurrentCalendarId)
                                              .orElse(null);
 
-            StreamSupport.stream(movieIdsIterator, false)
-                         .map(id -> adapter.getMovie(id))
-                         .filter(Objects::nonNull)
-                         .forEach(m -> {
-                             // Wrong "may be null" warning on Android Studio 3.6.3
-                             //noinspection ConstantConditions
-                             CalendarService.init(getActivity())
-                                            .ifPresent(c -> c.deleteMovieInCalendar(calendarId, m));
-                             AppDatabase database = AppDatabase.getDatabase(getContext());
-                             //noinspection ConstantConditions
-                             database.movieDao().remove(m.getId());
-                         });
+            AppDatabase database = AppDatabase.getDatabase(getContext());
+            CalendarService.init(getActivity())
+                           .ifPresent(c -> selectedIds.stream()
+                                                      .map(id -> adapter.getMovie(id))
+                                                      .filter(Objects::nonNull)
+                                                      .forEach(m -> {
+                                                          // Wrong "may be null" warning on Android Studio 3.6.3
+                                                          //noinspection ConstantConditions
+                                                          c.deleteMovieInCalendar(calendarId, m);
+                                                          database.movieDao().remove(m.getId());
+                                                      }));
 
             new Handler(Looper.getMainLooper()).post(this::refreshListFromDb);
 

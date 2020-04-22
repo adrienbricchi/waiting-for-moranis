@@ -33,6 +33,7 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true">
+
         <activity
                 android:name=".MainActivity"
                 android:label="@string/app_name"
@@ -41,17 +42,20 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+
         <activity
                 android:name=".components.preferences.SettingsActivity"
                 android:label="@string/settings"
                 android:theme="@style/AppTheme.Settings" />
+
         <activity
                 android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
                 android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar" />
+
         <activity
                 android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
                 android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar" />
+
     </application>
 
 </manifest>
