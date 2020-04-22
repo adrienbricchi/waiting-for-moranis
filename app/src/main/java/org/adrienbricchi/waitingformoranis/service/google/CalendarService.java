@@ -44,6 +44,7 @@ import static androidx.core.app.ActivityCompat.requestPermissions;
 import static androidx.core.content.ContextCompat.checkSelfPermission;
 import static java.util.Arrays.asList;
 import static org.adrienbricchi.waitingformoranis.MainActivity.APP_SHARED_PREFERENCES;
+import static org.adrienbricchi.waitingformoranis.R.string._hashtag_movie;
 
 
 @SuppressLint("MissingPermission")
@@ -203,7 +204,7 @@ public class CalendarService {
         values.put(DTSTART, movie.getReleaseDate());
         values.put(DTEND, movie.getReleaseDate());
         values.put(ALL_DAY, true);
-        values.put(TITLE, movie.getTitle() + " #film");
+        values.put(TITLE, movie.getTitle() + activity.getString(_hashtag_movie));
         values.put(CALENDAR_ID, calendarId);
         values.put(DESCRIPTION, movie.getId());
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
@@ -230,7 +231,7 @@ public class CalendarService {
         values.put(DTSTART, movie.getReleaseDate());
         values.put(DTEND, movie.getReleaseDate());
         values.put(ALL_DAY, true);
-        values.put(TITLE, movie.getTitle() + " #film");
+        values.put(TITLE, movie.getTitle() + activity.getString(_hashtag_movie));
         values.put(CALENDAR_ID, calendarId);
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 

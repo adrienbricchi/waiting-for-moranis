@@ -27,6 +27,7 @@
     <string name="disabled">Disabled</string>
 
     <string name="movie_list">Movie list</string>
+    <string name="_hashtag_movie"> #movie</string>
     <string name="search_movie_title_hint">Movie title</string>
     <string name="unknown_between_parenthesis">(unknown)</string>
 
