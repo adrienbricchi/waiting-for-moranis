@@ -81,6 +81,25 @@ public class TmdbService {
     // </editor-fold desc="Constructor">
 
 
+    public void setPrivateApiKey(@Nullable String apiKey) {
+
+        if (TextUtils.isEmpty(apiKey)) {
+            apiKey = null;
+        }
+
+        context.getSharedPreferences(APP_SHARED_PREFERENCES, MODE_PRIVATE)
+               .edit()
+               .putString(SHARED_PREFERENCES_TMDB_API_KEY, apiKey)
+               .apply();
+    }
+
+
+    public @NonNull Optional<String> getPrivateApiKey() {
+        return Optional.ofNullable(context.getSharedPreferences(APP_SHARED_PREFERENCES, MODE_PRIVATE)
+                                          .getString(SHARED_PREFERENCES_TMDB_API_KEY, null));
+    }
+
+
     public void searchMovie(@NonNull String searchTerm,
                             @NonNull final Response.Listener<List<? extends Movie>> onSuccess,
                             @NonNull final Response.ErrorListener onError) {
@@ -91,7 +110,7 @@ public class TmdbService {
         String url = new Uri.Builder()
                 .scheme(HTTPS).authority(URL)
                 .appendPath(API).appendPath(PATH_SEARCH).appendPath(PATH_MOVIE)
-                .appendQueryParameter(API_KEY_PARAM, TMDB_KEY)
+                .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
                 .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
                 .appendQueryParameter(QUERY_PARAM, searchTerm)
                 .build().toString();
@@ -119,7 +138,7 @@ public class TmdbService {
         String url = new Uri.Builder()
                 .scheme(HTTPS).authority(URL)
                 .appendPath(API).appendPath(PATH_MOVIE).appendPath(id)
-                .appendQueryParameter(API_KEY_PARAM, TMDB_KEY)
+                .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
                 .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
                 .build().toString();
 

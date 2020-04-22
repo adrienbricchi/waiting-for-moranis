@@ -21,11 +21,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.preference.ListPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
-import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.*;
 import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
+import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 
 import java.util.Map;
 import java.util.Optional;
@@ -51,13 +49,22 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         buildGoogleCalendarPref();
 
-        Optional.ofNullable((Preference) findPreference(getString(key_github)))
-                .ifPresent(p -> p.setOnPreferenceClickListener(preference -> {
-                    Intent i = new Intent(ACTION_VIEW);
-                    i.setData(Uri.parse(GITHUB_URL));
-                    startActivity(i);
-                    return true;
-                }));
+        Optional.ofNullable((EditTextPreference) findPreference(getString(key_tmdb_key)))
+                .ifPresent(p -> {
+
+                    p.setOnPreferenceClickListener(preference -> {
+                        TmdbService.init(getActivity())
+                                   .flatMap(TmdbService::getPrivateApiKey)
+                                   .ifPresent(p::setText);
+                        return false;
+                    });
+
+                    p.setOnPreferenceChangeListener((preference, newValue) -> {
+                        TmdbService.init(getActivity())
+                                   .ifPresent(t -> t.setPrivateApiKey(String.valueOf(newValue)));
+                        return false;
+                    });
+                });
 
         Optional.ofNullable((Preference) findPreference(getString(key_google_calendar_no_permission)))
                 .ifPresent(p -> p.setOnPreferenceClickListener(preference -> {
