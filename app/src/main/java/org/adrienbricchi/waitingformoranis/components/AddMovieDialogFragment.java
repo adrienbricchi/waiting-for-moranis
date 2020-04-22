@@ -38,6 +38,8 @@ import java.util.Optional;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.os.Looper.getMainLooper;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH;
 
 
@@ -59,13 +61,13 @@ public class AddMovieDialogFragment extends DialogFragment {
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(android.R.string.search_go)
-               .setView(binding.getRoot());
+        builder.setView(binding.getRoot());
 
         adapter = new AddMovieDialogListAdapter(new ArrayList<>());
         binding.addMovieListRecyclerView.setHasFixedSize(true);
         binding.addMovieListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.addMovieListRecyclerView.setAdapter(adapter);
+        binding.addMovieListRecyclerView.setVisibility(GONE);
 
         binding.searchAppCompatEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == IME_ACTION_SEARCH) {
@@ -105,6 +107,7 @@ public class AddMovieDialogFragment extends DialogFragment {
                                             movies -> {
                                                 adapter.getDataSet().clear();
                                                 adapter.getDataSet().addAll(movies);
+                                                binding.addMovieListRecyclerView.setVisibility(VISIBLE);
                                                 new Handler(getMainLooper()).post(() -> adapter.notifyDataSetChanged());
                                             },
                                             error -> Log.e(LOG_TAG, "That didn't work! " + error.getMessage())
