@@ -39,7 +39,7 @@
 
     <string name="external_services">Services externes</string>
     <string name="about">À propos</string>
-    <string name="app_copyright">Copyright © 2020\nLicensed under the terms of the Affero GNU General Public License</string>
+    <string name="app_copyright">Tous droits réservés © 2020\nLogiciel libre sous licence Affero GNU General Public License v3+</string>
 
     <string name="settings_tmdb_key_title">Clé d\'API TMDB</string>
     <string name="settings_tmdb_key_summary">Renseigner une clé personnelle, si celle par défaut est limitée</string>

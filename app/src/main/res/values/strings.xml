@@ -40,7 +40,7 @@
 
     <string name="external_services">External services</string>
     <string name="about">About</string>
-    <string name="app_copyright">Copyright © 2020\nLicensed under the terms of the Affero GNU General Public License</string>
+    <string name="app_copyright">Copyright © 2020\nLicensed under the terms of the Affero GNU General Public License v3+</string>
 
     <string name="settings_tmdb_key_title">TMDB API key</string>
     <string name="settings_tmdb_key_summary">Set your own, if the general key is limited</string>

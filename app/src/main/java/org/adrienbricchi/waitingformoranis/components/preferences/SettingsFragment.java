@@ -18,7 +18,6 @@
 package org.adrienbricchi.waitingformoranis.components.preferences;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +30,6 @@ import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import java.util.Map;
 import java.util.Optional;
 
-import static android.content.Intent.ACTION_VIEW;
 import static java.util.stream.Collectors.toList;
 import static org.adrienbricchi.waitingformoranis.R.drawable.ic_google_calendar_24dp_w40dp;
 import static org.adrienbricchi.waitingformoranis.R.string.*;
@@ -40,8 +38,6 @@ import static org.adrienbricchi.waitingformoranis.R.xml.preferences;
 
 @SuppressWarnings("unused")
 public class SettingsFragment extends PreferenceFragmentCompat {
-
-    private final String GITHUB_URL = "https://github.com/adrienbricchi/waiting-for-moranis";
 
 
     // <editor-fold desc="LifeCycle">
