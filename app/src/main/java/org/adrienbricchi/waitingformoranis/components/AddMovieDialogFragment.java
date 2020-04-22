@@ -22,7 +22,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,11 +37,13 @@ import java.util.Optional;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.INPUT_METHOD_SERVICE;
+import static android.os.Looper.getMainLooper;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH;
 
 
 public class AddMovieDialogFragment extends DialogFragment {
 
+    private static final String LOG_TAG = "AddMovieDialogFragment";
     public static final int REQUEST_CODE = 10404;
     public static final String TAG = "AddMovieDialogFragment";
 
@@ -98,16 +99,16 @@ public class AddMovieDialogFragment extends DialogFragment {
         Optional.ofNullable((InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE))
                 .ifPresent(in -> in.hideSoftInputFromWindow(binding.searchAppCompatEditText.getWindowToken(), 0));
 
-        new Thread(() -> TmdbService.searchMovie(
-                getActivity(),
-                searchTerm,
-                movies -> {
-                    adapter.getDataSet().clear();
-                    adapter.getDataSet().addAll(movies);
-                    new Handler(Looper.getMainLooper()).post(() -> adapter.notifyDataSetChanged());
-                },
-                error -> Log.e("Adrien", "That didn't work! " + error.getMessage())
-        )).start();
+        new Thread(() -> TmdbService.init(getActivity())
+                                    .ifPresent(t -> t.searchMovie(
+                                            searchTerm,
+                                            movies -> {
+                                                adapter.getDataSet().clear();
+                                                adapter.getDataSet().addAll(movies);
+                                                new Handler(getMainLooper()).post(() -> adapter.notifyDataSetChanged());
+                                            },
+                                            error -> Log.e(LOG_TAG, "That didn't work! " + error.getMessage())
+                                    ))).start();
     }
 
 }

@@ -43,6 +43,7 @@ import java.util.stream.StreamSupport;
 
 import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static androidx.recyclerview.selection.StorageStrategy.createStringStorage;
+import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
@@ -115,7 +116,9 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            CalendarService.getCurrentCalendarId(getActivity());
+            // TODO
+            CalendarService.init(getActivity())
+                           .ifPresent(CalendarService::getCurrentCalendarId);
         }
     }
 
@@ -232,6 +235,7 @@ public class MovieListFragment extends Fragment {
 
             @Override
             public void onSelectionChanged() {
+                Log.i(LOG_TAG, "onSelectionChanged");
 
                 if (getActivity() == null) { return; }
 
@@ -240,13 +244,12 @@ public class MovieListFragment extends Fragment {
                     Optional.ofNullable(actionMode)
                             .ifPresent(ActionMode::finish);
                 } else {
-                    ActionMode actMode = Optional.ofNullable(actionMode)
-                                                 .orElseGet(() -> getActivity().startActionMode(buildActionModeCallback()));
-                    Optional.ofNullable(actMode)
+                    actionMode = Optional.ofNullable(actionMode)
+                                         .orElseGet(() -> getActivity().startActionMode(buildActionModeCallback()));
+                    Optional.ofNullable(actionMode)
                             .ifPresent(a -> a.setTitle(getResources().getQuantityString(n_selected_items, rowsSelected, rowsSelected)));
                 }
             }
-
         };
     }
 
@@ -263,10 +266,15 @@ public class MovieListFragment extends Fragment {
                                                       .stream()
                                                       .collect(toMap(Movie::getId, movie -> movie));
 
-            Long calendarId = CalendarService.getCurrentCalendarId(getActivity());
+            Long calendarId = CalendarService.init(getActivity())
+                                             .map(CalendarService::getCurrentCalendarId)
+                                             .orElse(null);
+
             if (calendarId != null) {
 
-                Map<String, Long> existingEvents = CalendarService.getEvents(getActivity(), calendarId);
+                Map<String, Long> existingEvents = CalendarService.init(getActivity())
+                                                                  .map(c -> c.getEvents(calendarId))
+                                                                  .orElse(emptyMap());
 
                 // Movies that are in the Calendar, but not in the DB
                 existingEvents.entrySet()
@@ -289,7 +297,10 @@ public class MovieListFragment extends Fragment {
 
             List<Movie> refreshedMovies = oldMoviesMap.values()
                                                       .stream()
-                                                      .map(m -> TmdbService.getMovie(getActivity(), m.getId()))
+                                                      .map(m -> TmdbService.init(getActivity())
+                                                                           .map(t -> t.getMovie(m.getId()))
+                                                                           .orElse(null))
+                                                      .filter(Objects::nonNull)
                                                       .collect(toList());
 
             refreshedMovies.forEach(m -> {
@@ -305,7 +316,9 @@ public class MovieListFragment extends Fragment {
                                .filter(m -> (m.getCalendarEventId() == null))
                                .filter(m -> (m.getReleaseDate() != null))
                                .forEach(m -> {
-                                   Long calendarEventId = CalendarService.addMovieToCalendar(getActivity(), calendarId, m);
+                                   Long calendarEventId = CalendarService.init(getActivity())
+                                                                         .map(c -> c.addMovieToCalendar(calendarId, m))
+                                                                         .orElse(null);
                                    m.setCalendarEventId(calendarEventId);
                                });
 
@@ -313,7 +326,9 @@ public class MovieListFragment extends Fragment {
                                .filter(m -> (m.getCalendarEventId() != null))
                                .filter(Movie::isUpdateNeededInCalendar)
                                .forEach(m -> {
-                                   boolean edited = CalendarService.editMovieInCalendar(getActivity(), calendarId, m);
+                                   boolean edited = CalendarService.init(getActivity())
+                                                                   .map(c -> c.editMovieInCalendar(calendarId, m))
+                                                                   .orElse(false);
                                    m.setUpdateNeededInCalendar(!edited);
                                });
 
@@ -349,16 +364,20 @@ public class MovieListFragment extends Fragment {
     private void deleteMovies(@NonNull Spliterator<String> movieIdsIterator) {
         new Thread(() -> {
 
-            Long calendarId = CalendarService.getCurrentCalendarId(getActivity());
+            Long calendarId = CalendarService.init(getActivity())
+                                             .map(CalendarService::getCurrentCalendarId)
+                                             .orElse(null);
 
             StreamSupport.stream(movieIdsIterator, false)
                          .map(id -> adapter.getMovie(id))
                          .filter(Objects::nonNull)
                          .forEach(m -> {
-                             // Wrong "may be null" warning on Android Studio 3.6.2
+                             // Wrong "may be null" warning on Android Studio 3.6.3
                              //noinspection ConstantConditions
-                             CalendarService.deleteMovieInCalendar(getActivity(), calendarId, m);
+                             CalendarService.init(getActivity())
+                                            .ifPresent(c -> c.deleteMovieInCalendar(calendarId, m));
                              AppDatabase database = AppDatabase.getDatabase(getContext());
+                             //noinspection ConstantConditions
                              database.movieDao().remove(m.getId());
                          });
 

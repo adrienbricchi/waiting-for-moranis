@@ -19,6 +19,7 @@ package org.adrienbricchi.waitingformoranis.service.tmdb;
 
 import android.content.Context;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,14 +35,18 @@ import org.adrienbricchi.waitingformoranis.utils.JacksonRequest;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import static android.content.Context.MODE_PRIVATE;
 import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
+import static org.adrienbricchi.waitingformoranis.MainActivity.APP_SHARED_PREFERENCES;
 
 
 public class TmdbService {
 
     private static final String LOG_TAG = "TmdbService";
+    private static final String SHARED_PREFERENCES_TMDB_API_KEY = "tmdb_api_key";
 
     private static final String HTTPS = "https";
     private static final String API = "3";
@@ -55,10 +60,30 @@ public class TmdbService {
     private static final String QUERY_PARAM = "query";
 
 
-    public static void searchMovie(@NonNull Context context,
-                                   @NonNull String searchTerm,
-                                   @NonNull final Response.Listener<List<? extends Movie>> onSuccess,
-                                   @NonNull final Response.ErrorListener onError) {
+    private @NonNull Context context;
+
+
+    // <editor-fold desc="Constructor">
+
+
+    public static Optional<TmdbService> init(@Nullable Context context) {
+        return (context == null)
+               ? Optional.empty()
+               : Optional.of(new TmdbService(context));
+    }
+
+
+    private TmdbService(@NonNull Context context) {
+        this.context = context;
+    }
+
+
+    // </editor-fold desc="Constructor">
+
+
+    public void searchMovie(@NonNull String searchTerm,
+                            @NonNull final Response.Listener<List<? extends Movie>> onSuccess,
+                            @NonNull final Response.ErrorListener onError) {
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -84,11 +109,8 @@ public class TmdbService {
     }
 
 
-    public static @Nullable Movie getMovie(@Nullable Context context,
-                                           @NonNull String id) {
+    public @Nullable Movie getMovie(@NonNull String id) {
         Log.v(LOG_TAG, "getMovie id:" + id);
-
-        if (context == null) { return null; }
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);

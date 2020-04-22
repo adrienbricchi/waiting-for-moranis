@@ -34,6 +34,7 @@ import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String APP_SHARED_PREFERENCES = "Waiting For Moranis";
 
     private ActivityMainBinding binding;
 

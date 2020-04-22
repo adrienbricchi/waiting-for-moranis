@@ -65,7 +65,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         Optional.ofNullable((Preference) findPreference(getString(key_google_calendar_no_permission)))
                 .ifPresent(p -> p.setOnPreferenceClickListener(preference -> {
-                    CalendarService.askPermissions(getActivity());
+                    CalendarService.init(getActivity())
+                                   .ifPresent(CalendarService::askPermissions);
                     return false;
                 }));
     }
@@ -94,7 +95,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private void buildGoogleCalendarPref() {
         if (getActivity() == null) { return; }
 
-        boolean hasPermissions = CalendarService.hasPermissions(getActivity());
+        boolean hasPermissions = CalendarService.init(getActivity())
+                                                .map(CalendarService::hasPermissions)
+                                                .orElse(false);
         if (!hasPermissions) {
             return;
         }
@@ -118,7 +121,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         listPref.setTitle(settings_google_calendar_title);
         listPref.setDialogTitle(settings_google_calendar_title);
         listPref.setOnPreferenceChangeListener((preference, newValue) -> {
-            CalendarService.setCalendarId(getActivity(), Long.parseLong(newValue.toString()));
+            long newId = Long.parseLong(newValue.toString());
+            CalendarService.init(getActivity())
+                           .ifPresent(c -> c.setCalendarId(newId));
             populateGoogleCalendarList(listPref);
             return true;
         });
@@ -130,15 +135,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private void populateGoogleCalendarList(@NonNull ListPreference preference) {
 
-        Map<Long, String> calendars = CalendarService.getCalendarIds(getActivity());
+        Map<Long, String> calendars = CalendarService.init(getActivity())
+                                                     .map(CalendarService::getCalendarIds)
+                                                     .orElse(null);
         if (calendars == null) { return; }
 
         calendars.put(-1L, getString(disabled));
 
         // Display the currently selected calendar
 
-        Long calendar = Optional.ofNullable(CalendarService.getCurrentCalendarId(getActivity()))
-                                .orElse(-1L);
+        Long calendar = CalendarService.init(getActivity())
+                                       .map(CalendarService::getCurrentCalendarId)
+                                       .orElse(-1L);
 
         preference.setSummary(calendars.get(calendar));
 
