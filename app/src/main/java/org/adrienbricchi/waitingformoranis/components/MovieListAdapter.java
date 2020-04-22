@@ -46,8 +46,6 @@ import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_paren
 @EqualsAndHashCode(callSuper = true)
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder> {
 
-    private static final int TAG_MOVIE = 1315220905;
-
 
     private @NonNull List<Movie> dataSet;
     private SelectionTracker<String> selectionTracker;
@@ -95,7 +93,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                .placeholder(ic_local_movies_48dp)
                .into(holder.binding.coverImageView);
 
-        holder.binding.getRoot().setTag(TAG_MOVIE, currentMovie);
         holder.binding.coverImageView.setContentDescription(currentMovie.getTitle());
         holder.binding.titleTextView.setText(currentMovie.getTitle());
         holder.binding.dateTextView.setText(

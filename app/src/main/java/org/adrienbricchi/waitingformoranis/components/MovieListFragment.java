@@ -30,6 +30,7 @@ import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import lombok.Getter;
 import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
@@ -50,6 +51,7 @@ import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
 
 
+@Getter
 public class MovieListFragment extends Fragment {
 
     private static final String LOG_TAG = "MovieListFragment";

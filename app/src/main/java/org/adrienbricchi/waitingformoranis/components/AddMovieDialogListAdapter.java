@@ -20,6 +20,7 @@ package org.adrienbricchi.waitingformoranis.components;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import lombok.AllArgsConstructor;
@@ -30,10 +31,7 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 import static java.text.DateFormat.SHORT;
 import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_parenthesis;
@@ -45,9 +43,7 @@ import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_paren
 public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDialogListAdapter.MovieViewHolder> {
 
 
-    private static final int TAG_MOVIE = 1315220905;
-
-
+    private Set<String> knownIds;
     private List<Movie> dataSet;
 
 
@@ -58,12 +54,24 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
      */
     static class MovieViewHolder extends RecyclerView.ViewHolder {
 
+        Movie currentMovie;
         AddMovieListCellBinding binding;
+        CompoundButton.OnCheckedChangeListener listener;
 
 
         MovieViewHolder(AddMovieListCellBinding binding) {
             super(binding.getRoot());
+            this.currentMovie = null;
             this.binding = binding;
+            this.listener = (buttonView, isChecked) ->
+                    new Thread(() -> {
+                        AppDatabase database = AppDatabase.getDatabase(buttonView.getContext());
+                        if (isChecked) {
+                            database.movieDao().add(currentMovie);
+                        } else {
+                            database.movieDao().remove(currentMovie.getId());
+                        }
+                    }).start();
         }
     }
 
@@ -75,19 +83,10 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
     public @NonNull AddMovieDialogListAdapter.MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         AddMovieListCellBinding binding = AddMovieListCellBinding.inflate(
-                LayoutInflater.from(parent.getContext()), parent, false
+                LayoutInflater.from(parent.getContext()),
+                parent,
+                false
         );
-
-        binding.addMovieMaterialCheckBox.setOnCheckedChangeListener(
-                (buttonView, isChecked) -> new Thread(() -> {
-                    Movie movie = (Movie) binding.getRoot().getTag(TAG_MOVIE);
-                    AppDatabase database = AppDatabase.getDatabase(buttonView.getContext());
-                    if (isChecked) {
-                        database.movieDao().add(movie);
-                    } else {
-                        database.movieDao().remove(movie.getId());
-                    }
-                }).start());
 
         return new MovieViewHolder(binding);
     }
@@ -102,13 +101,17 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
         Movie currentMovie = dataSet.get(position);
         Context currentContext = holder.binding.getRoot().getContext();
 
-        holder.binding.getRoot().setTag(TAG_MOVIE, currentMovie);
+        holder.currentMovie = currentMovie;
         holder.binding.addMovieTitleTextView.setText(currentMovie.getTitle());
         holder.binding.addMovieDateTextView.setText(
                 Optional.ofNullable(currentMovie.getReleaseDate())
                         .map(Date::new)
                         .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
                         .orElse(currentContext.getString(unknown_between_parenthesis)));
+
+        holder.binding.addMovieMaterialCheckBox.setOnCheckedChangeListener(null);
+        holder.binding.addMovieMaterialCheckBox.setChecked(knownIds.contains(currentMovie.getId()));
+        holder.binding.addMovieMaterialCheckBox.setOnCheckedChangeListener(holder.listener);
     }
 
 

@@ -29,11 +29,15 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import lombok.Setter;
 import org.adrienbricchi.waitingformoranis.databinding.AddMovieMainBinding;
+import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.INPUT_METHOD_SERVICE;
@@ -41,16 +45,19 @@ import static android.os.Looper.getMainLooper;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH;
+import static java.util.stream.Collectors.toSet;
 
 
+@Setter
 public class AddMovieDialogFragment extends DialogFragment {
 
     private static final String LOG_TAG = "AddMovieDialogFragment";
-    public static final int REQUEST_CODE = 10404;
     public static final String TAG = "AddMovieDialogFragment";
+    public static final int REQUEST_CODE = 10404;
 
     private AddMovieDialogListAdapter adapter;
     private AddMovieMainBinding binding;
+    private List<Movie> knownMovies;
 
 
     @Override
@@ -63,7 +70,11 @@ public class AddMovieDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(binding.getRoot());
 
-        adapter = new AddMovieDialogListAdapter(new ArrayList<>());
+        Set<String> knownIds = knownMovies.stream()
+                                          .map(Movie::getId)
+                                          .collect(toSet());
+
+        adapter = new AddMovieDialogListAdapter(knownIds, new ArrayList<>());
         binding.addMovieListRecyclerView.setHasFixedSize(true);
         binding.addMovieListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.addMovieListRecyclerView.setAdapter(adapter);

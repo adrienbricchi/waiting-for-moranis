@@ -92,14 +92,13 @@ public class MainActivity extends AppCompatActivity {
         FragmentContainerView fragmentContainerView = binding.contentMain.navHostFragmentContainerView;
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(fragmentContainerView.getId());
 
-        if (navHostFragment == null) {
-            return;
-        }
+        if (navHostFragment == null) { return; }
 
         FragmentManager navFragmentManager = navHostFragment.getChildFragmentManager();
         MovieListFragment targetFragment = (MovieListFragment) navFragmentManager.getFragments().get(0);
 
         AddMovieDialogFragment fragment = new AddMovieDialogFragment();
+        fragment.setKnownMovies(targetFragment.getAdapter().getDataSet());
         fragment.setTargetFragment(targetFragment, AddMovieDialogFragment.REQUEST_CODE);
         fragment.show(navFragmentManager, AddMovieDialogFragment.TAG);
     }
