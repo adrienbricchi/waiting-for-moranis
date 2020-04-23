@@ -21,6 +21,7 @@
 <resources>
 
     <string name="app_name">Waiting For Moranis</string>
+    <string name="onboarding_text">Add a movie to your watchlist</string>
 
     <string name="settings">Settings</string>
     <string name="delete">Delete</string>

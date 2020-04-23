@@ -18,19 +18,51 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/movie_list_swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".components.MovieListFragment">
+        android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/movie_list_recycler_view"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/movie_list_swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingVertical="8dp" />
+            tools:context=".components.MovieListFragment">
 
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/movie_list_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingVertical="8dp"
+                tools:listitem="@layout/movie_list_cell" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <FrameLayout
+            android:id="@+id/onboarding_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <!-- width/height = itemWidth-right -->
+        <ImageView
+                android:layout_width="396dp"
+                android:layout_height="396dp"
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/emphasize_fab_shape"
+                android:contentDescription="@null" />
+
+        <TextView
+                android:layout_width="256dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="44dp"
+                android:layout_marginBottom="132dp"
+                android:gravity="center"
+                android:text="@string/onboarding_text"
+                android:textColor="?attr/colorOnPrimary"
+                android:textSize="24sp" />
+    </FrameLayout>
+
+</FrameLayout>

@@ -51,6 +51,7 @@
     <string name="settings_github_title">Code source</string>
     <string name="settings_github_summary">Contribuer, ou signaler un bug</string>
     <string name="settings_open_source_licenses_title">Licences open source</string>
+    <string name="onboarding_text">Ajouter un film à surveiller</string>
 
     <!-- </editor-fold desc="Settings" -->
 

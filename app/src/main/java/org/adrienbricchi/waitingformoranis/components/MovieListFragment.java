@@ -42,6 +42,8 @@ import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static androidx.recyclerview.selection.StorageStrategy.createStringStorage;
 import static java.util.Collections.emptyMap;
@@ -344,6 +346,7 @@ public class MovieListFragment extends Fragment {
             adapter.getDataSet().addAll(movies);
 
             new Handler(Looper.getMainLooper()).post(() -> {
+                binding.onboardingView.setVisibility(adapter.getDataSet().size() > 0 ? GONE : VISIBLE);
                 adapter.notifyDataSetChanged();
                 binding.movieListSwipeRefreshLayout.setRefreshing(false);
             });
