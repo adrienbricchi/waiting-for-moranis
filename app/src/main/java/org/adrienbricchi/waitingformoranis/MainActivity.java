@@ -37,7 +37,6 @@ import static org.adrienbricchi.waitingformoranis.R.menu.menu_main;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String APP_SHARED_PREFERENCES = "Waiting For Moranis";
 
     private ActivityMainBinding binding;
 

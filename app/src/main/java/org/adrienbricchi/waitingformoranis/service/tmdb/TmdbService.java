@@ -23,6 +23,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.RequestFuture;
@@ -38,9 +39,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import static android.content.Context.MODE_PRIVATE;
 import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
-import static org.adrienbricchi.waitingformoranis.MainActivity.APP_SHARED_PREFERENCES;
 
 
 public class TmdbService {
@@ -87,16 +86,16 @@ public class TmdbService {
             apiKey = null;
         }
 
-        context.getSharedPreferences(APP_SHARED_PREFERENCES, MODE_PRIVATE)
-               .edit()
-               .putString(SHARED_PREFERENCES_TMDB_API_KEY, apiKey)
-               .apply();
+        PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext())
+                         .edit()
+                         .putString(SHARED_PREFERENCES_TMDB_API_KEY, apiKey)
+                         .apply();
     }
 
 
     public @NonNull Optional<String> getPrivateApiKey() {
-        return Optional.ofNullable(context.getSharedPreferences(APP_SHARED_PREFERENCES, MODE_PRIVATE)
-                                          .getString(SHARED_PREFERENCES_TMDB_API_KEY, null));
+        return Optional.ofNullable(PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext())
+                                                    .getString(SHARED_PREFERENCES_TMDB_API_KEY, null));
     }
 
 

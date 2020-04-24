@@ -29,13 +29,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
 import java.util.*;
 
 import static android.Manifest.permission.READ_CALENDAR;
 import static android.Manifest.permission.WRITE_CALENDAR;
-import static android.content.Context.MODE_PRIVATE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.provider.BaseColumns._ID;
 import static android.provider.CalendarContract.Calendars.CALENDAR_DISPLAY_NAME;
@@ -43,7 +43,6 @@ import static android.provider.CalendarContract.Events.*;
 import static androidx.core.app.ActivityCompat.requestPermissions;
 import static androidx.core.content.ContextCompat.checkSelfPermission;
 import static java.util.Arrays.asList;
-import static org.adrienbricchi.waitingformoranis.MainActivity.APP_SHARED_PREFERENCES;
 import static org.adrienbricchi.waitingformoranis.R.string._hashtag_movie;
 
 
@@ -99,8 +98,8 @@ public class CalendarService {
             return null;
         }
 
-        long calendarId = activity.getSharedPreferences(APP_SHARED_PREFERENCES, MODE_PRIVATE)
-                                  .getLong(SHARED_PREFERENCES_CURRENT_GOOGLE_CALENDAR_ID_KEY, -1);
+        long calendarId = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext())
+                                           .getLong(SHARED_PREFERENCES_CURRENT_GOOGLE_CALENDAR_ID_KEY, -1);
 
         return (calendarId > 0) ? calendarId : null;
     }
@@ -112,10 +111,10 @@ public class CalendarService {
             return;
         }
 
-        activity.getSharedPreferences(APP_SHARED_PREFERENCES, MODE_PRIVATE)
-                .edit()
-                .putLong(SHARED_PREFERENCES_CURRENT_GOOGLE_CALENDAR_ID_KEY, calendarId)
-                .apply();
+        PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext())
+                         .edit()
+                         .putLong(SHARED_PREFERENCES_CURRENT_GOOGLE_CALENDAR_ID_KEY, calendarId)
+                         .apply();
     }
 
 
