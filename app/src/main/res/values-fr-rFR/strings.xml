@@ -31,6 +31,9 @@
     <string name="search_movie_title_hint">Rechercher un titre de film</string>
     <string name="unknown_between_parenthesis">(inconnu)</string>
 
+    <string name="add_calendar_tutorial_text1">Vous pouvez créer un sous-calendrier dédié sur votre compte.</string>
+    <string name="add_calendar_tutorial_text2">À ce jour, on peut les créer depuis la version web (bureau) de Google Calendar.</string>
+
     <plurals name="n_selected_items">
         <item quantity="one">%d item sélectionné</item>
         <item quantity="other">%d items sélectionnés</item>

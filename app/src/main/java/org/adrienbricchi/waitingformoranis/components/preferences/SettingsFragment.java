@@ -37,6 +37,8 @@ import static org.adrienbricchi.waitingformoranis.R.xml.preferences;
 @SuppressWarnings("unused")
 public class SettingsFragment extends PreferenceFragmentCompat {
 
+    private static final String LOG_TAG = SettingsFragment.class.getSimpleName();
+
 
     // <editor-fold desc="LifeCycle">
 
@@ -68,8 +70,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         Optional.ofNullable((Preference) findPreference(getString(key_google_calendar_no_permission)))
                 .ifPresent(p -> p.setOnPreferenceClickListener(preference -> {
-                    CalendarService.init(getActivity())
-                                   .ifPresent(CalendarService::askPermissions);
+                    if (getActivity() == null) { return false; }
+
+                    if (PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
+                                         .getBoolean(GoogleCalendarOnboardingDialogFragment.SHARED_PREFERENCES_SEEN_KEY, false)) {
+                        CalendarService.init(getActivity())
+                                       .ifPresent(CalendarService::askPermissions);
+                    } else {
+                        showGoogleCalendarOnboarding();
+                    }
                     return false;
                 }));
     }
@@ -88,6 +97,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         if (requestCode == CalendarService.PERMISSION_REQUEST_CODE) {
             buildGoogleCalendarPref();
+        } else if (requestCode == GoogleCalendarOnboardingDialogFragment.REQUEST_CODE) {
+            CalendarService.init(getActivity())
+                           .ifPresent(CalendarService::askPermissions);
         }
     }
 
@@ -163,6 +175,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         preference.setEntries(calendars.values()
                                        .toArray(new String[]{}));
+    }
+
+
+    private void showGoogleCalendarOnboarding() {
+        GoogleCalendarOnboardingDialogFragment fragment = new GoogleCalendarOnboardingDialogFragment();
+        fragment.setTargetFragment(this, GoogleCalendarOnboardingDialogFragment.REQUEST_CODE);
+        fragment.show(getParentFragmentManager(), GoogleCalendarOnboardingDialogFragment.TAG);
     }
 
 }

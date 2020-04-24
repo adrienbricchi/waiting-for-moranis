@@ -23,6 +23,8 @@
     <bool name="settingsWindowLightStatusBar">true</bool>
 
     <string name="project_github_url" translatable="false">https://github.com/adrienbricchi/waiting-for-moranis</string>
+    <string name="google_calendar_tutorial_add_url" translatable="false">https://support.google.com/calendar/answer/37095</string>
+    <string name="google_calendar_url" translatable="false">https://calendar.google.com/calendar</string>
 
     <string name="key_external_services" translatable="false">external_services</string>
     <string name="key_tmdb_key" translatable="false">tmdb_key</string>
