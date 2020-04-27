@@ -17,24 +17,23 @@
  */
 package org.adrienbricchi.waitingformoranis.service.tmdb;
 
-import androidx.core.util.Pair;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.adrienbricchi.waitingformoranis.models.ReleaseType;
-import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
+import org.adrienbricchi.waitingformoranis.models.Release;
 import org.junit.Test;
 
 import java.util.Date;
-import java.util.Locale;
-import java.util.Optional;
 
-import static org.adrienbricchi.waitingformoranis.models.ReleaseType.THEATRICAL;
+import static java.util.Arrays.asList;
+import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.countryLocale;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class TmdbMovieTest {
 
+    @SuppressWarnings("FieldCanBeLocal")
     private static String TMDB_MOVIE_FULL_EXAMPLE = "" +
             "{" +
             "    \"adult\": false," +
@@ -202,21 +201,25 @@ public class TmdbMovieTest {
         assertEquals("https://image.tmdb.org/t/p/w154/k68nPLbIST6NP96JmTxmZijEvCA.jpg", movie.getImageUrl());
 
         assertEquals(4, movie.getProductionCountries().size());
-        assertEquals("CA", movie.getProductionCountries().get(0).getCountry());
-        assertEquals("NO", movie.getProductionCountries().get(1).getCountry());
-        assertEquals("GB", movie.getProductionCountries().get(2).getCountry());
-        assertEquals("US", movie.getProductionCountries().get(3).getCountry());
+        assertTrue(movie.getProductionCountries()
+                        .containsAll(asList(
+                                countryLocale("CA"),
+                                countryLocale("NO"),
+                                countryLocale("GB"),
+                                countryLocale("US")
+                        )));
 
         assertEquals(11, movie.getReleaseDates().size());
-        assertEquals(1594944000000L, Optional.ofNullable(movie.getReleaseDates().get(countryLocale("US")))
-                                             .map(m -> m.get(THEATRICAL))
-                                             .map(Date::getTime)
-                                             .orElse(-1L)
-                                             .longValue());
-
-        Pair<Locale, ReleaseType> type = MovieUtils.getOriginalReleaseDate(movie);
-        System.out.println("" + type.first);
-        System.out.println("" + type.second);
+        assertEquals(1594807200000L, movie.getReleaseDate().longValue());
+        assertEquals(1594944000000L, movie.getReleaseDates()
+                                          .stream()
+                                          .filter(r -> r.getType() == THEATRICAL)
+                                          .filter(r -> r.getCountry().hashCode() == countryLocale("US").hashCode())
+                                          .findFirst()
+                                          .map(Release::getDate)
+                                          .map(Date::getTime)
+                                          .orElse(-1L)
+                                          .longValue());
     }
 
 }

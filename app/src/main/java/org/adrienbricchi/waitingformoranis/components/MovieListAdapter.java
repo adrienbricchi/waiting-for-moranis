@@ -31,9 +31,14 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.models.Release;
+import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static java.text.DateFormat.FULL;
@@ -87,6 +92,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
         Movie currentMovie = dataSet.get(position);
         Context currentContext = holder.binding.getRoot().getContext();
+        Release release = MovieUtils.getRelease(currentMovie, Locale.getDefault());
 
         Picasso.get()
                .load(dataSet.get(position).getImageUrl())
@@ -96,8 +102,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         holder.binding.coverImageView.setContentDescription(currentMovie.getTitle());
         holder.binding.titleTextView.setText(currentMovie.getTitle());
         holder.binding.dateTextView.setText(
-                Optional.ofNullable(currentMovie.getReleaseDate())
-                        .map(Date::new)
+                Optional.ofNullable(release)
+                        .map(Release::getDate)
                         .map(d -> SimpleDateFormat.getDateInstance(FULL, Locale.getDefault()).format(d))
                         .orElse(currentContext.getString(unknown_between_parenthesis)));
 

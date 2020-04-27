@@ -40,11 +40,13 @@ public class Movie {
 
     protected @PrimaryKey @NonNull String id = UUID.randomUUID().toString();
     protected String title;
-    protected Long releaseDate;
     protected String imageUrl;
     protected Long calendarEventId;
-    protected @NonNull List<Locale> productionCountries = new ArrayList<>();
-    protected @NonNull Map<Locale, Map<ReleaseType, Date>> releaseDates = new HashMap<>();
+
+    protected @NonNull Set<Locale> productionCountries = new HashSet<>();
+    protected @NonNull List<Release> releaseDates = new ArrayList<>();
+
+    protected Long releaseDate;
     protected boolean isUpdateNeededInCalendar = false;
 
 }

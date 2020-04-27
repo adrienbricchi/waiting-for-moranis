@@ -23,19 +23,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.adrienbricchi.waitingformoranis.models.Movie;
-import org.adrienbricchi.waitingformoranis.models.ReleaseType;
+import org.adrienbricchi.waitingformoranis.models.Release;
 import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
-import static org.adrienbricchi.waitingformoranis.models.ReleaseType.*;
+import static java.util.stream.Collectors.toSet;
+import static org.adrienbricchi.waitingformoranis.models.Release.Type.*;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.countryLocale;
 
 
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(callSuper = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 class TmdbMovie extends Movie {
 
     public static final String COVER_URL = "https://image.tmdb.org/t/p/w154%s";
@@ -52,36 +54,28 @@ class TmdbMovie extends Movie {
     private @JsonAlias("vote_average") float voteAverage;
 
 
-    //    @JsonAlias("release_date")
-    //    private void setReleaseDate(String date) {
-    //        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    //        try {
-    //            releaseDate = Optional.ofNullable(format.parse(date))
-    //                                  .map(Date::getTime)
-    //                                  // We add 12 hours to it, to ease everything.
-    //                                  // We're getting the right date, at 00:00, and GMT+/-1 tends to change the day.
-    //                                  .map(t -> t + (12 * 60 * 60 * 1000))
-    //                                  .orElse(null);
-    //        }
-    //        catch (ParseException exp) { /* Not used */ }
-    //    }
+    @JsonAlias("release_date")
+    private void setReleaseDate(String date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            releaseDate = Optional.ofNullable(format.parse(date))
+                                  .map(Date::getTime)
+                                  // We add 12 hours to it, to ease everything.
+                                  // We're getting the right date, at 00:00, and GMT+/-1 tends to change the day.
+                                  .map(t -> t + (12 * 60 * 60 * 1000))
+                                  .orElse(null);
+        }
+        catch (ParseException exp) { /* Not used */ }
+    }
 
 
     @JsonProperty("release_dates")
     private void parseReleaseDates(TmdbPage<TmdbReleaseDate> page) {
-        releaseDates = new HashMap<>();
+        releaseDates = new ArrayList<>();
 
         page.getResults()
-            .forEach(w -> {
-                Locale locale = countryLocale(w.country);
-
-                if (!releaseDates.containsKey(locale))
-                    releaseDates.put(locale, new HashMap<>());
-
-                w.getDateWrapper()
-                 .forEach(r -> Optional.ofNullable(releaseDates.get(locale))
-                                       .ifPresent(m -> m.put(r.releaseType, r.releaseDate)));
-            });
+            .forEach(w -> w.getDateWrapper()
+                           .forEach(r -> releaseDates.add(new Release(r.getReleaseType(), r.releaseDate, countryLocale(w.country)))));
     }
 
 
@@ -91,7 +85,7 @@ class TmdbMovie extends Movie {
                                   .map(TmdbProductionCountry::getCountry)
                                   .map(MovieUtils::countryLocale)
                                   .filter(Objects::nonNull)
-                                  .collect(toList());
+                                  .collect(toSet());
     }
 
 
@@ -103,6 +97,7 @@ class TmdbMovie extends Movie {
 
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private static class TmdbProductionCountry {
 
         private @JsonAlias("iso_3166_1") String country;
@@ -112,6 +107,7 @@ class TmdbMovie extends Movie {
 
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     static class TmdbReleaseDate {
 
         private @JsonAlias("iso_3166_1") String country;
@@ -121,7 +117,7 @@ class TmdbMovie extends Movie {
         @Data
         static class TmdbDateWrapper {
 
-            private ReleaseType releaseType;
+            private Release.Type releaseType;
             private String certification;
             private String note;
             private @JsonAlias("iso_639_1") String language;

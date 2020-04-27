@@ -27,7 +27,7 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 
 @Database(
         entities = {Movie.class},
-        version = 6,
+        version = 7,
         exportSchema = false
 )
 @TypeConverters({CustomTypeConverters.class})

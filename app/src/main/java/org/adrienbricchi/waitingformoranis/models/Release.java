@@ -17,12 +17,41 @@
  */
 package org.adrienbricchi.waitingformoranis.models;
 
-public enum ReleaseType {
-    PREMIERE,
-    THEATRICAL_LIMITED,
-    THEATRICAL,
-    DIGITAL,
-    PHYSICAL,
-    TV,
-    UNKNOWN
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+import java.util.Date;
+import java.util.Locale;
+
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Release {
+
+
+    public enum Type {
+
+        THEATRICAL,
+        DIGITAL,
+        PHYSICAL,
+        THEATRICAL_LIMITED,
+        TV,
+        PREMIERE,
+        UNKNOWN;
+
+
+        public static int compare(Type x, Type y) {
+            return (x.ordinal() < y.ordinal()) ? -1 : ((x == y) ? 0 : 1);
+        }
+
+    }
+
+
+    private @NonNull Type type;
+    private @NonNull Date date;
+    private @NonNull Locale country;
+
 }

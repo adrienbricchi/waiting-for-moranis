@@ -274,7 +274,10 @@ public class MovieListFragment extends Fragment {
                               .stream()
                               .filter(e -> oldMoviesMap.get(e.getKey()) == null)
                               .forEach(e -> {
-                                  Movie m = new Movie(e.getKey(), null, null, null, e.getValue(), true);
+                                  Movie m = new Movie(
+                                          e.getKey(), null, null, e.getValue(),
+                                          new HashSet<>(), new ArrayList<>(), null, true
+                                  );
                                   oldMoviesMap.put(e.getKey(), m);
                                   database.movieDao().add(m);
                               });
@@ -307,7 +310,7 @@ public class MovieListFragment extends Fragment {
 
                 refreshedMovies.stream()
                                .filter(m -> (m.getCalendarEventId() == null))
-                               .filter(m -> (m.getReleaseDate() != null))
+                               .filter(m -> (m.getReleaseDates() != null))
                                .forEach(m -> {
                                    Long calendarEventId = CalendarService.init(getActivity())
                                                                          .map(c -> c.addMovieToCalendar(calendarId, m))
@@ -340,7 +343,7 @@ public class MovieListFragment extends Fragment {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Movie> movies = database.movieDao().getAll();
-            movies.sort(MovieUtils::compareReleaseDate);
+            movies.sort((o1, o2) -> MovieUtils.compareMovieRelease(Locale.getDefault(), o1, o2));
 
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(movies);

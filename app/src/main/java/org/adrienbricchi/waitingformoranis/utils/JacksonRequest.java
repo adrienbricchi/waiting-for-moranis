@@ -65,7 +65,6 @@ public class JacksonRequest<T> extends Request<T> {
             );
             return Response.success(
                     objectMapper.readValue(json, typeRef),
-
                     // Temp fix of this warn : Unable to parse dateStr: 2020-02-26 04:37:00 +0000
                     // This has to be fixed on the TMDB server.
 
