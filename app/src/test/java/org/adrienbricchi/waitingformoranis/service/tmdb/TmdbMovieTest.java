@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import java.util.Date;
 
-import static java.util.Arrays.asList;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.countryLocale;
 import static org.junit.Assert.assertEquals;
@@ -201,15 +200,17 @@ public class TmdbMovieTest {
         assertEquals("https://image.tmdb.org/t/p/w154/k68nPLbIST6NP96JmTxmZijEvCA.jpg", movie.getImageUrl());
 
         assertEquals(4, movie.getProductionCountries().size());
-        assertTrue(movie.getProductionCountries()
-                        .containsAll(asList(
-                                countryLocale("CA"),
-                                countryLocale("NO"),
-                                countryLocale("GB"),
-                                countryLocale("US")
-                        )));
+        assertTrue(movie.getProductionCountries().stream().anyMatch(r -> r.equals(countryLocale("CA"))));
+        assertTrue(movie.getProductionCountries().stream().anyMatch(r -> r.equals(countryLocale("NO"))));
+        assertTrue(movie.getProductionCountries().stream().anyMatch(r -> r.equals(countryLocale("US"))));
+        assertTrue(movie.getProductionCountries().stream().anyMatch(r -> r.equals(countryLocale("GB"))));
+
 
         assertEquals(11, movie.getReleaseDates().size());
+        assertTrue(movie.getReleaseDates().stream().anyMatch(r -> r.getCountry().equals(countryLocale("FR"))));
+        assertTrue(movie.getReleaseDates().stream().anyMatch(r -> r.getCountry().equals(countryLocale("US"))));
+        assertTrue(movie.getReleaseDates().stream().anyMatch(r -> r.getCountry().equals(countryLocale("GB"))));
+
         assertEquals(1594807200000L, movie.getReleaseDate().longValue());
         assertEquals(1594944000000L, movie.getReleaseDates()
                                           .stream()

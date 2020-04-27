@@ -75,7 +75,12 @@ class TmdbMovie extends Movie {
 
         page.getResults()
             .forEach(w -> w.getDateWrapper()
-                           .forEach(r -> releaseDates.add(new Release(r.getReleaseType(), r.releaseDate, countryLocale(w.country)))));
+                           .forEach(r -> releaseDates.add(new Release(
+                                   r.getReleaseType(),
+                                   r.releaseDate,
+                                   countryLocale(w.country),
+                                   r.getNote()
+                           ))));
     }
 
 

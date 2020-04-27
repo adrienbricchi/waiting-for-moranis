@@ -67,7 +67,7 @@ public class MovieUtils {
     public static @Nullable Release getRelease(@NonNull Movie movie, @NonNull Locale locale) {
         return movie.getReleaseDates()
                     .stream()
-                    .filter(r -> r.getCountry() == locale)
+                    .filter(r -> r.getCountry().equals(locale))
                     .min(MovieUtils::compareRelease)
                     .orElse(getOriginalRelease(movie));
     }

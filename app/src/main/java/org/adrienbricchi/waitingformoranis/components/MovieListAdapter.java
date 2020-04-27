@@ -29,6 +29,7 @@ import com.squareup.picasso.Picasso;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
@@ -44,6 +45,8 @@ import java.util.stream.IntStream;
 import static java.text.DateFormat.FULL;
 import static org.adrienbricchi.waitingformoranis.R.drawable.ic_local_movies_48dp;
 import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_parenthesis;
+import static org.adrienbricchi.waitingformoranis.models.Release.Type.DIGITAL;
+import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
 
 
 @Data
@@ -92,7 +95,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
         Movie currentMovie = dataSet.get(position);
         Context currentContext = holder.binding.getRoot().getContext();
-        Release release = MovieUtils.getRelease(currentMovie, Locale.getDefault());
+        Locale currentLocale = MovieUtils.countryLocale(Locale.getDefault().getCountry());
+        Release release = MovieUtils.getRelease(currentMovie, currentLocale);
 
         Picasso.get()
                .load(dataSet.get(position).getImageUrl())
@@ -103,8 +107,38 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         holder.binding.titleTextView.setText(currentMovie.getTitle());
         holder.binding.dateTextView.setText(
                 Optional.ofNullable(release)
-                        .map(Release::getDate)
-                        .map(d -> SimpleDateFormat.getDateInstance(FULL, Locale.getDefault()).format(d))
+                        .map(r -> {
+                            boolean isWeirdType = (r.getType() != THEATRICAL);
+                            boolean isLocal = r.getCountry().equals(currentLocale);
+                            String dateString = SimpleDateFormat.getDateInstance(FULL, r.getCountry()).format(r.getDate());
+
+                            if (isWeirdType && !isLocal) {
+                                return currentContext.getString(
+                                        R.string.movie_double_parenthesis,
+                                        dateString,
+                                        r.getCountry().getDisplayCountry(Locale.getDefault()),
+                                        (r.getType() == DIGITAL) && !TextUtils.isEmpty(r.getDescription())
+                                        ? r.getDescription()
+                                        : currentContext.getString(r.getType().getLabelStringResource())
+                                );
+                            } else if (isWeirdType) {
+                                return currentContext.getString(
+                                        R.string.movie_single_parenthesis,
+                                        dateString,
+                                        (r.getType() == DIGITAL) && !TextUtils.isEmpty(r.getDescription())
+                                        ? r.getDescription()
+                                        : currentContext.getString(r.getType().getLabelStringResource())
+                                );
+                            } else if (!isLocal) {
+                                return currentContext.getString(
+                                        R.string.movie_single_parenthesis,
+                                        dateString,
+                                        r.getCountry().getDisplayCountry(Locale.getDefault())
+                                );
+                            } else {
+                                return dateString;
+                            }
+                        })
                         .orElse(currentContext.getString(unknown_between_parenthesis)));
 
         holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentMovie.getId()));

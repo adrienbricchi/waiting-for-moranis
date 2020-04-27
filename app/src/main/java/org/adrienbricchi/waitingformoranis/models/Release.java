@@ -17,30 +17,35 @@
  */
 package org.adrienbricchi.waitingformoranis.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import androidx.annotation.StringRes;
+import lombok.*;
 
 import java.util.Date;
 import java.util.Locale;
+
+import static org.adrienbricchi.waitingformoranis.R.string.*;
 
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class Release {
 
 
+    @Getter
+    @AllArgsConstructor
     public enum Type {
 
-        THEATRICAL,
-        DIGITAL,
-        PHYSICAL,
-        THEATRICAL_LIMITED,
-        TV,
-        PREMIERE,
-        UNKNOWN;
+        THEATRICAL(theatrical),
+        DIGITAL(digital),
+        PHYSICAL(physical),
+        THEATRICAL_LIMITED(theatrical_limited),
+        TV(tv),
+        PREMIERE(premiere),
+        UNKNOWN(-1);
+
+        private @StringRes int labelStringResource;
 
 
         public static int compare(Type x, Type y) {
@@ -53,5 +58,6 @@ public class Release {
     private @NonNull Type type;
     private @NonNull Date date;
     private @NonNull Locale country;
+    private String description = null;
 
 }
