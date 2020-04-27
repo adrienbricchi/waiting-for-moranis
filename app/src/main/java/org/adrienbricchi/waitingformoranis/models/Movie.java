@@ -25,23 +25,26 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import java.util.*;
 
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(tableName = Movie.TABLE_NAME,
-        indices = {@Index(value = "id")})
+        indices = {@Index(value = Movie.FIELD_ID)})
 public class Movie {
 
     public static final String TABLE_NAME = "movie";
+    public static final String FIELD_ID = "id";
 
     protected @PrimaryKey @NonNull String id = UUID.randomUUID().toString();
     protected String title;
     protected Long releaseDate;
     protected String imageUrl;
     protected Long calendarEventId;
+    protected @NonNull List<Locale> productionCountries = new ArrayList<>();
+    protected @NonNull Map<Locale, Map<ReleaseType, Date>> releaseDates = new HashMap<>();
     protected boolean isUpdateNeededInCalendar = false;
 
 }

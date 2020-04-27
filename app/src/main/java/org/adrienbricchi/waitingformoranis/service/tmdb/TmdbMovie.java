@@ -1,0 +1,162 @@
+/*
+ * Waiting For Moranis
+ * Copyright (C) 2020
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.adrienbricchi.waitingformoranis.service.tmdb;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.models.ReleaseType;
+import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
+
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
+import static org.adrienbricchi.waitingformoranis.models.ReleaseType.*;
+import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.countryLocale;
+
+
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode(callSuper = true)
+class TmdbMovie extends Movie {
+
+    public static final String COVER_URL = "https://image.tmdb.org/t/p/w154%s";
+
+
+    private @JsonAlias("original_title") String originalTitle;
+    private @JsonAlias("original_language") String originalLanguage;
+    private String overview;
+    private boolean video;
+    private boolean adult;
+    private @JsonAlias("backdrop_path") String backdropPath;
+    private float popularity;
+    private @JsonAlias("vote_count") int voteCount;
+    private @JsonAlias("vote_average") float voteAverage;
+
+
+    //    @JsonAlias("release_date")
+    //    private void setReleaseDate(String date) {
+    //        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    //        try {
+    //            releaseDate = Optional.ofNullable(format.parse(date))
+    //                                  .map(Date::getTime)
+    //                                  // We add 12 hours to it, to ease everything.
+    //                                  // We're getting the right date, at 00:00, and GMT+/-1 tends to change the day.
+    //                                  .map(t -> t + (12 * 60 * 60 * 1000))
+    //                                  .orElse(null);
+    //        }
+    //        catch (ParseException exp) { /* Not used */ }
+    //    }
+
+
+    @JsonProperty("release_dates")
+    private void parseReleaseDates(TmdbPage<TmdbReleaseDate> page) {
+        releaseDates = new HashMap<>();
+
+        page.getResults()
+            .forEach(w -> {
+                Locale locale = countryLocale(w.country);
+
+                if (!releaseDates.containsKey(locale))
+                    releaseDates.put(locale, new HashMap<>());
+
+                w.getDateWrapper()
+                 .forEach(r -> Optional.ofNullable(releaseDates.get(locale))
+                                       .ifPresent(m -> m.put(r.releaseType, r.releaseDate)));
+            });
+    }
+
+
+    @JsonProperty("production_countries")
+    private void parseProductionCountries(List<TmdbProductionCountry> list) {
+        productionCountries = list.stream()
+                                  .map(TmdbProductionCountry::getCountry)
+                                  .map(MovieUtils::countryLocale)
+                                  .filter(Objects::nonNull)
+                                  .collect(toList());
+    }
+
+
+    @JsonProperty("poster_path")
+    private void parsePosterPath(String posterPath) {
+        // https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
+        imageUrl = String.format(COVER_URL, posterPath);
+    }
+
+
+    @Data
+    private static class TmdbProductionCountry {
+
+        private @JsonAlias("iso_3166_1") String country;
+        private String name;
+
+    }
+
+
+    @Data
+    static class TmdbReleaseDate {
+
+        private @JsonAlias("iso_3166_1") String country;
+        private @JsonAlias("release_dates") List<TmdbDateWrapper> dateWrapper;
+
+
+        @Data
+        static class TmdbDateWrapper {
+
+            private ReleaseType releaseType;
+            private String certification;
+            private String note;
+            private @JsonAlias("iso_639_1") String language;
+            private @JsonAlias("release_date") Date releaseDate;
+
+
+            @JsonProperty("type")
+            private void parseType(int typeIndex) {
+                // https://developers.themoviedb.org/3/movies/get-movie-release-dates
+                switch (typeIndex) {
+                    case 1:
+                        releaseType = PREMIERE;
+                        break;
+                    case 2:
+                        releaseType = THEATRICAL_LIMITED;
+                        break;
+                    case 3:
+                        releaseType = THEATRICAL;
+                        break;
+                    case 4:
+                        releaseType = DIGITAL;
+                        break;
+                    case 5:
+                        releaseType = PHYSICAL;
+                        break;
+                    case 6:
+                        releaseType = TV;
+                        break;
+                    default:
+                        releaseType = UNKNOWN;
+                }
+            }
+
+        }
+
+    }
+
+}

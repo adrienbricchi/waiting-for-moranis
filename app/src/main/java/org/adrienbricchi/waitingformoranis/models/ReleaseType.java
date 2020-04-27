@@ -15,22 +15,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.adrienbricchi.waitingformoranis.models.tmdb;
+package org.adrienbricchi.waitingformoranis.models;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-
-import java.util.List;
-
-
-@Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class TmdbPage<T> {
-
-    private int page;
-    private List<T> results;
-    private @JsonAlias("total_results") int totalResults;
-    private @JsonAlias("total_pages") int totalPages;
-
+public enum ReleaseType {
+    PREMIERE,
+    THEATRICAL_LIMITED,
+    THEATRICAL,
+    DIGITAL,
+    PHYSICAL,
+    TV,
+    UNKNOWN
 }
