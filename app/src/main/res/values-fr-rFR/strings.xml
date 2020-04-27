@@ -39,6 +39,13 @@
         <item quantity="other">%d items sélectionnés</item>
     </plurals>
 
+    <string name="theatrical">Cinéma</string>
+    <string name="digital">Numérique</string>
+    <string name="physical">Support physique</string>
+    <string name="theatrical_limited">Sortie limitée</string>
+    <string name="tv">Télévision</string>
+    <string name="premiere">Avant-premiere</string>
+
     <!-- <editor-fold desc="Settings" -->
 
     <string name="external_services">Services externes</string>

@@ -30,8 +30,6 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.adrienbricchi.waitingformoranis.models.Movie;
-import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbMovie;
-import org.adrienbricchi.waitingformoranis.models.tmdb.TmdbPage;
 import org.adrienbricchi.waitingformoranis.utils.JacksonRequest;
 
 import java.util.List;
@@ -53,10 +51,12 @@ public class TmdbService {
 
     private static final String PATH_SEARCH = "search";
     private static final String PATH_MOVIE = "movie";
+    private static final String PATH_RELEASE_DATES = "release_dates";
 
     private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
     private static final String QUERY_PARAM = "query";
+    private static final String APPEND_TO_RESPONSE_PARAM = "append_to_response";
 
 
     private @NonNull Context context;
@@ -137,9 +137,12 @@ public class TmdbService {
         String url = new Uri.Builder()
                 .scheme(HTTPS).authority(URL)
                 .appendPath(API).appendPath(PATH_MOVIE).appendPath(id)
+                .appendQueryParameter(APPEND_TO_RESPONSE_PARAM, PATH_RELEASE_DATES)
                 .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
                 .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
                 .build().toString();
+
+        Log.v(LOG_TAG, url);
 
         // Request from the provided URL.
         JacksonRequest<TmdbMovie> jacksonRequest = new JacksonRequest<>(

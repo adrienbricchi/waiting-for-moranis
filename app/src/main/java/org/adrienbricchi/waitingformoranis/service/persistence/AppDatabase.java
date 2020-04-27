@@ -21,14 +21,16 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 
 
 @Database(
         entities = {Movie.class},
-        version = 4,
+        version = 7,
         exportSchema = false
 )
+@TypeConverters({CustomTypeConverters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;

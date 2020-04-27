@@ -31,6 +31,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.models.Release;
+import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 
 import java.util.*;
 
@@ -194,14 +196,15 @@ public class CalendarService {
     public @Nullable Long addMovieToCalendar(@Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "addMovieToCalendar title:" + movie.getTitle());
 
-        if ((calendarId == null) || !hasPermissions()) {
+        Release release = MovieUtils.getRelease(movie, Locale.getDefault());
+        if ((calendarId == null) || (release == null) || !hasPermissions()) {
             return null;
         }
 
         ContentResolver cr = activity.getContentResolver();
         ContentValues values = new ContentValues();
-        values.put(DTSTART, movie.getReleaseDate());
-        values.put(DTEND, movie.getReleaseDate());
+        values.put(DTSTART, release.getDate().getTime());
+        values.put(DTEND, release.getDate().getTime());
         values.put(ALL_DAY, true);
         values.put(TITLE, movie.getTitle() + activity.getString(_hashtag_movie));
         values.put(CALENDAR_ID, calendarId);
@@ -221,14 +224,15 @@ public class CalendarService {
     public boolean editMovieInCalendar(@Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "editMovieInCalendar title:" + movie.getTitle());
 
-        if ((calendarId == null) || (movie.getReleaseDate() == null) || !hasPermissions()) {
+        Release release = MovieUtils.getRelease(movie, Locale.getDefault());
+        if ((calendarId == null) || (release == null) || !hasPermissions()) {
             return false;
         }
 
         ContentResolver cr = activity.getContentResolver();
         ContentValues values = new ContentValues();
-        values.put(DTSTART, movie.getReleaseDate());
-        values.put(DTEND, movie.getReleaseDate());
+        values.put(DTSTART, release.getDate().getTime());
+        values.put(DTEND, release.getDate().getTime());
         values.put(ALL_DAY, true);
         values.put(TITLE, movie.getTitle() + activity.getString(_hashtag_movie));
         values.put(CALENDAR_ID, calendarId);
@@ -244,7 +248,7 @@ public class CalendarService {
     public boolean deleteMovieInCalendar(@Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "deleteMovieInCalendar title:" + movie.getTitle());
 
-        if ((calendarId == null) || (movie.getReleaseDate() == null) || !hasPermissions()) {
+        if ((calendarId == null) || !hasPermissions()) {
             return false;
         }
 
