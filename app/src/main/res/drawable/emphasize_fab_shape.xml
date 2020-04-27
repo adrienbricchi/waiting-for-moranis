@@ -21,12 +21,12 @@
 <layer-list
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- stokeWidth = -right = (width-88)/2  -->
+    <!--  stokeWidth = -right = (width-88)/2  -->
     <item
             android:width="704dp"
             android:height="704dp"
             android:bottom="-308dp"
-            android:right="-308dp">
+            android:end="-308dp">
         <shape android:shape="oval">
             <stroke
                     android:width="308dp"
