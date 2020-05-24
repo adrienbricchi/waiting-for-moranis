@@ -69,7 +69,7 @@ public class MovieUtils {
                     .stream()
                     .filter(r -> r.getCountry().equals(locale))
                     .min(MovieUtils::compareRelease)
-                    .orElse(getOriginalRelease(movie));
+                    .orElseGet(() -> getOriginalRelease(movie));
     }
 
 

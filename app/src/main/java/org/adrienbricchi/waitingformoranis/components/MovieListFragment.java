@@ -46,7 +46,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static androidx.recyclerview.selection.StorageStrategy.createStringStorage;
-import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
@@ -267,7 +266,7 @@ public class MovieListFragment extends Fragment {
 
                 Map<String, Long> existingEvents = CalendarService.init(getActivity())
                                                                   .map(c -> c.getEvents(calendarId))
-                                                                  .orElse(emptyMap());
+                                                                  .orElseGet(Collections::emptyMap);
 
                 // Movies that are in the Calendar, but not in the DB
                 existingEvents.entrySet()

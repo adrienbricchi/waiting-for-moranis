@@ -139,7 +139,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                                 return dateString;
                             }
                         })
-                        .orElse(currentContext.getString(unknown_between_parenthesis)));
+                        .orElseGet(() -> currentContext.getString(unknown_between_parenthesis)));
 
         holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentMovie.getId()));
     }
