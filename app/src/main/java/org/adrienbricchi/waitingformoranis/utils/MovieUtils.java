@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.utils;
 
+import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import org.adrienbricchi.waitingformoranis.models.Movie;
@@ -41,12 +42,12 @@ public class MovieUtils {
     }
 
 
-    static int compareCountry(Locale x, Locale y) {
+    private static int compareCountry(Locale x, Locale y) {
         return (x.hashCode() < y.hashCode()) ? -1 : ((x == y) ? 0 : 1);
     }
 
 
-    public static int compareRelease(@NonNull Release o1, @NonNull Release o2) {
+    private static int compareRelease(@NonNull Release o1, @NonNull Release o2) {
         return (MovieUtils.compareCountry(o1.getCountry(), o2.getCountry()) * 100)
                 + (Release.Type.compare(o1.getType(), o2.getType()) * 10)
                 + Long.compare(o1.getDate().getTime(), o2.getDate().getTime());
@@ -67,13 +68,13 @@ public class MovieUtils {
     public static @Nullable Release getRelease(@NonNull Movie movie, @NonNull Locale locale) {
         return movie.getReleaseDates()
                     .stream()
-                    .filter(r -> r.getCountry().equals(locale))
+                    .filter(r -> TextUtils.equals(r.getCountry().getCountry(), locale.getCountry()))
                     .min(MovieUtils::compareRelease)
                     .orElseGet(() -> getOriginalRelease(movie));
     }
 
 
-    public static @Nullable Release getOriginalRelease(@NonNull Movie movie) {
+    static @Nullable Release getOriginalRelease(@NonNull Movie movie) {
         return movie.getReleaseDates()
                     .stream()
                     .filter(r -> movie.getProductionCountries().contains(r.getCountry()))
