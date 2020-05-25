@@ -1,1 +1,17 @@
-# waiting-for-moranis
+# Waiting for Moranis
+
+A simple countdown list to keep track of upcoming movies.
+
+* Add movies to your waiting list
+* Refresh the list, to retrieve release dates
+* Setup a Google Calendar to synchronize movie releases as daily events
+* Share your Google Calendar, keep it to yourself, or do whatever the Calendar app can do
+
+
+### Application's privacy policy
+
+We don't store your data, period.
+We don't want to, nor have the infrastructure for that.  
+
+If you use the Google Calendar (not required, and disabled by default), the Google Calendar privacy policy will apply.  
+If you use your own TMDB account's API Key (not required, and disabled by default), the TMDB privacy policy will apply.
