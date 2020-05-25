@@ -1,4 +1,5 @@
-# Waiting for Moranis
+Waiting for Moranis
+===================
 
 A simple countdown list to keep track of upcoming movies.
 
