@@ -1,0 +1,99 @@
+/*
+ * Waiting For Moranis
+ * Copyright (C) 2020
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+apply plugin: 'com.android.application'
+
+def apikeyPropertiesFile = rootProject.file("apikey.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
+android {
+
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        applicationId "org.adrienbricchi.waitingformoranis"
+        minSdkVersion 24
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "TMDB_KEY", '"' + apikeyProperties['TMDB_KEY'] + '"'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    viewBinding {
+        enabled = true
+    }
+
+}
+
+apply plugin: 'com.google.gms.oss.licenses.plugin'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    def lombok_version = '1.18.12'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombok_version
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombok_version
+
+    def room_version = '1.1.1'
+    implementation group: 'android.arch.lifecycle', name: 'extensions', version: room_version
+    implementation group: 'android.arch.persistence.room', name: 'runtime', version: room_version
+    annotationProcessor group: 'android.arch.lifecycle', name: 'common-java8', version: room_version
+    annotationProcessor group: 'android.arch.persistence.room', name: 'compiler', version: room_version
+
+    def jackson_version = '2.11.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jackson_version
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jackson_version
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jackson_version
+
+    implementation group: 'com.android.volley', name: 'volley', version: '1.1.1'
+    implementation group: 'com.squareup.picasso', name: 'picasso', version: '2.71828'
+    implementation group: 'com.google.android.gms', name: 'play-services-oss-licenses', version: '17.0.0'
+
+    def androidx_navigation_version = '2.2.2'
+    implementation group: 'androidx.navigation', name: 'navigation-fragment', version: androidx_navigation_version
+    implementation group: 'androidx.navigation', name: 'navigation-ui', version: androidx_navigation_version
+
+    implementation group: 'androidx.appcompat', name: 'appcompat', version: '1.1.0'
+    implementation group: 'androidx.recyclerview', name: 'recyclerview', version: '1.1.0'
+    implementation group: 'androidx.recyclerview', name: 'recyclerview-selection', version: '1.1.0-rc01'
+    implementation group: 'com.google.android.material', name: 'material', version: '1.2.0-alpha06'
+    implementation group: 'androidx.constraintlayout', name: 'constraintlayout', version: '1.1.3'
+    implementation group: 'androidx.swiperefreshlayout', name: 'swiperefreshlayout', version: '1.0.0'
+    implementation group: 'androidx.preference', name: 'preference', version: '1.1.1'
+
+    testImplementation group: 'junit', name: 'junit', version: '4.13'
+    androidTestImplementation group: 'androidx.test.ext', name: 'junit', version: '1.1.1'
+    androidTestImplementation group: 'androidx.test.espresso', name: 'espresso-core', version: '3.2.0'
+}

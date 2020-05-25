@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Waiting For Moranis
+  Copyright (C) 2020
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<resources>
+
+    <string name="app_name">Waiting For Moranis</string>
+
+    <string name="settings">Préférences</string>
+    <string name="delete">Supprimer</string>
+    <string name="disabled">Désactivé</string>
+
+    <string name="movie_list">Liste de films</string>
+    <string name="_hashtag_movie"> #film</string>
+    <string name="search_movie_title_hint">Rechercher un titre de film</string>
+    <string name="unknown_between_parenthesis">(inconnu)</string>
+
+    <string name="add_calendar_tutorial_text1">Vous pouvez créer un sous-calendrier dédié sur votre compte.</string>
+    <string name="add_calendar_tutorial_text2">À ce jour, on peut les créer depuis la version web (bureau) de Google Calendar.</string>
+
+    <plurals name="n_selected_items">
+        <item quantity="one">%d item sélectionné</item>
+        <item quantity="other">%d items sélectionnés</item>
+    </plurals>
+
+    <string name="theatrical">Cinéma</string>
+    <string name="digital">Numérique</string>
+    <string name="physical">Support physique</string>
+    <string name="theatrical_limited">Sortie limitée</string>
+    <string name="tv">Télévision</string>
+    <string name="premiere">Avant-premiere</string>
+
+    <!-- <editor-fold desc="Settings" -->
+
+    <string name="external_services">Services externes</string>
+    <string name="about">À propos</string>
+    <string name="app_copyright">Tous droits réservés © 2020\nLogiciel libre sous licence Affero GNU General Public License v3+</string>
+
+    <string name="settings_tmdb_key_title">Clé d\'API TMDB</string>
+    <string name="settings_tmdb_key_summary">Renseigner une clé personnelle, si celle par défaut est limitée</string>
+    <string name="settings_isbndb_key_title">Clé d\'API ISBNdb</string>
+    <string name="settings_isbndb_key_summary">Obligatoire pour débloquer les livres\nPas encore implémenté</string>
+    <string name="settings_google_calendar_title">Google Calendar</string>
+    <string name="settings_google_calendar_summary">Choisir le calendrier qui reçevra les évènements</string>
+    <string name="settings_github_title">Code source</string>
+    <string name="settings_github_summary">Contribuer, ou signaler un bug</string>
+    <string name="settings_open_source_licenses_title">Licences open source</string>
+    <string name="onboarding_text">Ajouter un film à surveiller</string>
+
+    <!-- </editor-fold desc="Settings" -->
+
+</resources>

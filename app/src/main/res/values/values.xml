@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Waiting For Moranis
+  Copyright (C) 2020
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<resources>
+
+    <bool name="settingsWindowLightStatusBar">true</bool>
+
+    <string name="project_github_url" translatable="false">https://github.com/adrienbricchi/waiting-for-moranis</string>
+    <string name="google_calendar_tutorial_add_url" translatable="false">https://support.google.com/calendar/answer/37095</string>
+    <string name="google_calendar_url" translatable="false">https://calendar.google.com/calendar</string>
+
+    <string name="key_external_services" translatable="false">external_services</string>
+    <string name="key_tmdb_key" translatable="false">tmdb_key</string>
+    <string name="key_isbndb_key" translatable="false">isbndb_key</string>
+    <string name="key_google_calendar" translatable="false">google_calendar</string>
+    <string name="key_google_calendar_no_permission" translatable="false">google_calendar_no_permission</string>
+
+    <string name="movie_single_parenthesis" translatable="false">%1$s (%2$s)</string>
+    <string name="movie_double_parenthesis" translatable="false">%1$s (%2$s, %3$s)</string>
+
+</resources>

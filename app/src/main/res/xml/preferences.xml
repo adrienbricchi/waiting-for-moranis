@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Waiting For Moranis
+  Copyright (C) 2020
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+            android:title="@string/external_services"
+            app:key="@string/key_external_services">
+
+        <EditTextPreference
+                android:icon="@drawable/ic_tmdb_square_color_24dp_w40dp"
+                android:key="@string/key_tmdb_key"
+                android:summary="@string/settings_tmdb_key_summary"
+                android:title="@string/settings_tmdb_key_title" />
+
+        <EditTextPreference
+                android:enabled="false"
+                android:icon="@drawable/ic_library_books_color_24dp_w40dp"
+                android:key="@string/key_isbndb_key"
+                android:summary="@string/settings_isbndb_key_summary"
+                android:title="@string/settings_isbndb_key_title" />
+
+        <Preference
+                android:icon="@drawable/ic_google_calendar_24dp_w40dp"
+                android:key="@string/key_google_calendar_no_permission"
+                android:summary="@string/settings_google_calendar_summary"
+                android:title="@string/settings_google_calendar_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/about">
+
+        <Preference
+                android:icon="@drawable/ic_info_outline_color_24dp_w40dp"
+                android:summary="@string/app_copyright"
+                android:title="@string/app_name" />
+
+        <Preference
+                android:icon="@drawable/ic_github_color_22dp_w40dp"
+                android:summary="@string/settings_github_summary"
+                android:title="@string/settings_github_title">
+            <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="@string/project_github_url" />
+        </Preference>
+
+        <Preference
+                android:icon="@drawable/ic_copyright_color_24dp_w40dp"
+                android:title="@string/settings_open_source_licenses_title">
+            <intent
+                    android:targetClass="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+                    android:targetPackage="org.adrienbricchi.waitingformoranis" />
+        </Preference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
