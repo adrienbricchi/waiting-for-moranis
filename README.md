@@ -8,10 +8,10 @@ A simple countdown list to keep track of upcoming movies.
 * Share your Google Calendar, keep it to yourself, or do whatever the Calendar app can do
 
 
-### Application's privacy policy
+## Privacy policy
 
-We don't store your data, period.
-We don't want to, nor have the infrastructure for that.  
+We don't store your data, period.  
+We don't want to, nor have the infrastructure for that.
 
-If you use the Google Calendar (not required, and disabled by default), the Google Calendar privacy policy will apply.  
+If you use the Google Calendar (not required, and disabled by default), the Google privacy policy will apply.  
 If you use your own TMDB account's API Key (not required, and disabled by default), the TMDB privacy policy will apply.
