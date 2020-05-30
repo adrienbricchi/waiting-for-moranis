@@ -29,6 +29,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
+import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
@@ -204,7 +205,7 @@ public class CalendarService {
         values.put(ALL_DAY, true);
         values.put(TITLE, activity.getString(hashtagged_movie, movie.getTitle()));
         values.put(CALENDAR_ID, calendarId);
-        values.put(DESCRIPTION, movie.getId());
+        values.put(DESCRIPTION, activity.getString(R.string.google_calendar_event_description, movie.getId()));
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);

@@ -299,12 +299,11 @@ public class MovieListFragment extends Fragment {
                                                       .filter(Objects::nonNull)
                                                       .collect(toList());
 
-            refreshedMovies.forEach(m -> {
-                m.setUpdateNeededInCalendar(checkForCalendarUpgradeNeed(oldMoviesMap.get(m.getId()), m));
-                m.setCalendarEventId(Optional.ofNullable(oldMoviesMap.get(m.getId()))
-                                             .map(Movie::getCalendarEventId)
-                                             .orElse(null));
-            });
+            refreshedMovies.stream()
+                           .peek(m -> m.setUpdateNeededInCalendar(checkForCalendarUpgradeNeed(oldMoviesMap.get(m.getId()), m)))
+                           .forEach(m -> m.setCalendarEventId(Optional.ofNullable(oldMoviesMap.get(m.getId()))
+                                                                      .map(Movie::getCalendarEventId)
+                                                                      .orElse(null)));
 
             if (calendarId != null) {
 
