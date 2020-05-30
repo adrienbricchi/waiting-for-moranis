@@ -128,4 +128,16 @@ public class MovieUtilsTest {
         assertNull(originalRelease);
     }
 
+
+    @Test
+    public void getIdFromCalendarDescription() {
+        Assert.assertNull(MovieUtils.getIdFromCalendarDescription(null));
+        Assert.assertNull(MovieUtils.getIdFromCalendarDescription(""));
+        Assert.assertNull(MovieUtils.getIdFromCalendarDescription("123"));
+        Assert.assertNull(MovieUtils.getIdFromCalendarDescription("Plop"));
+        Assert.assertEquals("123456", MovieUtils.getIdFromCalendarDescription("123456"));
+        Assert.assertEquals("123", MovieUtils.getIdFromCalendarDescription("[TMDB id:123]"));
+        Assert.assertEquals("123", MovieUtils.getIdFromCalendarDescription("Plop [TMDB id:123] plop"));
+    }
+
 }

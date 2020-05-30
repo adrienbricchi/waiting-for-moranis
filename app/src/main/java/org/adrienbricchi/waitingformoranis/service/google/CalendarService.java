@@ -25,7 +25,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
-import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -177,13 +176,11 @@ public class CalendarService {
         // Use the cursor to step through the returned records
         if (cursor != null) {
             while (cursor.moveToNext()) {
-
                 long eventId = cursor.getLong(EVENT_PROJECTION.indexOf(_ID));
-                String movieId = cursor.getString(EVENT_PROJECTION.indexOf(DESCRIPTION));
+                String eventDescription = cursor.getString(EVENT_PROJECTION.indexOf(DESCRIPTION));
 
-                if (!TextUtils.isEmpty(movieId)) {
-                    result.put(movieId, eventId);
-                }
+                Optional.ofNullable(MovieUtils.getIdFromCalendarDescription(eventDescription))
+                        .ifPresent(id -> result.put(id, eventId));
             }
             cursor.close();
         }

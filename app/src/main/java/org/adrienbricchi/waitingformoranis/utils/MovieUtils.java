@@ -24,6 +24,9 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 
 import java.util.Locale;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
@@ -80,6 +83,23 @@ public class MovieUtils {
                     .filter(r -> movie.getProductionCountries().contains(r.getCountry()))
                     .min(MovieUtils::compareRelease)
                     .orElse(null);
+    }
+
+
+    public static @Nullable String getIdFromCalendarDescription(@Nullable String desc) {
+
+        if (desc == null) {
+            return null;
+        }
+
+        if (desc.matches("\\d{6}")) {
+            return desc;
+        }
+
+        return Optional.of(Pattern.compile(".*?\\[TMDB id:(?<id>.*?)].*").matcher(desc))
+                       .filter(Matcher::matches)
+                       .map(m -> m.group(1))
+                       .orElse(null);
     }
 
 }
