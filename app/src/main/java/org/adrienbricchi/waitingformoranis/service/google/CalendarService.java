@@ -45,17 +45,16 @@ import static android.provider.CalendarContract.Events.*;
 import static androidx.core.app.ActivityCompat.requestPermissions;
 import static androidx.core.content.ContextCompat.checkSelfPermission;
 import static java.util.Arrays.asList;
-import static org.adrienbricchi.waitingformoranis.R.string._hashtag_movie;
+import static org.adrienbricchi.waitingformoranis.R.string.hashtagged_movie;
 
 
 @SuppressLint("MissingPermission")
 public class CalendarService {
 
     public static final int PERMISSION_REQUEST_CODE = 30112;
-    public static final List<String> PERMISSIONS = asList(READ_CALENDAR, WRITE_CALENDAR);
 
     private static final String LOG_TAG = "CalendarService";
-
+    private static final List<String> PERMISSIONS = asList(READ_CALENDAR, WRITE_CALENDAR);
     private static final String SHARED_PREFERENCES_CURRENT_GOOGLE_CALENDAR_ID_KEY = "current_google_calendar_id";
     private static final List<String> CALENDAR_PROJECTION = asList(_ID, CALENDAR_DISPLAY_NAME, OWNER_ACCOUNT);
     private static final List<String> EVENT_PROJECTION = asList(_ID, DESCRIPTION);
@@ -206,7 +205,7 @@ public class CalendarService {
         values.put(DTSTART, release.getDate().getTime());
         values.put(DTEND, release.getDate().getTime());
         values.put(ALL_DAY, true);
-        values.put(TITLE, movie.getTitle() + activity.getString(_hashtag_movie));
+        values.put(TITLE, activity.getString(hashtagged_movie, movie.getTitle()));
         values.put(CALENDAR_ID, calendarId);
         values.put(DESCRIPTION, movie.getId());
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
@@ -234,7 +233,7 @@ public class CalendarService {
         values.put(DTSTART, release.getDate().getTime());
         values.put(DTEND, release.getDate().getTime());
         values.put(ALL_DAY, true);
-        values.put(TITLE, movie.getTitle() + activity.getString(_hashtag_movie));
+        values.put(TITLE, activity.getString(hashtagged_movie, movie.getTitle()));
         values.put(CALENDAR_ID, calendarId);
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
