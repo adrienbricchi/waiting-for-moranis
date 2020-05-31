@@ -92,7 +92,7 @@ public class MovieUtils {
             return null;
         }
 
-        if (desc.matches("\\d{6}")) {
+        if (desc.matches("\\d{5,6}")) {
             return desc;
         }
 
