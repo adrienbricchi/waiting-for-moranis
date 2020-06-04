@@ -20,7 +20,6 @@ package org.adrienbricchi.waitingformoranis.components;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.*;
 import androidx.annotation.NonNull;
@@ -42,6 +41,7 @@ import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
+import static android.os.Looper.getMainLooper;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
@@ -110,7 +110,8 @@ public class MovieListFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == AddMovieDialogFragment.REQUEST_CODE) {
-            refreshListFromDb();
+            refreshListFromDb(false);
+            onPullToRefresh();
         }
     }
 
@@ -298,18 +299,16 @@ public class MovieListFragment extends Fragment {
                                                       .filter(Objects::nonNull)
                                                       .collect(toList());
 
-            refreshedMovies.forEach(m -> {
-                m.setUpdateNeededInCalendar(checkForCalendarUpgradeNeed(oldMoviesMap.get(m.getId()), m));
-                m.setCalendarEventId(Optional.ofNullable(oldMoviesMap.get(m.getId()))
-                                             .map(Movie::getCalendarEventId)
-                                             .orElse(null));
-            });
+            refreshedMovies.stream()
+                           .peek(m -> m.setUpdateNeededInCalendar(checkForCalendarUpgradeNeed(oldMoviesMap.get(m.getId()), m)))
+                           .forEach(m -> m.setCalendarEventId(Optional.ofNullable(oldMoviesMap.get(m.getId()))
+                                                                      .map(Movie::getCalendarEventId)
+                                                                      .orElse(null)));
 
             if (calendarId != null) {
 
                 refreshedMovies.stream()
                                .filter(m -> (m.getCalendarEventId() == null))
-                               .filter(m -> (m.getReleaseDates() != null))
                                .forEach(m -> {
                                    Long calendarEventId = CalendarService.init(getActivity())
                                                                          .map(c -> c.addMovieToCalendar(calendarId, m))
@@ -331,13 +330,18 @@ public class MovieListFragment extends Fragment {
 
             refreshedMovies.forEach(m -> database.movieDao().update(m));
 
-            new Handler(Looper.getMainLooper()).post(this::refreshListFromDb);
+            new Handler(getMainLooper()).post(this::refreshListFromDb);
 
         }).start();
     }
 
 
     private void refreshListFromDb() {
+        refreshListFromDb(true);
+    }
+
+
+    private void refreshListFromDb(boolean disableSpinnerOnCompletion) {
         new Thread(() -> {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
@@ -347,10 +351,10 @@ public class MovieListFragment extends Fragment {
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(movies);
 
-            new Handler(Looper.getMainLooper()).post(() -> {
+            new Handler(getMainLooper()).post(() -> {
                 binding.onboardingView.setVisibility(adapter.getDataSet().size() > 0 ? GONE : VISIBLE);
                 adapter.notifyDataSetChanged();
-                binding.movieListSwipeRefreshLayout.setRefreshing(false);
+                binding.movieListSwipeRefreshLayout.setRefreshing(!disableSpinnerOnCompletion);
             });
 
         }).start();
@@ -378,7 +382,7 @@ public class MovieListFragment extends Fragment {
                                                           database.movieDao().remove(m.getId());
                                                       }));
 
-            new Handler(Looper.getMainLooper()).post(this::refreshListFromDb);
+            new Handler(getMainLooper()).post(this::refreshListFromDb);
 
         }).start();
     }

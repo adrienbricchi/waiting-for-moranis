@@ -32,6 +32,8 @@
     <string name="key_google_calendar" translatable="false">google_calendar</string>
     <string name="key_google_calendar_no_permission" translatable="false">google_calendar_no_permission</string>
 
+    <string name="google_calendar_event_description" translatable="false">[TMDB id:%s]</string>
+
     <string name="movie_single_parenthesis" translatable="false">%1$s (%2$s)</string>
     <string name="movie_double_parenthesis" translatable="false">%1$s (%2$s, %3$s)</string>
 

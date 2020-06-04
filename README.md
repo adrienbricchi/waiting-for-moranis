@@ -1,9 +1,13 @@
-# Waiting for Moranis
+Waiting for Moranis
+===================
 
-A simple countdown list to keep track of upcoming movies.
+## Summary
+
+A simple app to retrieve movie releases dates.  
+With a single list to keep track of the countdown.
 
 * Add movies to your waiting list
-* Refresh the list, to retrieve release dates
+* Refresh the list, retrieve release dates
 * Setup a Google Calendar to synchronize movie releases as daily events
 * Share your Google Calendar, keep it to yourself, or do whatever the Calendar app can do
 

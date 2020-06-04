@@ -27,7 +27,7 @@
     <string name="disabled">Désactivé</string>
 
     <string name="movie_list">Liste de films</string>
-    <string name="_hashtag_movie"> #film</string>
+    <string name="hashtagged_movie">%s #film</string>
     <string name="search_movie_title_hint">Rechercher un titre de film</string>
     <string name="unknown_between_parenthesis">(inconnu)</string>
 
