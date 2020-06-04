@@ -32,6 +32,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TmdbMovieTest {
 
+
     @SuppressWarnings("FieldCanBeLocal")
     private static String TMDB_MOVIE_FULL_EXAMPLE = "" +
             "{" +
