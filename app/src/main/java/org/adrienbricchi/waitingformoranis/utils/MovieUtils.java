@@ -28,9 +28,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Integer.MIN_VALUE;
-
 
 public class MovieUtils {
 
@@ -62,9 +59,15 @@ public class MovieUtils {
         Release o1Release = getRelease(o1, locale);
         Release o2Release = getRelease(o2, locale);
 
-        return (o1Release == null)
-               ? MAX_VALUE : (o2Release == null)
-                             ? MIN_VALUE : Long.compare(o1Release.getDate().getTime(), o2Release.getDate().getTime());
+        return ((o1Release == null) && (o2Release == null))
+               ? o1.getTitle().compareTo(o2.getTitle())
+               : (o1Release == null)
+                 ? 1
+                 : (o2Release == null)
+                   ? -1
+                   : (o1Release.getDate().getTime() == o2Release.getDate().getTime())
+                     ? o1.getTitle().compareTo(o2.getTitle())
+                     : Long.compare(o1Release.getDate().getTime(), o2Release.getDate().getTime());
     }
 
 
