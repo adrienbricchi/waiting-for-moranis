@@ -17,7 +17,9 @@
  */
 package org.adrienbricchi.waitingformoranis.components;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -41,6 +43,7 @@ import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
+import static android.content.Intent.ACTION_VIEW;
 import static android.os.Looper.getMainLooper;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -201,12 +204,21 @@ public class MovieListFragment extends Fragment {
                 switch (item.getItemId()) {
 
                     case R.id.delete:
+
                         deleteMovies(adapter.getSelectionTracker().getSelection().spliterator());
                         mode.finish(); // Action picked, so close the CAB
+
                         return true;
 
                     case R.id.edit:
-                        // TODO : open the navigator to the appropriate URL
+
+                        Uri webpage = Uri.parse("https://www.themoviedb.org/movie/155-the-dark-knight/releases?language=fr-FR");
+                        Intent intent = new Intent(ACTION_VIEW, webpage);
+                        Optional.ofNullable(getActivity())
+                                .map(Activity::getPackageManager)
+                                .filter(pm -> intent.resolveActivity(pm) != null)
+                                .ifPresent(pm -> startActivity(intent));
+
                         mode.finish();
                         return true;
 
