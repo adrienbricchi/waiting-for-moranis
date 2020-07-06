@@ -197,13 +197,22 @@ public class MovieListFragment extends Fragment {
             // Called when the user selects a contextual menu item
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                if (item.getItemId() == R.id.delete) {
 
-                    deleteMovies(adapter.getSelectionTracker().getSelection().spliterator());
-                    mode.finish(); // Action picked, so close the CAB
-                    return true;
+                switch (item.getItemId()) {
+
+                    case R.id.delete:
+                        deleteMovies(adapter.getSelectionTracker().getSelection().spliterator());
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+
+                    case R.id.edit:
+                        // TODO : open the navigator to the appropriate URL
+                        mode.finish();
+                        return true;
+
+                    default:
+                        return false;
                 }
-                return false;
             }
 
 
@@ -239,8 +248,17 @@ public class MovieListFragment extends Fragment {
                 } else {
                     actionMode = Optional.ofNullable(actionMode)
                                          .orElseGet(() -> getActivity().startActionMode(buildActionModeCallback()));
+
                     Optional.ofNullable(actionMode)
                             .ifPresent(a -> a.setTitle(getResources().getQuantityString(n_selected_items, rowsSelected, rowsSelected)));
+
+                    Optional.ofNullable(actionMode)
+                            .map(ActionMode::getMenu)
+                            .map(m -> m.findItem(R.id.edit))
+                            .ifPresent(i -> {
+                                i.setEnabled(rowsSelected == 1);
+                                i.setVisible(rowsSelected == 1);
+                            });
                 }
             }
         };
