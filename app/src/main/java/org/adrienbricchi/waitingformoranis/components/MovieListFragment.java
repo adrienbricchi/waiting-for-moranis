@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.components;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +42,7 @@ import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
+import static android.content.Intent.ACTION_VIEW;
 import static android.os.Looper.getMainLooper;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -197,13 +199,43 @@ public class MovieListFragment extends Fragment {
             // Called when the user selects a contextual menu item
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                if (item.getItemId() == R.id.delete) {
 
-                    deleteMovies(adapter.getSelectionTracker().getSelection().spliterator());
-                    mode.finish(); // Action picked, so close the CAB
-                    return true;
+                switch (item.getItemId()) {
+
+                    case R.id.delete:
+
+                        deleteMovies(adapter.getSelectionTracker().getSelection().spliterator());
+                        mode.finish(); // Action picked, so close the CAB
+
+                        return true;
+
+                    case R.id.edit:
+
+                        Movie selectedMovie = StreamSupport
+                                .stream(adapter.getSelectionTracker().getSelection().spliterator(), false)
+                                .findFirst()
+                                .map(adapter::getMovie)
+                                .orElse(null);
+
+                        Intent intent = TmdbService
+                                .init(getActivity())
+                                .filter(t -> selectedMovie != null)
+                                .map(t -> t.getEditReleaseDatesUrl(selectedMovie))
+                                .map(u -> new Intent(ACTION_VIEW, u))
+                                .orElse(null);
+
+                        Optional.ofNullable(getActivity())
+                                .map(Activity::getPackageManager)
+                                .filter(pm -> intent != null)
+                                .filter(pm -> intent.resolveActivity(pm) != null)
+                                .ifPresent(pm -> startActivity(intent));
+
+                        mode.finish();
+                        return true;
+
+                    default:
+                        return false;
                 }
-                return false;
             }
 
 
@@ -239,8 +271,17 @@ public class MovieListFragment extends Fragment {
                 } else {
                     actionMode = Optional.ofNullable(actionMode)
                                          .orElseGet(() -> getActivity().startActionMode(buildActionModeCallback()));
+
                     Optional.ofNullable(actionMode)
                             .ifPresent(a -> a.setTitle(getResources().getQuantityString(n_selected_items, rowsSelected, rowsSelected)));
+
+                    Optional.ofNullable(actionMode)
+                            .map(ActionMode::getMenu)
+                            .map(m -> m.findItem(R.id.edit))
+                            .ifPresent(i -> {
+                                i.setEnabled(rowsSelected == 1);
+                                i.setVisible(rowsSelected == 1);
+                            });
                 }
             }
         };

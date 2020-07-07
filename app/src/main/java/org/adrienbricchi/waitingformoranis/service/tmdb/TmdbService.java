@@ -32,26 +32,35 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.utils.JacksonRequest;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
+import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
 import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
 
 
 public class TmdbService {
 
     private static final String LOG_TAG = "TmdbService";
+
+    private static Map<String, Long> sDelaySinceLastRequest = new HashMap<>();
+    private static final Long DELAY_TIMEOUT_MS = 30 * 60 * 1000L;
+
     private static final String SHARED_PREFERENCES_TMDB_API_KEY = "tmdb_api_key";
 
     private static final String HTTPS = "https";
-    private static final String API = "3";
-    private static final String URL = "api.themoviedb.org";
+    private static final String API_URL = "api.themoviedb.org";
+    private static final String WEB_URL = "www.themoviedb.org";
+    private static final String API_VERSION = "3";
 
     private static final String PATH_SEARCH = "search";
     private static final String PATH_MOVIE = "movie";
+    private static final String PATH_EDIT = "edit";
     private static final String PATH_RELEASE_DATES = "release_dates";
+
+    private static final String PATH_QUERY_ACTIVE_NAV_ITEM = "active_nav_item";
+    private static final String PATH_QUERY_RELEASE_INFORMATION = "release_information";
 
     private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
@@ -78,6 +87,15 @@ public class TmdbService {
 
 
     // </editor-fold desc="Constructor">
+
+
+    public @NonNull Uri getEditReleaseDatesUrl(@NonNull Movie movie) {
+        return new Uri.Builder()
+                .scheme(HTTPS).authority(WEB_URL)
+                .appendPath(PATH_MOVIE).appendPath(movie.getId()).appendPath(PATH_EDIT)
+                .appendQueryParameter(PATH_QUERY_ACTIVE_NAV_ITEM, PATH_QUERY_RELEASE_INFORMATION)
+                .build();
+    }
 
 
     public void setPrivateApiKey(@Nullable String apiKey) {
@@ -107,8 +125,8 @@ public class TmdbService {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         String url = new Uri.Builder()
-                .scheme(HTTPS).authority(URL)
-                .appendPath(API).appendPath(PATH_SEARCH).appendPath(PATH_MOVIE)
+                .scheme(HTTPS).authority(API_URL)
+                .appendPath(API_VERSION).appendPath(PATH_SEARCH).appendPath(PATH_MOVIE)
                 .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
                 .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
                 .appendQueryParameter(QUERY_PARAM, searchTerm)
@@ -130,13 +148,24 @@ public class TmdbService {
     public @Nullable Movie getMovie(@NonNull String id) {
         Log.v(LOG_TAG, "getMovie id:" + id);
 
+        // Delay test
+
+        if (Optional.ofNullable(sDelaySinceLastRequest.get(id))
+                    .filter(t -> t < currentTimeMillis() + DELAY_TIMEOUT_MS)
+                    .isPresent()) {
+
+            Log.i(LOG_TAG, format("getMovie postponed id:%s, timeout delay not yet finished", id));
+            return null;
+        }
+
         // Instantiate the RequestQueue.
+
         RequestQueue queue = Volley.newRequestQueue(context);
         RequestFuture<TmdbMovie> future = RequestFuture.newFuture();
 
         String url = new Uri.Builder()
-                .scheme(HTTPS).authority(URL)
-                .appendPath(API).appendPath(PATH_MOVIE).appendPath(id)
+                .scheme(HTTPS).authority(API_URL)
+                .appendPath(API_VERSION).appendPath(PATH_MOVIE).appendPath(id)
                 .appendQueryParameter(APPEND_TO_RESPONSE_PARAM, PATH_RELEASE_DATES)
                 .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
                 .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
@@ -156,7 +185,10 @@ public class TmdbService {
         queue.add(jacksonRequest);
 
         try {
-            return future.get();
+            Movie movie = future.get();
+            Log.d(LOG_TAG, format("getMovie successful id:%s title:%s", movie.getId(), movie.getTitle()));
+            sDelaySinceLastRequest.put(movie.getId(), currentTimeMillis());
+            return movie;
         }
         catch (InterruptedException | ExecutionException e) {
             return null;
