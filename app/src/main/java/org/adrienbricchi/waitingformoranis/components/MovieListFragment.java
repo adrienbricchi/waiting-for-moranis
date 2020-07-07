@@ -19,7 +19,6 @@ package org.adrienbricchi.waitingformoranis.components;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -212,10 +211,22 @@ public class MovieListFragment extends Fragment {
 
                     case R.id.edit:
 
-                        Uri webpage = Uri.parse("https://www.themoviedb.org/movie/155-the-dark-knight/releases?language=fr-FR");
-                        Intent intent = new Intent(ACTION_VIEW, webpage);
+                        Movie selectedMovie = StreamSupport
+                                .stream(adapter.getSelectionTracker().getSelection().spliterator(), false)
+                                .findFirst()
+                                .map(adapter::getMovie)
+                                .orElse(null);
+
+                        Intent intent = TmdbService
+                                .init(getActivity())
+                                .filter(t -> selectedMovie != null)
+                                .map(t -> t.getEditReleaseDatesUrl(selectedMovie))
+                                .map(u -> new Intent(ACTION_VIEW, u))
+                                .orElse(null);
+
                         Optional.ofNullable(getActivity())
                                 .map(Activity::getPackageManager)
+                                .filter(pm -> intent != null)
                                 .filter(pm -> intent.resolveActivity(pm) != null)
                                 .ifPresent(pm -> startActivity(intent));
 
