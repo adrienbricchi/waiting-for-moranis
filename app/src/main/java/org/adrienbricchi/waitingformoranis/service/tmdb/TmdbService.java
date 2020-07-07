@@ -46,12 +46,17 @@ public class TmdbService {
     private static final String SHARED_PREFERENCES_TMDB_API_KEY = "tmdb_api_key";
 
     private static final String HTTPS = "https";
-    private static final String API = "3";
-    private static final String URL = "api.themoviedb.org";
+    private static final String API_URL = "api.themoviedb.org";
+    private static final String WEB_URL = "www.themoviedb.org";
+    private static final String API_VERSION = "3";
 
     private static final String PATH_SEARCH = "search";
     private static final String PATH_MOVIE = "movie";
+    private static final String PATH_EDIT = "edit";
     private static final String PATH_RELEASE_DATES = "release_dates";
+
+    private static final String PATH_QUERY_ACTIVE_NAV_ITEM = "active_nav_item";
+    private static final String PATH_QUERY_RELEASE_INFORMATION = "release_information";
 
     private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
@@ -78,6 +83,15 @@ public class TmdbService {
 
 
     // </editor-fold desc="Constructor">
+
+
+    public @NonNull Uri getEditReleaseDatesUrl(@NonNull Movie movie) {
+        return new Uri.Builder()
+                .scheme(HTTPS).authority(WEB_URL)
+                .appendPath(PATH_MOVIE).appendPath(movie.getId()).appendPath(PATH_EDIT)
+                .appendQueryParameter(PATH_QUERY_ACTIVE_NAV_ITEM, PATH_QUERY_RELEASE_INFORMATION)
+                .build();
+    }
 
 
     public void setPrivateApiKey(@Nullable String apiKey) {
@@ -107,8 +121,8 @@ public class TmdbService {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         String url = new Uri.Builder()
-                .scheme(HTTPS).authority(URL)
-                .appendPath(API).appendPath(PATH_SEARCH).appendPath(PATH_MOVIE)
+                .scheme(HTTPS).authority(API_URL)
+                .appendPath(API_VERSION).appendPath(PATH_SEARCH).appendPath(PATH_MOVIE)
                 .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
                 .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
                 .appendQueryParameter(QUERY_PARAM, searchTerm)
@@ -135,8 +149,8 @@ public class TmdbService {
         RequestFuture<TmdbMovie> future = RequestFuture.newFuture();
 
         String url = new Uri.Builder()
-                .scheme(HTTPS).authority(URL)
-                .appendPath(API).appendPath(PATH_MOVIE).appendPath(id)
+                .scheme(HTTPS).authority(API_URL)
+                .appendPath(API_VERSION).appendPath(PATH_MOVIE).appendPath(id)
                 .appendQueryParameter(APPEND_TO_RESPONSE_PARAM, PATH_RELEASE_DATES)
                 .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
                 .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
