@@ -254,6 +254,7 @@ public class CalendarService {
     }
 
 
+    @SuppressWarnings("UnusedReturnValue")
     public boolean deleteMovieInCalendar(@Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "deleteMovieInCalendar title:" + movie.getTitle());
 
@@ -272,7 +273,11 @@ public class CalendarService {
     // <editor-fold desc="Patches">
 
 
-    private void check100To101Patch(Long calendarId, String desc) {
+    private void check100To101Patch(@Nullable Long calendarId, @Nullable String desc) {
+
+        if ((calendarId == null) || (desc == null)) {
+            return;
+        }
 
         // Refreshing entirely the event.
         // Title and description were improved from 1.0.0 to 1.0.1
