@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Edit movie release dates, on single selection
+- Slow timeout on same-movie request (30min)
 
 ### Fixed
 

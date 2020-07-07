@@ -32,17 +32,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.utils.JacksonRequest;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
+import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
 import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
 
 
 public class TmdbService {
 
     private static final String LOG_TAG = "TmdbService";
+
+    private static Map<String, Long> sDelaySinceLastRequest = new HashMap<>();
+    private static final Long DELAY_TIMEOUT_MS = 30 * 60 * 1000L;
+
     private static final String SHARED_PREFERENCES_TMDB_API_KEY = "tmdb_api_key";
 
     private static final String HTTPS = "https";
@@ -144,7 +148,18 @@ public class TmdbService {
     public @Nullable Movie getMovie(@NonNull String id) {
         Log.v(LOG_TAG, "getMovie id:" + id);
 
+        // Delay test
+
+        if (Optional.ofNullable(sDelaySinceLastRequest.get(id))
+                    .filter(t -> t < currentTimeMillis() + DELAY_TIMEOUT_MS)
+                    .isPresent()) {
+
+            Log.i(LOG_TAG, format("getMovie postponed id:%s, timeout delay not yet finished", id));
+            return null;
+        }
+
         // Instantiate the RequestQueue.
+
         RequestQueue queue = Volley.newRequestQueue(context);
         RequestFuture<TmdbMovie> future = RequestFuture.newFuture();
 
@@ -170,7 +185,10 @@ public class TmdbService {
         queue.add(jacksonRequest);
 
         try {
-            return future.get();
+            Movie movie = future.get();
+            Log.d(LOG_TAG, format("getMovie successful id:%s title:%s", movie.getId(), movie.getTitle()));
+            sDelaySinceLastRequest.put(movie.getId(), currentTimeMillis());
+            return movie;
         }
         catch (InterruptedException | ExecutionException e) {
             return null;
