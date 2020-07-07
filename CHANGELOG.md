@@ -12,6 +12,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 
+## [1.1.0] - 2020-07-07
+
+### Added
+
+- Edit movie release dates, on single selection
+
+### Fixed
+
+- Crash on same-release date movies
+- Crash on patch 100 to 101
+
+
 ## [1.0.1] - 2020-06-04
 
 ### Changed
@@ -30,5 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 [Unreleased]: https://github.com/adrienbricchi/waiting-for-moranis/tree/develop
+[1.1.0]: https://github.com/adrienbricchi/waiting-for-moranis/releases/tag/1.1.0
 [1.0.1]: https://github.com/adrienbricchi/waiting-for-moranis/releases/tag/1.0.1
 [1.0.0]: https://github.com/adrienbricchi/waiting-for-moranis/releases/tag/1.0.0
