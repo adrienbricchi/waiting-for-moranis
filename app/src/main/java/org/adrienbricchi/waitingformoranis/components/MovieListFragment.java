@@ -37,7 +37,6 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
-import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 
 import java.util.*;
 import java.util.stream.StreamSupport;
@@ -52,6 +51,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
+import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.generateReleaseDateComparator;
 
 
 @Getter
@@ -387,7 +387,7 @@ public class MovieListFragment extends Fragment {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Movie> movies = database.movieDao().getAll();
-            movies.sort((o1, o2) -> MovieUtils.compareMovieRelease(Locale.getDefault(), o1, o2));
+            Collections.sort(movies, generateReleaseDateComparator(Locale.getDefault()));
 
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(movies);
