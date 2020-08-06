@@ -23,13 +23,28 @@ import androidx.annotation.Nullable;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 
+import java.util.Comparator;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Comparator.*;
+
 
 public class MovieUtils {
+
+
+    private static Function<Release, Integer> COUNTRY_HASH_EXTRACTOR = r -> Optional.ofNullable(r.getCountry())
+                                                                                    .map(Locale::hashCode)
+                                                                                    .orElse(null);
+
+    private static Comparator<Release> RELEASE_COMPARATOR =
+            comparing(COUNTRY_HASH_EXTRACTOR, comparing(r -> r, nullsLast(naturalOrder())))
+                    .thenComparing(Release::getType, nullsLast(naturalOrder()))
+                    .thenComparing(Release::getDate, nullsLast(naturalOrder()));
 
 
     public static @NonNull Locale countryLocale(@NonNull String iso639) {
@@ -42,32 +57,15 @@ public class MovieUtils {
     }
 
 
-    private static int compareCountry(Locale x, Locale y) {
-        return (x.hashCode() < y.hashCode()) ? -1 : ((x == y) ? 0 : 1);
-    }
+    public static Comparator<Movie> generateReleaseDateComparator(@NonNull Locale locale) {
 
+        Function<Movie, Date> movieReleaseExtractor = movie -> Optional.ofNullable(getRelease(movie, locale))
+                                                                       .map(Release::getDate)
+                                                                       .orElse(null);
 
-    private static int compareRelease(@NonNull Release o1, @NonNull Release o2) {
-        return (MovieUtils.compareCountry(o1.getCountry(), o2.getCountry()) * 100)
-                + (Release.Type.compare(o1.getType(), o2.getType()) * 10)
-                + Long.compare(o1.getDate().getTime(), o2.getDate().getTime());
-    }
-
-
-    public static int compareMovieRelease(@NonNull Locale locale, @NonNull Movie o1, @NonNull Movie o2) {
-
-        Release o1Release = getRelease(o1, locale);
-        Release o2Release = getRelease(o2, locale);
-
-        return ((o1Release == null) && (o2Release == null))
-               ? o1.getTitle().compareTo(o2.getTitle())
-               : (o1Release == null)
-                 ? 1
-                 : (o2Release == null)
-                   ? -1
-                   : (o1Release.getDate().getTime() == o2Release.getDate().getTime())
-                     ? o1.getTitle().compareTo(o2.getTitle())
-                     : Long.compare(o1Release.getDate().getTime(), o2Release.getDate().getTime());
+        return comparing(movieReleaseExtractor, comparing(d -> d, nullsLast(naturalOrder())))
+                .thenComparing(Movie::getTitle, nullsLast(naturalOrder()))
+                .thenComparing(Movie::getId, nullsLast(naturalOrder()));
     }
 
 
@@ -75,7 +73,7 @@ public class MovieUtils {
         return movie.getReleaseDates()
                     .stream()
                     .filter(r -> TextUtils.equals(r.getCountry().getCountry(), locale.getCountry()))
-                    .min(MovieUtils::compareRelease)
+                    .min(RELEASE_COMPARATOR)
                     .orElseGet(() -> getOriginalRelease(movie));
     }
 
@@ -84,7 +82,7 @@ public class MovieUtils {
         return movie.getReleaseDates()
                     .stream()
                     .filter(r -> movie.getProductionCountries().contains(r.getCountry()))
-                    .min(MovieUtils::compareRelease)
+                    .min(RELEASE_COMPARATOR)
                     .orElse(null);
     }
 

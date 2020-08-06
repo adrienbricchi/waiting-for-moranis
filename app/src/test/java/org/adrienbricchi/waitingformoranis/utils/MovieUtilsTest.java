@@ -22,16 +22,14 @@ import org.adrienbricchi.waitingformoranis.models.Release;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Locale;
+import java.util.*;
 
-import static java.lang.Integer.MIN_VALUE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.Locale.*;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.*;
+import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.getRelease;
 import static org.junit.Assert.*;
 
 
@@ -66,9 +64,9 @@ public class MovieUtilsTest {
                 new Release(THEATRICAL, new Date(3L), FRANCE)
         ));
 
-        assertEquals(-1L, MovieUtils.compareMovieRelease(US, movie1, movie2));
-        assertEquals(1L, MovieUtils.compareMovieRelease(FRANCE, movie1, movie2));
-        assertEquals(MIN_VALUE, MovieUtils.compareMovieRelease(US, movie1, new Movie()));
+        assertEquals(-1L, MovieUtils.generateReleaseDateComparator(US).compare(movie1, movie2));
+        assertEquals(1L, MovieUtils.generateReleaseDateComparator(FRANCE).compare(movie1, movie2));
+        assertEquals(-1, MovieUtils.generateReleaseDateComparator(US).compare(movie1, new Movie()));
     }
 
 
@@ -85,15 +83,65 @@ public class MovieUtilsTest {
                 new Release(THEATRICAL, new Date(4L), FRANCE)
         ));
 
-        Release franceRelease = MovieUtils.getRelease(movie, FRANCE);
+        Release franceRelease = getRelease(movie, FRANCE);
         assertNotNull(franceRelease);
         assertEquals(FRANCE, franceRelease.getCountry());
         assertEquals(THEATRICAL, franceRelease.getType());
 
-        Release ukRelease = MovieUtils.getRelease(movie, UK);
+        Release ukRelease = getRelease(movie, UK);
         assertNotNull(ukRelease);
         assertEquals(CANADA, ukRelease.getCountry());
         assertEquals(DIGITAL, ukRelease.getType());
+    }
+
+
+    @Test
+    public void generateReleaseDateComparator() {
+
+        // Building test case
+
+        Movie movie01 = new Movie() {{
+            setId("id_01");
+            setTitle("title_z1");
+            setReleaseDates(singletonList(new Release(THEATRICAL, new Date(0L), CANADA_FRENCH)));
+        }};
+
+        Movie movie02 = new Movie() {{
+            setId("id_02");
+            setTitle("title_z2");
+            setReleaseDates(singletonList(new Release(THEATRICAL, new Date(86400000L), CANADA_FRENCH)));
+        }};
+
+        Movie movie03 = new Movie() {{
+            setId("id_03");
+            setTitle("title_03");
+            setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
+        }};
+
+        Movie movie03bis = new Movie() {{
+            setId("id_03bis");
+            setTitle("title_03");
+            setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
+        }};
+
+        Movie movie03ter = new Movie() {{
+            setId("id_03ter");
+            setTitle(null);
+            setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
+        }};
+
+        Movie movie04 = new Movie() {{
+            setId("id_04");
+            setTitle("title_04");
+            setReleaseDates(emptyList());
+        }};
+
+        List<Movie> movieList = asList(movie04, movie02, movie03ter, movie01, movie03bis, movie03);
+
+        // Testing
+
+        Collections.sort(movieList, MovieUtils.generateReleaseDateComparator(CANADA_FRENCH));
+        movieList.forEach(System.out::println);
     }
 
 
