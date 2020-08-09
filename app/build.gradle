@@ -81,7 +81,7 @@ dependencies {
     implementation group: 'com.squareup.picasso', name: 'picasso', version: '2.71828'
     implementation group: 'com.google.android.gms', name: 'play-services-oss-licenses', version: '17.0.0'
 
-    def androidx_navigation_version = '2.2.2'
+    def androidx_navigation_version = '2.3.0'
     implementation group: 'androidx.navigation', name: 'navigation-fragment', version: androidx_navigation_version
     implementation group: 'androidx.navigation', name: 'navigation-ui', version: androidx_navigation_version
 
