@@ -23,11 +23,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentContainerView;
-import androidx.fragment.app.FragmentManager;
-import androidx.navigation.fragment.NavHostFragment;
-import org.adrienbricchi.waitingformoranis.components.AddMovieDialogFragment;
-import org.adrienbricchi.waitingformoranis.components.MovieListFragment;
 import org.adrienbricchi.waitingformoranis.components.preferences.SettingsActivity;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 
@@ -51,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
-
-        binding.fab.setOnClickListener(view -> onAddMovieFloatingButtonClicked());
     }
 
 
@@ -84,22 +77,5 @@ public class MainActivity extends AppCompatActivity {
 
 
     // </editor-fold desc="LifeCycle">
-
-
-    private void onAddMovieFloatingButtonClicked() {
-
-        FragmentContainerView fragmentContainerView = binding.contentMain.navHostFragmentContainerView;
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(fragmentContainerView.getId());
-
-        if (navHostFragment == null) { return; }
-
-        FragmentManager navFragmentManager = navHostFragment.getChildFragmentManager();
-        MovieListFragment targetFragment = (MovieListFragment) navFragmentManager.getFragments().get(0);
-
-        AddMovieDialogFragment fragment = new AddMovieDialogFragment();
-        fragment.setKnownMovies(targetFragment.getAdapter().getDataSet());
-        fragment.setTargetFragment(targetFragment, AddMovieDialogFragment.REQUEST_CODE);
-        fragment.show(navFragmentManager, AddMovieDialogFragment.TAG);
-    }
 
 }
