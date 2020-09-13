@@ -17,41 +17,31 @@
  */
 package org.adrienbricchi.waitingformoranis.models;
 
-import androidx.annotation.StringRes;
-import lombok.*;
+import org.junit.Test;
 
 import java.util.Date;
-import java.util.Locale;
 
-import static org.adrienbricchi.waitingformoranis.R.string.*;
-
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@RequiredArgsConstructor
-public class Release {
+import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
+import static java.util.Locale.CANADA_FRENCH;
+import static java.util.Locale.US;
+import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
 
 
-    @Getter
-    @AllArgsConstructor
-    public enum Type {
+public class MovieTest {
 
-        THEATRICAL(theatrical),
-        DIGITAL(digital),
-        PHYSICAL(physical),
-        THEATRICAL_LIMITED(theatrical_limited),
-        TV(tv),
-        PREMIERE(premiere),
-        UNKNOWN(-1);
-
-        private @StringRes int labelStringResource;
+    @Test
+    public void allArgsConstructor() {
+        new Movie(
+                "id_01",
+                "title_z1",
+                "http://image.jpg",
+                1234L,
+                singleton(US),
+                singletonList(new Release(THEATRICAL, new Date(0L), CANADA_FRENCH)),
+                9999L,
+                true
+        );
     }
-
-
-    private @NonNull Type type;
-    private @NonNull Date date;
-    private @NonNull Locale country;
-    private String description = null;
 
 }

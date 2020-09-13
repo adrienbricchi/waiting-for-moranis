@@ -17,41 +17,26 @@
  */
 package org.adrienbricchi.waitingformoranis.models;
 
-import androidx.annotation.StringRes;
-import lombok.*;
+import org.junit.Test;
 
-import java.util.Date;
-import java.util.Locale;
+import java.util.Arrays;
 
-import static org.adrienbricchi.waitingformoranis.R.string.*;
+import static org.junit.Assert.assertTrue;
 
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@RequiredArgsConstructor
-public class Release {
+public class ReleaseTest {
 
 
-    @Getter
-    @AllArgsConstructor
-    public enum Type {
-
-        THEATRICAL(theatrical),
-        DIGITAL(digital),
-        PHYSICAL(physical),
-        THEATRICAL_LIMITED(theatrical_limited),
-        TV(tv),
-        PREMIERE(premiere),
-        UNKNOWN(-1);
-
-        private @StringRes int labelStringResource;
+    @Test
+    public void noArgsConstructor() {
+        new Release();
     }
 
 
-    private @NonNull Type type;
-    private @NonNull Date date;
-    private @NonNull Locale country;
-    private String description = null;
+    @Test
+    public void typeStringResource() {
+        Arrays.stream(Release.Type.values())
+              .forEach(t -> assertTrue(t.getLabelStringResource() >= -1));
+    }
 
 }
