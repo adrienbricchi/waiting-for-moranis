@@ -19,16 +19,11 @@ package org.adrienbricchi.waitingformoranis.service.tmdb;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.junit.Test;
 
 import java.util.Date;
 
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
-import static java.util.Locale.CANADA_FRENCH;
-import static java.util.Locale.US;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.countryLocale;
 import static org.junit.Assert.assertEquals;
@@ -39,7 +34,7 @@ public class TmdbMovieTest {
 
 
     @SuppressWarnings("FieldCanBeLocal")
-    private static String TMDB_MOVIE_FULL_EXAMPLE = "" +
+    private static final String TMDB_MOVIE_FULL_EXAMPLE = "" +
             "{" +
             "    \"adult\": false," +
             "    \"backdrop_path\": \"/g5hIWYC46G1eVYPNkwaX5AisIcc.jpg\"," +

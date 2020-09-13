@@ -37,11 +37,11 @@ import static java.util.Comparator.*;
 public class MovieUtils {
 
 
-    private static Function<Release, Integer> COUNTRY_HASH_EXTRACTOR = r -> Optional.ofNullable(r.getCountry())
-                                                                                    .map(Locale::hashCode)
-                                                                                    .orElse(null);
+    private static final Function<Release, Integer> COUNTRY_HASH_EXTRACTOR = r -> Optional.ofNullable(r.getCountry())
+                                                                                          .map(Locale::hashCode)
+                                                                                          .orElse(null);
 
-    private static Comparator<Release> RELEASE_COMPARATOR =
+    private static final Comparator<Release> RELEASE_COMPARATOR =
             comparing(COUNTRY_HASH_EXTRACTOR, comparing(r -> r, nullsLast(naturalOrder())))
                     .thenComparing(Release::getType, nullsLast(naturalOrder()))
                     .thenComparing(Release::getDate, nullsLast(naturalOrder()));

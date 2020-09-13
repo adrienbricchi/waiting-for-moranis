@@ -40,8 +40,6 @@ import java.util.*;
 import static android.Manifest.permission.READ_CALENDAR;
 import static android.Manifest.permission.WRITE_CALENDAR;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static android.provider.BaseColumns._ID;
-import static android.provider.CalendarContract.Calendars.CALENDAR_DISPLAY_NAME;
 import static android.provider.CalendarContract.Events.*;
 import static androidx.core.app.ActivityCompat.requestPermissions;
 import static androidx.core.content.ContextCompat.checkSelfPermission;
@@ -62,7 +60,7 @@ public class CalendarService {
     private static final List<String> EVENT_PROJECTION = asList(_ID, DESCRIPTION);
 
 
-    private @NonNull Activity activity;
+    private @NonNull final Activity activity;
 
 
     // <editor-fold desc="Constructor">

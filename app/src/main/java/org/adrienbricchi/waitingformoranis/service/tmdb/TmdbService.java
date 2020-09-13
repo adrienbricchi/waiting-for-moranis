@@ -44,7 +44,7 @@ public class TmdbService {
 
     private static final String LOG_TAG = "TmdbService";
 
-    private static Map<String, Long> sDelaySinceLastRequest = new HashMap<>();
+    private static final Map<String, Long> sDelaySinceLastRequest = new HashMap<>();
     private static final Long DELAY_TIMEOUT_MS = 30 * 60 * 1000L;
 
     private static final String SHARED_PREFERENCES_TMDB_API_KEY = "tmdb_api_key";
@@ -68,7 +68,7 @@ public class TmdbService {
     private static final String APPEND_TO_RESPONSE_PARAM = "append_to_response";
 
 
-    private @NonNull Context context;
+    private @NonNull final Context context;
 
 
     // <editor-fold desc="Constructor">

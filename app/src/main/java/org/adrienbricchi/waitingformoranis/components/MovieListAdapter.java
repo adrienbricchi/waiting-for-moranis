@@ -66,7 +66,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
      */
     static class MovieViewHolder extends RecyclerView.ViewHolder {
 
-        MovieListCellBinding binding;
+        final MovieListCellBinding binding;
 
 
         MovieViewHolder(MovieListCellBinding binding) {

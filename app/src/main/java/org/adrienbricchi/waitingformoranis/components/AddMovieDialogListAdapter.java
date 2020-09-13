@@ -54,9 +54,9 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
      */
     static class MovieViewHolder extends RecyclerView.ViewHolder {
 
-        Movie currentMovie;
-        AddMovieListCellBinding binding;
-        CompoundButton.OnCheckedChangeListener listener;
+        final Movie currentMovie;
+        final AddMovieListCellBinding binding;
+        final CompoundButton.OnCheckedChangeListener listener;
 
 
         MovieViewHolder(AddMovieListCellBinding binding) {
