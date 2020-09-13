@@ -34,7 +34,7 @@ public class TmdbMovieTest {
 
 
     @SuppressWarnings("FieldCanBeLocal")
-    private static String TMDB_MOVIE_FULL_EXAMPLE = "" +
+    private static final String TMDB_MOVIE_FULL_EXAMPLE = "" +
             "{" +
             "    \"adult\": false," +
             "    \"backdrop_path\": \"/g5hIWYC46G1eVYPNkwaX5AisIcc.jpg\"," +
@@ -194,7 +194,8 @@ public class TmdbMovieTest {
             "}";
 
 
-    @Test public void parse() throws JsonProcessingException {
+    @Test
+    public void parse() throws JsonProcessingException {
         TmdbMovie movie = new ObjectMapper().readValue(TMDB_MOVIE_FULL_EXAMPLE, TmdbMovie.class);
 
         assertEquals("577922", movie.getId());

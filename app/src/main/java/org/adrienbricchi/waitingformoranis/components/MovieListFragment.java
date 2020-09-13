@@ -26,6 +26,7 @@ import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
@@ -97,6 +98,7 @@ public class MovieListFragment extends Fragment {
         adapter.getSelectionTracker().addObserver(buildMovieSelectionObserver());
 
         binding.movieListSwipeRefreshLayout.setOnRefreshListener(this::onPullToRefresh);
+        binding.addMovieFab.setOnClickListener(v -> onAddMovieFloatingButtonClicked());
     }
 
 
@@ -289,6 +291,17 @@ public class MovieListFragment extends Fragment {
 
 
     // </editor-fold desc="Setup">
+
+
+    private void onAddMovieFloatingButtonClicked() {
+
+        FragmentManager navFragmentManager = getParentFragmentManager();
+
+        AddMovieDialogFragment fragment = new AddMovieDialogFragment();
+        fragment.setKnownMovies(adapter.getDataSet());
+        fragment.setTargetFragment(this, AddMovieDialogFragment.REQUEST_CODE);
+        fragment.show(navFragmentManager, AddMovieDialogFragment.TAG);
+    }
 
 
     private void onPullToRefresh() {
