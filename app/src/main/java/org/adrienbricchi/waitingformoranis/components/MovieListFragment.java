@@ -420,10 +420,6 @@ public class MovieListFragment extends Fragment {
 
         new Thread(() -> {
 
-            Long calendarId = CalendarService.init(getActivity())
-                                             .map(CalendarService::getCurrentCalendarId)
-                                             .orElse(null);
-
             AppDatabase database = AppDatabase.getDatabase(getContext());
             CalendarService.init(getActivity())
                            .ifPresent(c -> selectedIds.stream()
