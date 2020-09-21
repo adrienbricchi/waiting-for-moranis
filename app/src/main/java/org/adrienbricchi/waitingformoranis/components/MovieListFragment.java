@@ -432,7 +432,7 @@ public class MovieListFragment extends Fragment {
                                                       .forEach(m -> {
                                                           // Wrong "may be null" warning on Android Studio 3.6.3
                                                           //noinspection ConstantConditions
-                                                          c.deleteMovieInCalendar(calendarId, m);
+                                                          c.deleteMovieInCalendar(m);
                                                           database.movieDao().remove(m.getId());
                                                       }));
 

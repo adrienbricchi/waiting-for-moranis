@@ -253,10 +253,10 @@ public class CalendarService {
 
 
     @SuppressWarnings("UnusedReturnValue")
-    public boolean deleteMovieInCalendar(@Nullable Long calendarId, @NonNull Movie movie) {
+    public boolean deleteMovieInCalendar(@NonNull Movie movie) {
         Log.v(LOG_TAG, "deleteMovieInCalendar title:" + movie.getTitle());
 
-        if ((calendarId == null) || !hasPermissions()) {
+        if ((movie.getCalendarEventId() == null) || !hasPermissions()) {
             return false;
         }
 
