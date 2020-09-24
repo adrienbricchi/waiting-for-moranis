@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.utils;
 
+import androidx.annotation.Keep;
 import androidx.navigation.fragment.NavHostFragment;
 
 
@@ -32,7 +33,7 @@ import androidx.navigation.fragment.NavHostFragment;
  * Even without minify nor Proguard enabled.
  * Creating a custom class is an attempt to fix this error.
  */
-@SuppressWarnings("unused")
+@Keep
 public class CustomNavHostFragment extends NavHostFragment {
 
 }
