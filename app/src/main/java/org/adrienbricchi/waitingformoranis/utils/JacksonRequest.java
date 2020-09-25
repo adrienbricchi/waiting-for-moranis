@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.utils;
 
+import androidx.annotation.Keep;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -31,6 +32,7 @@ import java.io.UnsupportedEncodingException;
 import static com.android.volley.Request.Method.GET;
 
 
+@Keep
 public class JacksonRequest<T> extends Request<T> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();

@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.models;
 
+import androidx.annotation.Keep;
 import androidx.annotation.StringRes;
 import lombok.*;
 
@@ -27,12 +28,14 @@ import static org.adrienbricchi.waitingformoranis.R.string.*;
 
 
 @Data
+@Keep
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Release {
 
 
+    @Keep
     @Getter
     @AllArgsConstructor
     public enum Type {
