@@ -104,6 +104,7 @@ class TmdbMovie extends Movie {
 
 
     @Data
+    @Keep
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class TmdbProductionCountry {
 
@@ -114,6 +115,7 @@ class TmdbMovie extends Movie {
 
 
     @Data
+    @Keep
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class TmdbReleaseDate {
 
@@ -122,6 +124,7 @@ class TmdbMovie extends Movie {
 
 
         @Data
+        @Keep
         static class TmdbDateWrapper {
 
             private Release.Type releaseType;
