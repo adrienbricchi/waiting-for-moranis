@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.service.tmdb;
 
+import androidx.annotation.Keep;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -36,6 +37,7 @@ import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.countryLocale
 
 
 @Data
+@Keep
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 class TmdbMovie extends Movie {
@@ -102,6 +104,7 @@ class TmdbMovie extends Movie {
 
 
     @Data
+    @Keep
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class TmdbProductionCountry {
 
@@ -112,6 +115,7 @@ class TmdbMovie extends Movie {
 
 
     @Data
+    @Keep
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class TmdbReleaseDate {
 
@@ -120,6 +124,7 @@ class TmdbMovie extends Movie {
 
 
         @Data
+        @Keep
         static class TmdbDateWrapper {
 
             private Release.Type releaseType;

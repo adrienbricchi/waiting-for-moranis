@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.service.tmdb;
 
+import androidx.annotation.Keep;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -25,6 +26,7 @@ import java.util.List;
 
 
 @Data
+@Keep
 @JsonIgnoreProperties(ignoreUnknown = true)
 class TmdbPage<T> {
 

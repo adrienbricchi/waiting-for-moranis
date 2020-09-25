@@ -84,3 +84,5 @@ lint/tmp/
 # lint/reports/
 
 apikey.properties
+
+app/release/

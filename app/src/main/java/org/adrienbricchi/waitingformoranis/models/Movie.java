@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.models;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Index;
@@ -29,6 +30,7 @@ import java.util.*;
 
 
 @Data
+@Keep
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(tableName = Movie.TABLE_NAME,
