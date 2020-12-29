@@ -31,7 +31,7 @@ import androidx.navigation.fragment.NavHostFragment;
  * </code>
  * <p>
  * Even without minify nor Proguard enabled.
- * Creating a custom class is an attempt to fix this error.
+ * Creating a custom class here fix this error.
  */
 @Keep
 public class CustomNavHostFragment extends NavHostFragment {
