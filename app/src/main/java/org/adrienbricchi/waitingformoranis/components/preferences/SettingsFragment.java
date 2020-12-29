@@ -19,6 +19,7 @@ package org.adrienbricchi.waitingformoranis.components.preferences;
 
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.*;
@@ -34,7 +35,7 @@ import static org.adrienbricchi.waitingformoranis.R.string.*;
 import static org.adrienbricchi.waitingformoranis.R.xml.preferences;
 
 
-@SuppressWarnings("unused")
+@Keep
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private static final String LOG_TAG = SettingsFragment.class.getSimpleName();
