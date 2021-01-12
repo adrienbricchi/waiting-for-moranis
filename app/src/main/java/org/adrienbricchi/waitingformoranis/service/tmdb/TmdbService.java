@@ -42,6 +42,8 @@ import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
 
 public class TmdbService {
 
+    public static final String COVER_URL = "https://image.tmdb.org/t/p/w154%s";
+
     private static final String LOG_TAG = "TmdbService";
 
     private static final Map<String, Long> sDelaySinceLastRequest = new HashMap<>();

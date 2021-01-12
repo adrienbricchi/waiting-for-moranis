@@ -33,6 +33,7 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.*;
+import static org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService.COVER_URL;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.countryLocale;
 
 
@@ -41,8 +42,6 @@ import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.countryLocale
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 class TmdbMovie extends Movie {
-
-    public static final String COVER_URL = "https://image.tmdb.org/t/p/w154%s";
 
 
     private @JsonAlias("original_title") String originalTitle;
