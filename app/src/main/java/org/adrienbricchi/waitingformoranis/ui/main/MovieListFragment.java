@@ -69,6 +69,11 @@ public class MovieListFragment extends Fragment {
     // <editor-fold desc="LifeCycle">
 
 
+    public static @NonNull MovieListFragment newInstance() {
+        return new MovieListFragment();
+    }
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = MovieListBinding.inflate(inflater, container, false);
@@ -436,5 +441,6 @@ public class MovieListFragment extends Fragment {
 
         }).start();
     }
+
 
 }

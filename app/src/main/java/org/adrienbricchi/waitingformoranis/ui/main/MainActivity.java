@@ -23,17 +23,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
-import org.adrienbricchi.waitingformoranis.ui.preferences.SettingsActivity;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
+import org.adrienbricchi.waitingformoranis.ui.preferences.SettingsActivity;
 
 import static org.adrienbricchi.waitingformoranis.R.id.action_settings;
 import static org.adrienbricchi.waitingformoranis.R.menu.menu_main;
 
 
 public class MainActivity extends AppCompatActivity {
-
-
-    private ActivityMainBinding binding;
 
 
     // <editor-fold desc="LifeCycle">
@@ -43,9 +40,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(LayoutInflater.from(this));
+        ActivityMainBinding binding = ActivityMainBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
+
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        binding.viewPager.setAdapter(sectionsPagerAdapter);
+        binding.tabs.setupWithViewPager(binding.viewPager);
     }
 
 
