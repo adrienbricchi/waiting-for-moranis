@@ -18,7 +18,6 @@
 package org.adrienbricchi.waitingformoranis.service.tmdb;
 
 import androidx.annotation.Keep;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -40,5 +39,6 @@ public class TmdbShow extends Show {
         // https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
         imageUrl = String.format(COVER_URL, posterPath);
     }
+
 
 }

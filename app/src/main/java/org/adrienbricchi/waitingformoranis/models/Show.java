@@ -17,6 +17,7 @@
  */
 package org.adrienbricchi.waitingformoranis.models;
 
+import android.util.SparseArray;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
@@ -45,12 +46,23 @@ public class Show {
     protected @PrimaryKey @NonNull String id = UUID.randomUUID().toString();
     protected String title;
     protected String imageUrl;
-    protected Long calendarEventId;
 
     protected String status;
-    protected @NonNull List<Release> airDates = new ArrayList<>();
+    protected @NonNull SparseArray<Season> seasonSparseArray = new SparseArray<>();
 
-    protected Long nextAirDate;
-    protected boolean isUpdateNeededInCalendar = false;
+
+    public static class Season {
+
+        protected String imageUrl;
+        protected Long calendarEventId;
+
+        protected String status;
+        protected @NonNull List<Release> airDates = new ArrayList<>();
+
+        protected Long nextAirDate;
+        protected boolean isUpdateNeededInCalendar = false;
+
+    }
+
 
 }
