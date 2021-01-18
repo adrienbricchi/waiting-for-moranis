@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.adrienbricchi.waitingformoranis;
+package org.adrienbricchi.waitingformoranis.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
-import org.adrienbricchi.waitingformoranis.components.preferences.SettingsActivity;
+import org.adrienbricchi.waitingformoranis.ui.preferences.SettingsActivity;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 
 import static org.adrienbricchi.waitingformoranis.R.id.action_settings;
