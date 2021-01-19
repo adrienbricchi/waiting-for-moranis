@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayoutMediator;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
+import org.adrienbricchi.waitingformoranis.ui.main.movieList.MovieListFragment;
 import org.adrienbricchi.waitingformoranis.ui.preferences.SettingsActivity;
 
 import static android.view.View.GONE;

@@ -23,6 +23,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.google.android.material.tabs.TabLayout;
 import org.adrienbricchi.waitingformoranis.R;
+import org.adrienbricchi.waitingformoranis.ui.main.movieList.MovieListFragment;
 
 
 /**

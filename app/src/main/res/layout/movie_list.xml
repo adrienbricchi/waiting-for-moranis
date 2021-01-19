@@ -28,7 +28,7 @@
             android:id="@+id/movie_list_swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.main.MovieListFragment">
+            tools:context=".ui.main.movieList.MovieListFragment">
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/movie_list_recycler_view"

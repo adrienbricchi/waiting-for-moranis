@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.adrienbricchi.waitingformoranis.ui.main;
+package org.adrienbricchi.waitingformoranis.ui.main.movieList;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -37,6 +37,7 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
+import org.adrienbricchi.waitingformoranis.ui.main.MainActivity;
 
 import java.util.*;
 import java.util.stream.StreamSupport;
