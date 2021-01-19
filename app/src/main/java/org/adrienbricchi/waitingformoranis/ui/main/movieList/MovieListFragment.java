@@ -50,7 +50,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
-import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.generateReleaseDateComparator;
+import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.generateMovieReleaseDateComparator;
 
 
 @Getter
@@ -117,6 +117,19 @@ public class MovieListFragment extends Fragment {
                     }
                 }
         );
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        refreshListFromDb();
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         getParentFragmentManager().setFragmentResultListener(
                 MainActivity.FRAGMENT_REQUEST,
@@ -133,9 +146,9 @@ public class MovieListFragment extends Fragment {
 
 
     @Override
-    public void onStart() {
-        super.onStart();
-        refreshListFromDb();
+    public void onPause() {
+        super.onPause();
+        getParentFragmentManager().clearFragmentResultListener(MainActivity.FRAGMENT_REQUEST);
     }
 
 
@@ -408,7 +421,7 @@ public class MovieListFragment extends Fragment {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Movie> movies = database.movieDao().getAll();
-            Collections.sort(movies, generateReleaseDateComparator(Locale.getDefault()));
+            Collections.sort(movies, generateMovieReleaseDateComparator(Locale.getDefault()));
 
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(movies);

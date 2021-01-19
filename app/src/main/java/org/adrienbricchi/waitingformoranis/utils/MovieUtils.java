@@ -57,7 +57,7 @@ public class MovieUtils {
     }
 
 
-    public static Comparator<Movie> generateReleaseDateComparator(@NonNull Locale locale) {
+    public static Comparator<Movie> generateMovieReleaseDateComparator(@NonNull Locale locale) {
 
         Function<Movie, Date> movieReleaseExtractor = movie -> Optional.ofNullable(getRelease(movie, locale))
                                                                        .map(Release::getDate)
@@ -102,5 +102,6 @@ public class MovieUtils {
                        .map(m -> m.group(1))
                        .orElse(null);
     }
+
 
 }

@@ -33,7 +33,7 @@ import static org.adrienbricchi.waitingformoranis.models.Movie.TABLE_NAME;
 public interface MovieDao {
 
     @Insert(onConflict = REPLACE)
-    void add(Movie user);
+    void add(Movie show);
 
     @Query("select * from " + TABLE_NAME)
     List<Movie> getAll();
@@ -42,7 +42,7 @@ public interface MovieDao {
     List<Movie> get(String id);
 
     @Update(onConflict = REPLACE)
-    void update(Movie user);
+    void update(Movie show);
 
     @Query("delete from " + TABLE_NAME + " where id = :id")
     void remove(String id);

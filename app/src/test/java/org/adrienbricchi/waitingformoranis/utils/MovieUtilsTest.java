@@ -64,9 +64,9 @@ public class MovieUtilsTest {
                 new Release(THEATRICAL, new Date(3L), FRANCE)
         ));
 
-        assertEquals(-1L, MovieUtils.generateReleaseDateComparator(US).compare(movie1, movie2));
-        assertEquals(1L, MovieUtils.generateReleaseDateComparator(FRANCE).compare(movie1, movie2));
-        assertEquals(-1, MovieUtils.generateReleaseDateComparator(US).compare(movie1, new Movie()));
+        assertEquals(-1L, MovieUtils.generateMovieReleaseDateComparator(US).compare(movie1, movie2));
+        assertEquals(1L, MovieUtils.generateMovieReleaseDateComparator(FRANCE).compare(movie1, movie2));
+        assertEquals(-1, MovieUtils.generateMovieReleaseDateComparator(US).compare(movie1, new Movie()));
     }
 
 
@@ -140,7 +140,7 @@ public class MovieUtilsTest {
 
         // Testing
 
-        Collections.sort(movieList, MovieUtils.generateReleaseDateComparator(CANADA_FRENCH));
+        Collections.sort(movieList, MovieUtils.generateMovieReleaseDateComparator(CANADA_FRENCH));
         movieList.forEach(System.out::println);
     }
 
