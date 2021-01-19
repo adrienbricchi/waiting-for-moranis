@@ -31,6 +31,7 @@ import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Show;
+import org.adrienbricchi.waitingformoranis.models.ShowWithSeasons;
 import org.adrienbricchi.waitingformoranis.utils.JacksonRequest;
 
 import java.util.*;
@@ -226,5 +227,64 @@ public class TmdbService {
             return null;
         }
     }
+
+
+    public @Nullable ShowWithSeasons getShow(@NonNull String id) {
+        Log.v(LOG_TAG, "getShow id:" + id);
+
+        // Delay test
+
+        if (Optional.ofNullable(sDelaySinceLastRequest.get(id))
+                    .filter(t -> t < currentTimeMillis() + DELAY_TIMEOUT_MS)
+                    .isPresent()) {
+
+            Log.i(LOG_TAG, format("getMovie postponed id:%s, timeout delay not yet finished", id));
+            return null;
+        }
+
+        // Instantiate the RequestQueue.
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestFuture<TmdbShow> future = RequestFuture.newFuture();
+
+        String url = new Uri.Builder()
+                .scheme(HTTPS).authority(API_URL)
+                .appendPath(API_VERSION).appendPath(PATH_TV).appendPath(id)
+                .appendQueryParameter(APPEND_TO_RESPONSE_PARAM, PATH_RELEASE_DATES)
+                .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
+                .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
+                .build().toString();
+
+        Log.v(LOG_TAG, url);
+
+        // Request from the provided URL.
+        JacksonRequest<TmdbShow> jacksonRequest = new JacksonRequest<>(
+                url,
+                new TypeReference<TmdbShow>() {},
+                future,
+                future
+        );
+
+        // Add the request to the RequestQueue.
+        queue.add(jacksonRequest);
+
+        try {
+            TmdbShow tmdbShow = future.get();
+            ShowWithSeasons showWithSeasons = new ShowWithSeasons(tmdbShow, tmdbShow.getSeasonsList());
+            Log.d(LOG_TAG, format(
+                    "getShow successful id:%s title:%s seasons:%d",
+                    showWithSeasons.getShow().getId(),
+                    showWithSeasons.getShow().getTitle(),
+                    showWithSeasons.getSeasonList().size()
+            ));
+
+            sDelaySinceLastRequest.put(showWithSeasons.getShow().getId(), currentTimeMillis());
+            return showWithSeasons;
+        }
+        catch (InterruptedException | ExecutionException e) {
+            return null;
+        }
+    }
+
 
 }

@@ -15,28 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.adrienbricchi.waitingformoranis.models;
+package org.adrienbricchi.waitingformoranis.service.tmdb;
 
-import androidx.room.Embedded;
-import androidx.room.Relation;
-import lombok.AllArgsConstructor;
+import androidx.annotation.Keep;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
+import lombok.EqualsAndHashCode;
+import org.adrienbricchi.waitingformoranis.models.Season;
 
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ShowWithSeasons {
+@Keep
+@EqualsAndHashCode(callSuper = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class TmdbSeason extends Season {
 
-    @Embedded public Show show;
 
-    @Relation(
-            parentColumn = Show.FIELD_ID,
-            entityColumn = Season.FIELD_SHOW_ID
-    )
-    public List<? extends Season> seasonList;
+    @JsonProperty("season_number")
+    private void parseTitle(int number) {
+        this.number = number;
+    }
+
 
 }

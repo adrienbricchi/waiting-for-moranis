@@ -19,6 +19,7 @@ package org.adrienbricchi.waitingformoranis.ui.main.showList;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.ShowListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Release;
+import org.adrienbricchi.waitingformoranis.models.Season;
 import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.models.ShowWithSeasons;
 import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
@@ -45,6 +47,7 @@ import java.util.stream.IntStream;
 
 import static java.text.DateFormat.FULL;
 import static org.adrienbricchi.waitingformoranis.R.drawable.ic_baseline_live_tv_48;
+import static org.adrienbricchi.waitingformoranis.R.string.show_season;
 import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_parenthesis;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.DIGITAL;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
@@ -53,7 +56,7 @@ import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ShowWithSeasonListAdapter extends RecyclerView.Adapter<ShowWithSeasonListAdapter.ShowWithSeasonsViewHolder> {
+public class ShowWithSeasonsListAdapter extends RecyclerView.Adapter<ShowWithSeasonsListAdapter.ShowWithSeasonsViewHolder> {
 
 
     private @NonNull List<ShowWithSeasons> dataSet;
@@ -94,7 +97,9 @@ public class ShowWithSeasonListAdapter extends RecyclerView.Adapter<ShowWithSeas
     @Override
     public void onBindViewHolder(ShowWithSeasonsViewHolder holder, int position) {
 
-        ShowWithSeasons currentShow = dataSet.get(position);
+        ShowWithSeasons currentShowWithSeasons = dataSet.get(position);
+        Show currentShow = currentShowWithSeasons.getShow();
+        Season currentSeason = currentShowWithSeasons.getSeasonList().stream().reduce((o1, o2) -> o2).orElse(null);
         Context currentContext = holder.binding.getRoot().getContext();
         Locale currentLocale = MovieUtils.countryLocale(Locale.getDefault().getCountry());
         Release release = MovieUtils.getRelease(currentShow, currentLocale);
@@ -104,8 +109,13 @@ public class ShowWithSeasonListAdapter extends RecyclerView.Adapter<ShowWithSeas
                .placeholder(ic_baseline_live_tv_48)
                .into(holder.binding.coverImageView);
 
-        holder.binding.coverImageView.setContentDescription(currentShow.getShow().getTitle());
-        holder.binding.titleTextView.setText(currentShow.getShow().getTitle());
+        String label = Optional.ofNullable(currentSeason)
+                               .map(Season::getNumber)
+                               .map(n -> currentContext.getString(show_season, currentShow.getTitle(), n))
+                               .orElse(currentShow.getTitle());
+
+        holder.binding.titleTextView.setText(label);
+        holder.binding.coverImageView.setContentDescription(currentShow.getTitle());
         holder.binding.dateTextView.setText(
                 Optional.ofNullable(release)
                         .map(r -> {
@@ -142,7 +152,7 @@ public class ShowWithSeasonListAdapter extends RecyclerView.Adapter<ShowWithSeas
                         })
                         .orElseGet(() -> currentContext.getString(unknown_between_parenthesis)));
 
-        holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentShow.getShow().getId()));
+        holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentShow.getId()));
     }
 
 
