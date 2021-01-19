@@ -26,7 +26,6 @@ import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
@@ -44,8 +43,6 @@ import java.util.stream.StreamSupport;
 
 import static android.content.Intent.ACTION_VIEW;
 import static android.os.Looper.getMainLooper;
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static androidx.recyclerview.selection.StorageStrategy.createStringStorage;
 import static java.util.stream.Collectors.toList;
@@ -60,6 +57,11 @@ public class MovieListFragment extends Fragment {
 
     private static final String LOG_TAG = "MovieListFragment";
     private static final String SELECTION_ID_MOVIES_ID = "selection_id_movies_id";
+
+    public static final String FRAGMENT_TAG = "MovieListFragment";
+    public static final String FRAGMENT_REQUEST = "movie_list_fragment";
+    public static final String FRAGMENT_RESULT_MOVIES_COUNT = "movies_count";
+
 
     private MovieListAdapter adapter;
     private MovieListBinding binding;
@@ -103,7 +105,17 @@ public class MovieListFragment extends Fragment {
         adapter.getSelectionTracker().addObserver(buildMovieSelectionObserver());
 
         binding.movieListSwipeRefreshLayout.setOnRefreshListener(this::onPullToRefresh);
-        binding.addMovieFab.setOnClickListener(v -> onAddMovieFloatingButtonClicked());
+
+        getParentFragmentManager().setFragmentResultListener(
+                AddMovieDialogFragment.FRAGMENT_REQUEST,
+                this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(AddMovieDialogFragment.FRAGMENT_RESULT_VALID, false)) {
+                        refreshListFromDb(false);
+                        onPullToRefresh();
+                    }
+                }
+        );
     }
 
 
@@ -111,17 +123,6 @@ public class MovieListFragment extends Fragment {
     public void onStart() {
         super.onStart();
         refreshListFromDb();
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == AddMovieDialogFragment.REQUEST_CODE) {
-            refreshListFromDb(false);
-            onPullToRefresh();
-        }
     }
 
 
@@ -298,17 +299,6 @@ public class MovieListFragment extends Fragment {
     // </editor-fold desc="Setup">
 
 
-    private void onAddMovieFloatingButtonClicked() {
-
-        FragmentManager navFragmentManager = getParentFragmentManager();
-
-        AddMovieDialogFragment fragment = new AddMovieDialogFragment();
-        fragment.setKnownMovies(adapter.getDataSet());
-        fragment.setTargetFragment(this, AddMovieDialogFragment.REQUEST_CODE);
-        fragment.show(navFragmentManager, AddMovieDialogFragment.TAG);
-    }
-
-
     private void onPullToRefresh() {
         new Thread(() -> {
 
@@ -411,7 +401,11 @@ public class MovieListFragment extends Fragment {
             adapter.getDataSet().addAll(movies);
 
             new Handler(getMainLooper()).post(() -> {
-                binding.onboardingView.setVisibility(adapter.getDataSet().size() > 0 ? GONE : VISIBLE);
+
+                Bundle result = new Bundle();
+                result.putInt(FRAGMENT_RESULT_MOVIES_COUNT, adapter.getDataSet().size());
+                getParentFragmentManager().setFragmentResult(FRAGMENT_REQUEST, result);
+
                 adapter.notifyDataSetChanged();
                 binding.movieListSwipeRefreshLayout.setRefreshing(!disableSpinnerOnCompletion);
             });

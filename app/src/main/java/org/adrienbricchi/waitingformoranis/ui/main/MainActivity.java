@@ -23,9 +23,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.tabs.TabLayoutMediator;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 import org.adrienbricchi.waitingformoranis.ui.preferences.SettingsActivity;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static org.adrienbricchi.waitingformoranis.R.id.action_settings;
 import static org.adrienbricchi.waitingformoranis.R.menu.menu_main;
 
@@ -44,9 +47,30 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this);
         binding.viewPager.setAdapter(sectionsPagerAdapter);
-        binding.tabs.setupWithViewPager(binding.viewPager);
+
+        new TabLayoutMediator(
+                binding.tabs,
+                binding.viewPager,
+                true,
+                sectionsPagerAdapter::getPageTitle
+        ).attach();
+
+        binding.addMovieFab.setOnClickListener(v -> {
+            AddMovieDialogFragment addMovieDialogFragment = new AddMovieDialogFragment();
+            // FIXME : addMovieDialogFragment.setKnownMovies(movieListFragment.getAdapter().getDataSet());
+            addMovieDialogFragment.show(getSupportFragmentManager(), AddMovieDialogFragment.TAG);
+        });
+
+        getSupportFragmentManager().setFragmentResultListener(
+                MovieListFragment.FRAGMENT_REQUEST,
+                this,
+                (requestKey, bundle) -> {
+                    int moviesCount = bundle.getInt(MovieListFragment.FRAGMENT_RESULT_MOVIES_COUNT);
+                    binding.onboardingView.setVisibility((moviesCount == 0) ? VISIBLE : GONE);
+                }
+        );
     }
 
 

@@ -20,7 +20,6 @@
 
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -40,41 +39,5 @@
                 tools:listitem="@layout/movie_list_cell" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <FrameLayout
-            android:id="@+id/onboarding_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-        <!-- width/height = itemWidth-right -->
-        <ImageView
-                android:layout_width="396dp"
-                android:layout_height="396dp"
-                android:layout_gravity="bottom|end"
-                android:background="@drawable/emphasize_fab_shape"
-                android:contentDescription="@null" />
-
-        <TextView
-                android:layout_width="256dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginEnd="44dp"
-                android:layout_marginBottom="132dp"
-                android:gravity="center"
-                android:text="@string/onboarding_text"
-                android:textColor="?attr/colorOnPrimary"
-                android:textSize="24sp" />
-    </FrameLayout>
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/add_movie_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:backgroundTint="@color/colorAccent"
-            app:icon="@drawable/ic_add_white_24dp"
-            app:iconTint="?android:attr/colorBackground" />
 
 </FrameLayout>

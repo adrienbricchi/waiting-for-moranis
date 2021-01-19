@@ -17,33 +17,28 @@
  */
 package org.adrienbricchi.waitingformoranis.ui.main;
 
-import android.content.Context;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import com.google.android.material.tabs.TabLayout;
 import org.adrienbricchi.waitingformoranis.R;
 
 
 /**
- * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+ * A {@link FragmentStateAdapter} that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class SectionsPagerAdapter extends FragmentStateAdapter {
 
 
-    private final Context context;
-
-
-    public SectionsPagerAdapter(Context context, FragmentManager fm) {
-        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        this.context = context;
+    public SectionsPagerAdapter(FragmentActivity fa) {
+        super(fa);
     }
 
 
     @Override
-    public @NonNull Fragment getItem(int position) {
+    public @NonNull Fragment createFragment(int position) {
         if (position == 0) {
             return MovieListFragment.newInstance();
         } else {
@@ -53,18 +48,17 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 
     @Override
-    public @Nullable CharSequence getPageTitle(int position) {
-        if (position == 0) {
-            return context.getString(R.string.movies);
-        } else {
-            return context.getString(R.string.shows);
-        }
-    }
-
-
-    @Override
-    public int getCount() {
+    public int getItemCount() {
         return 2;
+    }
+
+
+    public void getPageTitle(@NonNull TabLayout.Tab tab, int position) {
+        if (position == 0) {
+            tab.setText(R.string.movies);
+        } else {
+            tab.setText(R.string.shows);
+        }
     }
 
 
