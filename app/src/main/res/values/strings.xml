@@ -34,6 +34,7 @@
     <string name="movie_list">Movie list</string>
     <string name="hashtagged_movie">%s #movie</string>
     <string name="search_movie_title_hint">Search a movie title</string>
+    <string name="search_show_title_hint">Search a show title</string>
     <string name="unknown_between_parenthesis">(unknown)</string>
 
     <string name="add_calendar_tutorial_text1">Consider creating a dedicated calendar from your account.</string>
