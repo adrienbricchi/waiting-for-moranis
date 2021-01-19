@@ -17,10 +17,11 @@
  */
 package org.adrienbricchi.waitingformoranis.service.persistence;
 
-import androidx.room.*;
-import org.adrienbricchi.waitingformoranis.models.Season;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
 import org.adrienbricchi.waitingformoranis.models.Show;
-import org.adrienbricchi.waitingformoranis.models.ShowWithSeasons;
 
 import java.util.List;
 
@@ -32,23 +33,16 @@ import static org.adrienbricchi.waitingformoranis.models.Show.TABLE_NAME;
 public interface ShowDao {
 
     @Insert(onConflict = REPLACE)
-    void addShow(Show show);
+    void add(Show show);
 
-    @Insert(onConflict = REPLACE)
-    void addSeason(Season season);
-
-    @Transaction
     @Query("select * from " + TABLE_NAME)
-    List<ShowWithSeasons> getAll();
+    List<Show> getAll();
 
     @Query("select * from " + TABLE_NAME + " where id = :id limit 1")
     List<Show> get(String id);
 
     @Update(onConflict = REPLACE)
     void update(Show show);
-
-    @Update(onConflict = REPLACE)
-    void update(Season season);
 
     @Query("delete from " + TABLE_NAME + " where id = :id")
     void remove(String id);

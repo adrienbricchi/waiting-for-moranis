@@ -23,12 +23,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.adrienbricchi.waitingformoranis.models.Show;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -42,13 +42,41 @@ import static org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService.COVER
 public class TmdbShow extends Show {
 
 
-    @JsonAlias("seasons")
-    private List<TmdbSeason> seasonsList;
+    @Data
+    @NoArgsConstructor
+    public static class EpisodeToAir {
+
+        private Long airDate;
+        private @JsonAlias("episode_number") Integer number;
+        private @JsonAlias("season_number") Integer seasonNumber;
+
+
+        @JsonProperty("air_date")
+        private void parseAirDate(String date) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            try {
+                airDate = Optional.ofNullable(format.parse(date))
+                                  .map(Date::getTime)
+                                  // We add 12 hours to it, to ease everything.
+                                  // We're getting the right date, at 00:00, and GMT+/-1 tends to change the day.
+                                  .map(t -> t + (12 * 60 * 60 * 1000))
+                                  .orElse(null);
+            }
+            catch (ParseException exp) { /* Not used */ }
+        }
+
+    }
 
 
     @JsonProperty("name")
     private void parseTitle(String name) {
         title = name;
+    }
+
+
+    @JsonProperty("in_production")
+    private void parseInProduction(boolean isInProduction) {
+        this.inProduction = isInProduction;
     }
 
 
@@ -71,6 +99,14 @@ public class TmdbShow extends Show {
                                   .orElse(null);
         }
         catch (ParseException exp) { /* Not used */ }
+    }
+
+
+    @JsonProperty("next_episode_to_air")
+    private void parseNextEpisode(EpisodeToAir nextEpisode) {
+        nextEpisodeAirDate = nextEpisode.getAirDate();
+        nextEpisodeNumber = nextEpisode.getNumber();
+        nextEpisodeSeasonNumber = nextEpisode.getSeasonNumber();
     }
 
 

@@ -31,7 +31,6 @@ import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Show;
-import org.adrienbricchi.waitingformoranis.models.ShowWithSeasons;
 import org.adrienbricchi.waitingformoranis.utils.JacksonRequest;
 
 import java.util.*;
@@ -229,7 +228,7 @@ public class TmdbService {
     }
 
 
-    public @Nullable ShowWithSeasons getShow(@NonNull String id) {
+    public @Nullable Show getShow(@NonNull String id) {
         Log.v(LOG_TAG, "getShow id:" + id);
 
         // Delay test
@@ -270,16 +269,8 @@ public class TmdbService {
 
         try {
             TmdbShow tmdbShow = future.get();
-            ShowWithSeasons showWithSeasons = new ShowWithSeasons(tmdbShow, tmdbShow.getSeasonsList());
-            Log.d(LOG_TAG, format(
-                    "getShow successful id:%s title:%s seasons:%d",
-                    showWithSeasons.getShow().getId(),
-                    showWithSeasons.getShow().getTitle(),
-                    showWithSeasons.getSeasonList().size()
-            ));
-
-            sDelaySinceLastRequest.put(showWithSeasons.getShow().getId(), currentTimeMillis());
-            return showWithSeasons;
+            sDelaySinceLastRequest.put(tmdbShow.getId(), currentTimeMillis());
+            return tmdbShow;
         }
         catch (InterruptedException | ExecutionException e) {
             return null;

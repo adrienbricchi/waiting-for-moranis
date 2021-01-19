@@ -47,7 +47,14 @@ public class Show {
     protected String title;
     protected String imageUrl;
 
-    protected String status;
+    protected boolean inProduction;
     protected Long releaseDate;
+
+    protected Long nextEpisodeAirDate;
+    protected Integer nextEpisodeNumber;
+    protected Integer nextEpisodeSeasonNumber;
+
+    protected Long calendarEventId;
+    protected boolean isUpdateNeededInCalendar = false;
 
 }

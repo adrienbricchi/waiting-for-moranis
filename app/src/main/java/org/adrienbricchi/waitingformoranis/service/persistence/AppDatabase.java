@@ -23,13 +23,12 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import org.adrienbricchi.waitingformoranis.models.Movie;
-import org.adrienbricchi.waitingformoranis.models.Season;
 import org.adrienbricchi.waitingformoranis.models.Show;
 
 
 @Database(
-        entities = {Movie.class, Show.class, Season.class},
-        version = 8,
+        entities = {Movie.class, Show.class},
+        version = 9,
         exportSchema = false
 )
 @TypeConverters({CustomTypeConverters.class})
