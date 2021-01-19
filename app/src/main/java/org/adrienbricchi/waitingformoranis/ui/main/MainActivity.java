@@ -48,6 +48,26 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this);
+        binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+
+            @Override public void onPageScrollStateChanged(int state) {
+                switch (state) {
+
+                    case SCROLL_STATE_DRAGGING:
+                        binding.addMovieFab.hide();
+                        break;
+
+                    case SCROLL_STATE_SETTLING:
+                        break;
+
+                    case SCROLL_STATE_IDLE:
+                    default:
+                        binding.addMovieFab.show();
+                }
+            }
+
+        });
+
         binding.viewPager.setAdapter(sectionsPagerAdapter);
 
         new TabLayoutMediator(
