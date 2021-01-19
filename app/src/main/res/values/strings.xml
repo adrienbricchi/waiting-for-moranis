@@ -37,7 +37,7 @@
     <string name="next_episode_date">Next episode: %s</string>
     <string name="search_movie_title_hint">Search a movie title</string>
     <string name="search_show_title_hint">Search a show title</string>
-    <string name="unknown_between_parenthesis">(unknown)</string>
+    <string name="unknown_release_date">Unknown release date</string>
 
     <string name="add_calendar_tutorial_text1">Consider creating a dedicated calendar from your account.</string>
     <string name="add_calendar_tutorial_text2">At the time these lines were written, it could only be done on the desktop web version of Google Calendar.</string>

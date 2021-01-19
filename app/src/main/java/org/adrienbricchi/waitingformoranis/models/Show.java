@@ -47,9 +47,10 @@ public class Show {
     protected String title;
     protected String imageUrl;
 
-    protected boolean isInProduction = true;
+    protected boolean isInProduction;
     protected Long releaseDate;
 
+    protected Long lastEpisodeAirDate;
     protected Long nextEpisodeAirDate;
     protected Integer nextEpisodeNumber;
     protected Integer nextEpisodeSeasonNumber;

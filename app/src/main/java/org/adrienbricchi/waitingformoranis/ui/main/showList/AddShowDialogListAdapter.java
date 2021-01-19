@@ -34,7 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static java.text.DateFormat.SHORT;
-import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_parenthesis;
+import static org.adrienbricchi.waitingformoranis.R.string.unknown_release_date;
 
 
 @Data
@@ -107,7 +107,7 @@ public class AddShowDialogListAdapter extends RecyclerView.Adapter<AddShowDialog
                 Optional.ofNullable(currentShow.getReleaseDate())
                         .map(Date::new)
                         .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
-                        .orElseGet(() -> currentContext.getString(unknown_between_parenthesis)));
+                        .orElseGet(() -> currentContext.getString(unknown_release_date)));
 
         holder.binding.addShowMaterialCheckBox.setOnCheckedChangeListener(null);
         holder.binding.addShowMaterialCheckBox.setChecked(knownIds.contains(currentShow.getId()));

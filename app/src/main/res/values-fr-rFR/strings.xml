@@ -36,7 +36,7 @@
     <string name="next_episode_date">Prochain épisode : %s</string>
     <string name="search_movie_title_hint">Rechercher un titre de film</string>
     <string name="search_show_title_hint">Rechercher un titre de série</string>
-    <string name="unknown_between_parenthesis">(inconnu)</string>
+    <string name="unknown_release_date">Date de sortie inconnue</string>
 
     <string name="add_calendar_tutorial_text1">Vous pouvez créer un sous-calendrier dédié sur votre compte.</string>
     <string name="add_calendar_tutorial_text2">À ce jour, on peut les créer depuis la version web (bureau) de Google Calendar.</string>

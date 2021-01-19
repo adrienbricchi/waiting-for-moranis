@@ -327,7 +327,7 @@ public class ShowListFragment extends Fragment {
             Map<String, Show> oldShowsMap = database.showDao()
                                                     .getAll()
                                                     .stream()
-                                                    .collect(toMap(s -> s.getId(), s -> s));
+                                                    .collect(toMap(Show::getId, s -> s));
 
             Long calendarId = CalendarService.init(getActivity())
                                              .map(CalendarService::getCurrentCalendarId)

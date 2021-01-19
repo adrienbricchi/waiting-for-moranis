@@ -18,6 +18,7 @@
 package org.adrienbricchi.waitingformoranis.service.tmdb;
 
 import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -76,8 +77,8 @@ public class TmdbShow extends Show {
 
 
     @JsonProperty("in_production")
-    private void parseInProduction(boolean isInProduction) {
-        this.inProduction = isInProduction;
+    private void parseInProduction(boolean inProduction) {
+        isInProduction = inProduction;
     }
 
 
@@ -103,11 +104,17 @@ public class TmdbShow extends Show {
     }
 
 
+    @JsonProperty("last_episode_to_air")
+    private void parseLastEpisode(@Nullable EpisodeToAir lastEpisode) {
+        lastEpisodeAirDate = Optional.ofNullable(lastEpisode).map(EpisodeToAir::getAirDate).orElse(null);
+    }
+
+
     @JsonProperty("next_episode_to_air")
-    private void parseNextEpisode(EpisodeToAir nextEpisode) {
-        nextEpisodeAirDate = nextEpisode.getAirDate();
-        nextEpisodeNumber = nextEpisode.getNumber();
-        nextEpisodeSeasonNumber = nextEpisode.getSeasonNumber();
+    private void parseNextEpisode(@Nullable EpisodeToAir nextEpisode) {
+        nextEpisodeAirDate = Optional.ofNullable(nextEpisode).map(EpisodeToAir::getAirDate).orElse(null);
+        nextEpisodeNumber = Optional.ofNullable(nextEpisode).map(EpisodeToAir::getNumber).orElse(null);
+        nextEpisodeSeasonNumber = Optional.ofNullable(nextEpisode).map(EpisodeToAir::getSeasonNumber).orElse(null);
     }
 
 

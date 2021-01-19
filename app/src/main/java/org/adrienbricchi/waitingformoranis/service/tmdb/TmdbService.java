@@ -237,7 +237,7 @@ public class TmdbService {
                     .filter(t -> t < currentTimeMillis() + DELAY_TIMEOUT_MS)
                     .isPresent()) {
 
-            Log.i(LOG_TAG, format("getMovie postponed id:%s, timeout delay not yet finished", id));
+            Log.i(LOG_TAG, format("getShow postponed id:%s, timeout delay not yet finished", id));
             return null;
         }
 

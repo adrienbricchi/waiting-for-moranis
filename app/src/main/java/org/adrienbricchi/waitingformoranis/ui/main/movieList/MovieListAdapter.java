@@ -44,7 +44,7 @@ import java.util.stream.IntStream;
 
 import static java.text.DateFormat.FULL;
 import static org.adrienbricchi.waitingformoranis.R.drawable.ic_local_movies_48dp;
-import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_parenthesis;
+import static org.adrienbricchi.waitingformoranis.R.string.unknown_release_date;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.DIGITAL;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
 
@@ -139,7 +139,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                                 return dateString;
                             }
                         })
-                        .orElseGet(() -> currentContext.getString(unknown_between_parenthesis)));
+                        .orElseGet(() -> currentContext.getString(unknown_release_date)));
 
         holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentMovie.getId()));
     }

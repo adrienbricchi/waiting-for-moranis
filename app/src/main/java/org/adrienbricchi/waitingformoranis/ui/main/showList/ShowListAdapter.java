@@ -100,7 +100,7 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
 
         String nextEpisodeDateLabel = Optional.ofNullable(currentShow.getNextEpisodeAirDate())
                                               .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
-                                              .orElse(currentContext.getString(unknown_between_parenthesis));
+                                              .orElse(currentContext.getString(unknown_release_date));
 
         String dateLabel = ((currentShow.getNextEpisodeSeasonNumber() != null) && (currentShow.getNextEpisodeNumber() != null))
                            ? currentContext
