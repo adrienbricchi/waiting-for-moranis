@@ -102,19 +102,19 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
                                               .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
                                               .orElse(currentContext.getString(unknown_between_parenthesis));
 
-        String nextDateLabel = ((currentShow.getNextEpisodeSeasonNumber() != null) && (currentShow.getNextEpisodeNumber() != null))
-                               ? currentContext
-                                       .getString(
-                                               next_episode_code_date,
-                                               currentShow.getNextEpisodeSeasonNumber(),
-                                               currentShow.getNextEpisodeNumber(),
-                                               nextEpisodeDateLabel
-                                       )
-                               : currentContext.getString(next_episode_date, nextEpisodeDateLabel);
+        String dateLabel = ((currentShow.getNextEpisodeSeasonNumber() != null) && (currentShow.getNextEpisodeNumber() != null))
+                           ? currentContext
+                                   .getString(
+                                           next_episode_code_date,
+                                           currentShow.getNextEpisodeSeasonNumber(),
+                                           currentShow.getNextEpisodeNumber(),
+                                           nextEpisodeDateLabel
+                                   )
+                           : currentContext.getString(next_episode_date, nextEpisodeDateLabel);
 
-        holder.binding.titleTextView.setText(currentShow.isInProduction() ? nextDateLabel : currentShow.getTitle());
+        holder.binding.titleTextView.setText(currentShow.getTitle());
         holder.binding.coverImageView.setContentDescription(currentShow.getTitle());
-        holder.binding.dateTextView.setText(currentShow.isInProduction() ? nextDateLabel : currentContext.getText(ended));
+        holder.binding.dateTextView.setText(currentShow.isInProduction() ? dateLabel : currentContext.getText(ended));
 
         holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentShow.getId()));
     }

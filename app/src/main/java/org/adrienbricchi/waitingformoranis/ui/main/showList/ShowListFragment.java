@@ -51,11 +51,11 @@ import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
 @Getter
 public class ShowListFragment extends Fragment {
 
-    private static final String LOG_TAG = "ShowWithSeasonsListFragment";
+    private static final String LOG_TAG = "ShowListFragment";
     private static final String SELECTION_ID_SHOWS_ID = "selection_id_shows_id";
 
-    public static final String FRAGMENT_TAG = "ShowWithSeasonsListFragment";
-    public static final String FRAGMENT_REQUEST = "show_with_seasons_list_fragment";
+    public static final String FRAGMENT_TAG = "ShowListFragment";
+    public static final String FRAGMENT_REQUEST = "show_list_fragment";
     public static final String FRAGMENT_RESULT_SHOWS_COUNT = "shows_count";
 
 

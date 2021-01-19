@@ -33,7 +33,8 @@
 
     <string name="movie_list">Movie list</string>
     <string name="hashtagged_movie">%s #movie</string>
-    <string name="show_season">%s - Season %d</string>
+    <string name="next_episode_code_date">s%02de%02d : %s</string>
+    <string name="next_episode_date">Next episode: %s</string>
     <string name="search_movie_title_hint">Search a movie title</string>
     <string name="search_show_title_hint">Search a show title</string>
     <string name="unknown_between_parenthesis">(unknown)</string>
@@ -53,6 +54,8 @@
     <string name="theatrical_limited">Limited theatrical</string>
     <string name="tv">TV</string>
     <string name="premiere">Premiere</string>
+
+    <string name="ended">Ended</string>
 
     <!-- <editor-fold desc="Settings" -->
 

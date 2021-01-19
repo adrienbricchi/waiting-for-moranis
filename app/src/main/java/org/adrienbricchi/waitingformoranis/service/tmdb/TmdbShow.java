@@ -44,6 +44,7 @@ public class TmdbShow extends Show {
 
     @Data
     @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class EpisodeToAir {
 
         private Long airDate;
