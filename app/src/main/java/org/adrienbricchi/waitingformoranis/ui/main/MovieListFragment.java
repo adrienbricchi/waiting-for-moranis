@@ -116,6 +116,18 @@ public class MovieListFragment extends Fragment {
                     }
                 }
         );
+
+        getParentFragmentManager().setFragmentResultListener(
+                MainActivity.FRAGMENT_REQUEST,
+                this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(MainActivity.FRAGMENT_ADD_FAB_BUTTON_CLICKED, false)) {
+                        AddMovieDialogFragment addMovieDialogFragment = new AddMovieDialogFragment();
+                        addMovieDialogFragment.setKnownMovies(adapter.getDataSet());
+                        addMovieDialogFragment.show(getParentFragmentManager(), AddMovieDialogFragment.TAG);
+                    }
+                }
+        );
     }
 
 

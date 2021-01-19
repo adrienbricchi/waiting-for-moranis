@@ -58,7 +58,7 @@ public class AddMovieDialogFragment extends DialogFragment {
 
     private AddMovieDialogListAdapter adapter;
     private AddMovieMainBinding binding;
-    private List<Movie> knownMovies = new ArrayList<>();
+    private List<Movie> knownMovies;
 
 
     @Override

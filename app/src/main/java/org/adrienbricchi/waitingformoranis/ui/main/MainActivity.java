@@ -23,17 +23,23 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayoutMediator;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 import org.adrienbricchi.waitingformoranis.ui.preferences.SettingsActivity;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static androidx.viewpager2.widget.ViewPager2.*;
 import static org.adrienbricchi.waitingformoranis.R.id.action_settings;
 import static org.adrienbricchi.waitingformoranis.R.menu.menu_main;
 
 
 public class MainActivity extends AppCompatActivity {
+
+
+    public static final String FRAGMENT_REQUEST = "main_activity";
+    public static final String FRAGMENT_ADD_FAB_BUTTON_CLICKED = "add_fab_button_clicked";
 
 
     // <editor-fold desc="LifeCycle">
@@ -78,9 +84,9 @@ public class MainActivity extends AppCompatActivity {
         ).attach();
 
         binding.addMovieFab.setOnClickListener(v -> {
-            AddMovieDialogFragment addMovieDialogFragment = new AddMovieDialogFragment();
-            // FIXME : addMovieDialogFragment.setKnownMovies(movieListFragment.getAdapter().getDataSet());
-            addMovieDialogFragment.show(getSupportFragmentManager(), AddMovieDialogFragment.TAG);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(FRAGMENT_ADD_FAB_BUTTON_CLICKED, true);
+            getSupportFragmentManager().setFragmentResult(FRAGMENT_REQUEST, bundle);
         });
 
         getSupportFragmentManager().setFragmentResultListener(
