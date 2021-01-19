@@ -26,7 +26,7 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 
 
 @Database(
-        entities = {Movie.class},
+        entities = {Movie.class, Show.class, Season.class},
         version = 7,
         exportSchema = false
 )

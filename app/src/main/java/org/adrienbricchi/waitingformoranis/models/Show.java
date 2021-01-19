@@ -17,25 +17,21 @@
  */
 package org.adrienbricchi.waitingformoranis.models;
 
-import android.util.SparseArray;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 
 @Data
 @Keep
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity(tableName = Show.TABLE_NAME,
         indices = {@Index(value = Show.FIELD_ID)})
 public class Show {
@@ -43,26 +39,15 @@ public class Show {
     public static final String TABLE_NAME = "show";
     public static final String FIELD_ID = "id";
 
-    protected @PrimaryKey @NonNull String id = UUID.randomUUID().toString();
+
+    @PrimaryKey
+    @ColumnInfo(name = FIELD_ID)
+    protected @NonNull String id = UUID.randomUUID().toString();
+
     protected String title;
     protected String imageUrl;
 
     protected String status;
-    protected @NonNull SparseArray<Season> seasonSparseArray = new SparseArray<>();
-
-
-    public static class Season {
-
-        protected String imageUrl;
-        protected Long calendarEventId;
-
-        protected String status;
-        protected @NonNull List<Release> airDates = new ArrayList<>();
-
-        protected Long nextAirDate;
-        protected boolean isUpdateNeededInCalendar = false;
-
-    }
-
+    protected long releaseDate;
 
 }

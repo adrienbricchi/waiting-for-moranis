@@ -30,6 +30,7 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.utils.JacksonRequest;
 
 import java.util.*;
@@ -58,6 +59,7 @@ public class TmdbService {
 
     private static final String PATH_SEARCH = "search";
     private static final String PATH_MOVIE = "movie";
+    private static final String PATH_TV = "tv";
     private static final String PATH_EDIT = "edit";
     private static final String PATH_RELEASE_DATES = "release_dates";
 
@@ -138,6 +140,34 @@ public class TmdbService {
         JacksonRequest<TmdbPage<TmdbMovie>> jacksonRequest = new JacksonRequest<>(
                 url,
                 new TypeReference<TmdbPage<TmdbMovie>>() {},
+                response -> onSuccess.onResponse(response.getResults()),
+                onError
+        );
+
+        // Add the request to the RequestQueue.
+        queue.add(jacksonRequest);
+    }
+
+
+    public void searchShow(@NonNull String searchTerm,
+                           @NonNull final Response.Listener<List<? extends Show>> onSuccess,
+                           @NonNull final Response.ErrorListener onError) {
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        String url = new Uri.Builder()
+                .scheme(HTTPS).authority(API_URL)
+                .appendPath(API_VERSION).appendPath(PATH_SEARCH).appendPath(PATH_TV)
+                .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
+                .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
+                .appendQueryParameter(QUERY_PARAM, searchTerm)
+                .build().toString();
+
+        // Request response from the provided URL.
+        JacksonRequest<TmdbPage<TmdbShow>> jacksonRequest = new JacksonRequest<>(
+                url,
+                new TypeReference<TmdbPage<TmdbShow>>() {},
                 response -> onSuccess.onResponse(response.getResults()),
                 onError
         );
