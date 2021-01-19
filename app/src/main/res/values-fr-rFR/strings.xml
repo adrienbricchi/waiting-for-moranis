@@ -32,6 +32,7 @@
 
     <string name="movie_list">Liste de films</string>
     <string name="hashtagged_movie">%s #film</string>
+    <string name="show_season">%s - Saison %d</string>
     <string name="search_movie_title_hint">Rechercher un titre de film</string>
     <string name="search_show_title_hint">Rechercher un titre de série</string>
     <string name="unknown_between_parenthesis">(inconnu)</string>

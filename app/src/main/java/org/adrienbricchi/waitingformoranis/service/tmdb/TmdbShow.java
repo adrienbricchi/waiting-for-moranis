@@ -28,6 +28,7 @@ import org.adrienbricchi.waitingformoranis.models.Show;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -39,6 +40,10 @@ import static org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService.COVER
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TmdbShow extends Show {
+
+
+    @JsonAlias("seasons")
+    private List<TmdbSeason> seasonsList;
 
 
     @JsonProperty("name")

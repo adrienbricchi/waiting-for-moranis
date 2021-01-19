@@ -67,7 +67,7 @@ public class AddShowDialogListAdapter extends RecyclerView.Adapter<AddShowDialog
                     new Thread(() -> {
                         AppDatabase database = AppDatabase.getDatabase(buttonView.getContext());
                         if (isChecked) {
-                            database.showDao().add(currentShow);
+                            database.showDao().addShow(currentShow);
                         } else {
                             database.showDao().remove(currentShow.getId());
                         }

@@ -23,11 +23,13 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.models.Season;
+import org.adrienbricchi.waitingformoranis.models.Show;
 
 
 @Database(
         entities = {Movie.class, Show.class, Season.class},
-        version = 7,
+        version = 8,
         exportSchema = false
 )
 @TypeConverters({CustomTypeConverters.class})
@@ -37,6 +39,8 @@ public abstract class AppDatabase extends RoomDatabase {
 
 
     public abstract MovieDao movieDao();
+
+    public abstract ShowDao showDao();
 
 
     public static AppDatabase getDatabase(Context context) {

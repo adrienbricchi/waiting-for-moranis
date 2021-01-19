@@ -31,9 +31,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import lombok.Getter;
 import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.ShowListBinding;
+import org.adrienbricchi.waitingformoranis.models.Season;
 import org.adrienbricchi.waitingformoranis.models.ShowWithSeasons;
 import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
+import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 import org.adrienbricchi.waitingformoranis.ui.main.MainActivity;
 
 import java.util.*;
@@ -43,21 +45,22 @@ import static android.os.Looper.getMainLooper;
 import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static androidx.recyclerview.selection.StorageStrategy.createStringStorage;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
 
 
 @Getter
-public class ShowListFragment extends Fragment {
+public class ShowWithSeasonsListFragment extends Fragment {
 
-    private static final String LOG_TAG = "ShowListFragment";
+    private static final String LOG_TAG = "ShowWithSeasonsListFragment";
     private static final String SELECTION_ID_SHOWS_ID = "selection_id_shows_id";
 
-    public static final String FRAGMENT_TAG = "ShowListFragment";
-    public static final String FRAGMENT_REQUEST = "show_list_fragment";
+    public static final String FRAGMENT_TAG = "ShowWithSeasonsListFragment";
+    public static final String FRAGMENT_REQUEST = "show_with_seasons_list_fragment";
     public static final String FRAGMENT_RESULT_SHOWS_COUNT = "shows_count";
 
 
-    private ShowWithSeasonListAdapter adapter;
+    private ShowWithSeasonsListAdapter adapter;
     private ShowListBinding binding;
     private ActionMode actionMode;
 
@@ -65,8 +68,8 @@ public class ShowListFragment extends Fragment {
     // <editor-fold desc="LifeCycle">
 
 
-    public static @NonNull ShowListFragment newInstance() {
-        return new ShowListFragment();
+    public static @NonNull ShowWithSeasonsListFragment newInstance() {
+        return new ShowWithSeasonsListFragment();
     }
 
 
@@ -81,7 +84,7 @@ public class ShowListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        adapter = new ShowWithSeasonListAdapter(new ArrayList<>());
+        adapter = new ShowWithSeasonsListAdapter(new ArrayList<>());
 
         binding.showListRecyclerView.setHasFixedSize(true);
         binding.showListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -320,19 +323,20 @@ public class ShowListFragment extends Fragment {
 
     private void onPullToRefresh() {
         new Thread(() -> {
-            // TODO
-//            AppDatabase database = AppDatabase.getDatabase(getContext());
-//            Map<String, Show> oldShowsMap = database.movieDao()
-//                                                    .getAll()
-//                                                    .stream()
-//                                                    .collect(toMap(Show::getId, show -> show));
-//
-//            Long calendarId = CalendarService.init(getActivity())
-//                                             .map(CalendarService::getCurrentCalendarId)
-//                                             .orElse(null);
-//
-//            if (calendarId != null) {
-//
+
+            AppDatabase database = AppDatabase.getDatabase(getContext());
+            Map<String, ShowWithSeasons> oldShowsMap = database.showDao()
+                                                               .getAll()
+                                                               .stream()
+                                                               .collect(toMap(s -> s.getShow().getId(), s -> s));
+
+            Long calendarId = CalendarService.init(getActivity())
+                                             .map(CalendarService::getCurrentCalendarId)
+                                             .orElse(null);
+
+            if (calendarId != null) {
+
+                // TODO
 //                Map<String, Long> existingEvents = CalendarService.init(getActivity())
 //                                                                  .map(c -> c.getEvents(calendarId))
 //                                                                  .orElseGet(Collections::emptyMap);
@@ -356,17 +360,18 @@ public class ShowListFragment extends Fragment {
 //                           .filter(s -> s.getValue().getCalendarEventId() == null)
 //                           .filter(s -> existingEvents.get(s.getKey()) != null)
 //                           .forEach(s -> s.getValue().setCalendarEventId(existingEvents.get(s.getKey())));
-//
-//            }
-//
-//            List<Show> refreshedShows = oldShowsMap.values()
-//                                                   .stream()
-//                                                   .map(s -> TmdbService.init(getActivity())
-//                                                                        .map(t -> t.getShow(s.getId()))
-//                                                                        .orElse(null))
-//                                                   .filter(Objects::nonNull)
-//                                                   .collect(toList());
-//
+
+            }
+
+            List<ShowWithSeasons> refreshedShows = oldShowsMap.values()
+                                                              .stream()
+                                                              .map(s -> TmdbService.init(getActivity())
+                                                                                   .map(t -> t.getShow(s.getShow().getId()))
+                                                                                   .orElse(null))
+                                                              .filter(Objects::nonNull)
+                                                              .collect(toList());
+
+            //TODO
 //            refreshedShows.stream()
 //                          .flatMap(s -> s.getSeasonList().stream())
 //                          .filter(Objects::nonNull)
@@ -374,37 +379,40 @@ public class ShowListFragment extends Fragment {
 //                          .forEach(s -> s.setCalendarEventId(Optional.ofNullable(oldShowsMap.get(s.getId()))
 //                                                                     .map(Show.Season::getCalendarEventId)
 //                                                                     .orElse(null)));
-//
-//            if (calendarId != null) {
-//
-//                refreshedShows.stream()
-//                              .flatMap(s -> s.getSeasonList().stream())
-//                              .filter(Objects::nonNull)
-//                              .filter(s -> (s.getCalendarEventId() == null))
-//                              .forEach(s -> {
-//                                  Long calendarEventId = CalendarService.init(getActivity())
-//                                                                        .map(c -> c.addShowSeasonToCalendar(calendarId, s))
-//                                                                        .orElse(null);
-//                                  s.setCalendarEventId(calendarEventId);
-//                              });
-//
-//                refreshedShows.stream()
-//                              .flatMap(s -> s.getSeasonList().stream())
-//                              .filter(Objects::nonNull)
-//                              .filter(s -> (s.getCalendarEventId() != null))
-//                              .filter(Show.Season::isUpdateNeededInCalendar)
-//                              .forEach(s -> {
-//                                  boolean edited = CalendarService.init(getActivity())
-//                                                                  .map(c -> c.editShowSeasonToCalendar(calendarId, s))
-//                                                                  .orElse(false);
-//                                  s.setUpdateNeededInCalendar(!edited);
-//                              });
-//
-//            }
-//
-//            refreshedShows.forEach(s -> database.showDao().update(s));
-//
-//            new Handler(getMainLooper()).post(this::refreshListFromDb);
+
+            if (calendarId != null) {
+
+                refreshedShows.stream()
+                              .flatMap(s -> s.getSeasonList().stream())
+                              .filter(Objects::nonNull)
+                              .filter(s -> (s.getCalendarEventId() == null))
+                              .forEach(s -> {
+                                  Long calendarEventId = CalendarService.init(getActivity())
+                                                                        .map(c -> c.addShowSeasonToCalendar(calendarId, s))
+                                                                        .orElse(null);
+                                  s.setCalendarEventId(calendarEventId);
+                              });
+
+                refreshedShows.stream()
+                              .flatMap(s -> s.getSeasonList().stream())
+                              .filter(Objects::nonNull)
+                              .filter(s -> (s.getCalendarEventId() != null))
+                              .filter(Season::isUpdateNeededInCalendar)
+                              .forEach(s -> {
+                                  boolean edited = CalendarService.init(getActivity())
+                                                                  .map(c -> c.editShowSeasonToCalendar(calendarId, s))
+                                                                  .orElse(false);
+                                  s.setUpdateNeededInCalendar(!edited);
+                              });
+
+            }
+
+            refreshedShows.forEach(s -> database.showDao().update(s.show));
+            refreshedShows.stream()
+                          .flatMap(s -> s.getSeasonList().stream())
+                          .forEach(s -> database.showDao().update(s));
+
+            new Handler(getMainLooper()).post(this::refreshListFromDb);
 
         }).start();
     }
