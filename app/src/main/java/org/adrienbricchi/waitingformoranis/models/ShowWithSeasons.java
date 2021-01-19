@@ -17,37 +17,26 @@
  */
 package org.adrienbricchi.waitingformoranis.models;
 
-import androidx.annotation.Keep;
-import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
+import androidx.room.Embedded;
+import androidx.room.Relation;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import java.util.List;
 
 
 @Data
-@Keep
 @NoArgsConstructor
-@Entity(tableName = Show.TABLE_NAME,
-        indices = {@Index(value = Show.FIELD_ID)})
-public class Show {
+@AllArgsConstructor
+public class ShowWithSeasons {
 
-    public static final String TABLE_NAME = "show";
-    public static final String FIELD_ID = "id";
+    @Embedded public Show show;
 
-
-    @PrimaryKey
-    @ColumnInfo(name = FIELD_ID)
-    protected @NonNull String id = UUID.randomUUID().toString();
-
-    protected String title;
-    protected String imageUrl;
-
-    protected String status;
-    protected Long releaseDate;
+    @Relation(
+            parentColumn = Show.FIELD_ID,
+            entityColumn = Season.FIELD_SHOW_ID
+    )
+    public List<Season> seasonList;
 
 }

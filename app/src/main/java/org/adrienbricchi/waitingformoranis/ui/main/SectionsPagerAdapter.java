@@ -24,6 +24,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.google.android.material.tabs.TabLayout;
 import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.ui.main.movieList.MovieListFragment;
+import org.adrienbricchi.waitingformoranis.ui.main.showList.ShowListFragment;
 
 
 /**
@@ -43,7 +44,7 @@ public class SectionsPagerAdapter extends FragmentStateAdapter {
         if (position == 0) {
             return MovieListFragment.newInstance();
         } else {
-            return MovieListFragment.newInstance();
+            return ShowListFragment.newInstance();
         }
     }
 
