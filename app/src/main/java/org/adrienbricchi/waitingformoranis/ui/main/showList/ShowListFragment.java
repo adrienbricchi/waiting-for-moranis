@@ -232,42 +232,41 @@ public class ShowListFragment extends Fragment {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
-                switch (item.getItemId()) {
+                if (item.getItemId() == R.id.delete) {
 
-                    case R.id.delete:
+                    deleteShows(adapter.getSelectionTracker().getSelection().spliterator());
+                    mode.finish(); // Action picked, so close the CAB
 
-                        deleteShows(adapter.getSelectionTracker().getSelection().spliterator());
-                        mode.finish(); // Action picked, so close the CAB
+                    return true;
 
-                        return true;
-
-                    case R.id.edit:
-
-                        Show selectedShow = StreamSupport
-                                .stream(adapter.getSelectionTracker().getSelection().spliterator(), false)
-                                .findFirst()
-                                .map(adapter::getShow)
-                                .orElse(null);
-
-                        Intent intent = TmdbService
-                                .init(getActivity())
-                                .filter(t -> selectedShow != null)
-                                .map(t -> t.getEditReleaseDatesUrl(selectedShow))
-                                .map(u -> new Intent(ACTION_VIEW, u))
-                                .orElse(null);
-
-                        Optional.ofNullable(getActivity())
-                                .map(Activity::getPackageManager)
-                                .filter(pm -> intent != null)
-                                .filter(pm -> intent.resolveActivity(pm) != null)
-                                .ifPresent(pm -> startActivity(intent));
-
-                        mode.finish();
-                        return true;
-
-                    default:
-                        return false;
                 }
+
+                if (item.getItemId() == R.id.edit) {
+
+                    Show selectedShow = StreamSupport
+                            .stream(adapter.getSelectionTracker().getSelection().spliterator(), false)
+                            .findFirst()
+                            .map(adapter::getShow)
+                            .orElse(null);
+
+                    Intent intent = TmdbService
+                            .init(getActivity())
+                            .filter(t -> selectedShow != null)
+                            .map(t -> t.getEditReleaseDatesUrl(selectedShow))
+                            .map(u -> new Intent(ACTION_VIEW, u))
+                            .orElse(null);
+
+                    Optional.ofNullable(getActivity())
+                            .map(Activity::getPackageManager)
+                            .filter(pm -> intent != null)
+                            .filter(pm -> intent.resolveActivity(pm) != null)
+                            .ifPresent(pm -> startActivity(intent));
+
+                    mode.finish();
+                    return true;
+                }
+
+                return false;
             }
 
 

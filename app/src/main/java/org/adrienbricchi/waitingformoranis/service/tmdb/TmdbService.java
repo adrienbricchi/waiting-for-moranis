@@ -61,10 +61,13 @@ public class TmdbService {
     private static final String PATH_MOVIE = "movie";
     private static final String PATH_TV = "tv";
     private static final String PATH_EDIT = "edit";
+    private static final String PATH_SEASON = "season";
     private static final String PATH_RELEASE_DATES = "release_dates";
 
     private static final String PATH_QUERY_ACTIVE_NAV_ITEM = "active_nav_item";
     private static final String PATH_QUERY_RELEASE_INFORMATION = "release_information";
+    private static final String PATH_QUERY_EPISODES = "episodes";
+    private static final String PATH_QUERY_SEASONS = "seasons";
 
     private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
@@ -103,11 +106,27 @@ public class TmdbService {
 
 
     public @NonNull Uri getEditReleaseDatesUrl(@NonNull Show show) {
-        return new Uri.Builder()
-                .scheme(HTTPS).authority(WEB_URL)
-                .appendPath(PATH_TV).appendPath(show.getId()).appendPath(PATH_EDIT)
-                .appendQueryParameter(PATH_QUERY_ACTIVE_NAV_ITEM, PATH_QUERY_RELEASE_INFORMATION)
-                .build();
+
+        if (show.getNextEpisodeSeasonNumber() != null) {
+
+            // https://www.themoviedb.org/tv/85271-wandavision/season/1/edit?active_nav_item=episodes
+            return new Uri.Builder()
+                    .scheme(HTTPS).authority(WEB_URL)
+                    .appendPath(PATH_TV).appendPath(show.getId())
+                    .appendPath(PATH_SEASON).appendPath(String.valueOf(show.getNextEpisodeSeasonNumber()))
+                    .appendPath(PATH_EDIT)
+                    .appendQueryParameter(PATH_QUERY_ACTIVE_NAV_ITEM, PATH_QUERY_EPISODES)
+                    .build();
+        } else {
+
+            // https://www.themoviedb.org/tv/85271-wandavision/edit?active_nav_item=seasons
+            return new Uri.Builder()
+                    .scheme(HTTPS).authority(WEB_URL)
+                    .appendPath(PATH_TV).appendPath(show.getId()).appendPath(PATH_EDIT)
+                    .appendQueryParameter(PATH_QUERY_ACTIVE_NAV_ITEM, PATH_QUERY_SEASONS)
+                    .build();
+        }
+
     }
 
 
