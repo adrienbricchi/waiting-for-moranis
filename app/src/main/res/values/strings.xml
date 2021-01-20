@@ -34,6 +34,7 @@
     <string name="movie_list">Movie list</string>
     <string name="hashtagged_movie">%s #movie</string>
     <string name="next_episode_code_date">s%02de%02d : %s</string>
+    <string name="title_episode_code">%s - s%02de%02d</string>
     <string name="next_episode_date">Next episode: %s</string>
     <string name="search_movie_title_hint">Search a movie title</string>
     <string name="search_show_title_hint">Search a show title</string>

@@ -49,6 +49,7 @@ import static androidx.recyclerview.selection.StorageStrategy.createStringStorag
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
+import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
 import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.generateShowReleaseDateComparator;
 
 
@@ -337,30 +338,30 @@ public class ShowListFragment extends Fragment {
 
             if (calendarId != null) {
 
-                // TODO
-//                Map<String, Long> existingEvents = CalendarService.init(getActivity())
-//                                                                  .map(c -> c.getEvents(calendarId))
-//                                                                  .orElseGet(Collections::emptyMap);
-//
-//                // Movies that are in the Calendar, but not in the DB
-//                existingEvents.entrySet()
-//                              .stream()
-//                              .filter(e -> oldShowsMap.get(e.getKey()) == null)
-//                              .forEach(e -> {
-//                                  Movie m = new Movie(
-//                                          e.getKey(), null, null, e.getValue(),
-//                                          new HashSet<>(), new ArrayList<>(), null, true
-//                                  );
-//                                  oldShowsMap.put(e.getKey(), m);
-//                                  database.movieDao().add(m);
-//                              });
-//
-//                // Movies that are in the Calendar and the DB, but not mapped together
-//                oldShowsMap.entrySet()
-//                           .stream()
-//                           .filter(s -> s.getValue().getCalendarEventId() == null)
-//                           .filter(s -> existingEvents.get(s.getKey()) != null)
-//                           .forEach(s -> s.getValue().setCalendarEventId(existingEvents.get(s.getKey())));
+                Map<String, Long> existingEvents = CalendarService.init(getActivity())
+                                                                  .map(c -> c.getEvents(calendarId, false))
+                                                                  .orElseGet(Collections::emptyMap);
+
+                // Movies that are in the Calendar, but not in the DB
+                existingEvents.entrySet()
+                              .stream()
+                              .filter(e -> oldShowsMap.get(e.getKey()) == null)
+                              .forEach(e -> {
+                                  Show s = new Show(
+                                          e.getKey(), null, null, false, null, e.getValue(),
+                                          null, null, null, null,
+                                          true
+                                  );
+                                  oldShowsMap.put(e.getKey(), s);
+                                  database.showDao().add(s);
+                              });
+
+                // Movies that are in the Calendar and the DB, but not mapped together
+                oldShowsMap.entrySet()
+                           .stream()
+                           .filter(s -> s.getValue().getCalendarEventId() == null)
+                           .filter(s -> existingEvents.get(s.getKey()) != null)
+                           .forEach(s -> s.getValue().setCalendarEventId(existingEvents.get(s.getKey())));
 
             }
 
@@ -372,12 +373,11 @@ public class ShowListFragment extends Fragment {
                                                    .filter(Objects::nonNull)
                                                    .collect(toList());
 
-            //TODO
-//            refreshedShows.stream()
-//                          .peek(s -> s.setUpdateNeededInCalendar(checkForCalendarUpgradeNeed(oldShowsMap.get(s.getId()), s)))
-//                          .forEach(s -> s.setCalendarEventId(Optional.ofNullable(oldShowsMap.get(s.getId()))
-//                                                                     .map(Show.Season::getCalendarEventId)
-//                                                                     .orElse(null)));
+            refreshedShows.stream()
+                          .peek(s -> s.setUpdateNeededInCalendar(checkForCalendarUpgradeNeed(oldShowsMap.get(s.getId()), s)))
+                          .forEach(s -> s.setCalendarEventId(Optional.ofNullable(oldShowsMap.get(s.getId()))
+                                                                     .map(Show::getCalendarEventId)
+                                                                     .orElse(null)));
 
             if (calendarId != null) {
 
@@ -450,7 +450,9 @@ public class ShowListFragment extends Fragment {
                                                       .map(id -> adapter.getShow(id))
                                                       .filter(Objects::nonNull)
                                                       .forEach(s -> {
-                                                          c.deleteShowInCalendar(s);
+                                                          // Wrong "may be null" warning
+                                                          // noinspection ConstantConditions
+                                                          c.deleteEventInCalendar(s.getCalendarEventId());
                                                           database.showDao().remove(s.getId());
                                                       }));
 

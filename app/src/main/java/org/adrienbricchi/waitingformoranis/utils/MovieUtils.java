@@ -26,8 +26,6 @@ import org.adrienbricchi.waitingformoranis.models.Show;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static java.util.Comparator.*;
 
@@ -95,23 +93,6 @@ public class MovieUtils {
                     .filter(r -> movie.getProductionCountries().contains(r.getCountry()))
                     .min(RELEASE_COMPARATOR)
                     .orElse(null);
-    }
-
-
-    public static @Nullable String getIdFromCalendarDescription(@Nullable String desc) {
-
-        if (desc == null) {
-            return null;
-        }
-
-        if (desc.matches("\\d{5,6}")) {
-            return desc;
-        }
-
-        return Optional.of(Pattern.compile(".*?\\[TMDB id:(?<id>.*?)].*").matcher(desc))
-                       .filter(Matcher::matches)
-                       .map(m -> m.group(1))
-                       .orElse(null);
     }
 
 

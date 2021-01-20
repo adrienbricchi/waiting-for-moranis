@@ -339,7 +339,7 @@ public class MovieListFragment extends Fragment {
             if (calendarId != null) {
 
                 Map<String, Long> existingEvents = CalendarService.init(getActivity())
-                                                                  .map(c -> c.getEvents(calendarId))
+                                                                  .map(c -> c.getEvents(calendarId, true))
                                                                   .orElseGet(Collections::emptyMap);
 
                 // Movies that are in the Calendar, but not in the DB
@@ -449,7 +449,9 @@ public class MovieListFragment extends Fragment {
                                                       .map(id -> adapter.getMovie(id))
                                                       .filter(Objects::nonNull)
                                                       .forEach(m -> {
-                                                          c.deleteMovieInCalendar(m);
+                                                          // Wrong "may be null" warning
+                                                          // noinspection ConstantConditions
+                                                          c.deleteEventInCalendar(m.getCalendarEventId());
                                                           database.movieDao().remove(m.getId());
                                                       }));
 

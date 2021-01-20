@@ -23,6 +23,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -32,6 +33,7 @@ import java.util.UUID;
 @Data
 @Keep
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity(tableName = Show.TABLE_NAME,
         indices = {@Index(value = Show.FIELD_ID)})
 public class Show {
