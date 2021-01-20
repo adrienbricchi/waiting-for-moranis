@@ -33,7 +33,7 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
-import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
+import org.adrienbricchi.waitingformoranis.utils.ReleaseUtils;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -202,7 +202,7 @@ public class CalendarService {
     public @Nullable Long addMovieToCalendar(@Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "addMovieToCalendar title:" + movie.getTitle());
 
-        Release release = MovieUtils.getRelease(movie, Locale.getDefault());
+        Release release = ReleaseUtils.getRelease(movie, Locale.getDefault());
         if ((calendarId == null) || (release == null) || !hasPermissions()) {
             return null;
         }
@@ -304,7 +304,7 @@ public class CalendarService {
     private boolean editMovieInCalendar(@Nullable Long calendarId, @NonNull Movie movie, boolean refreshDescription) {
         Log.v(LOG_TAG, "editMovieInCalendar title:" + movie.getTitle());
 
-        Release release = MovieUtils.getRelease(movie, Locale.getDefault());
+        Release release = ReleaseUtils.getRelease(movie, Locale.getDefault());
         if ((calendarId == null) || (release == null) || !hasPermissions()) {
             return false;
         }

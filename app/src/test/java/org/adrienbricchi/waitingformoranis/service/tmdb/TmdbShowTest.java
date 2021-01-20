@@ -242,7 +242,6 @@ public class TmdbShowTest {
 
         assertEquals("1399", tvShow.getId());
         assertEquals("https://image.tmdb.org/t/p/w154/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg", tvShow.getImageUrl());
-        assertEquals("Ended", tvShow.getStatus());
     }
 
 }

@@ -49,8 +49,8 @@ import static androidx.recyclerview.selection.StorageStrategy.createStringStorag
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
-import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
-import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.generateMovieReleaseDateComparator;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.checkForCalendarUpgradeNeed;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.generateMovieReleaseDateComparator;
 
 
 @Getter

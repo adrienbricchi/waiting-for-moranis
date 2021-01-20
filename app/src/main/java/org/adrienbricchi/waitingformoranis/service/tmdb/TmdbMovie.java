@@ -25,7 +25,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
-import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
+import org.adrienbricchi.waitingformoranis.utils.ReleaseUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,7 +34,7 @@ import java.util.*;
 import static java.util.stream.Collectors.toSet;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.*;
 import static org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService.COVER_URL;
-import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.countryLocale;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.countryLocale;
 
 
 @Data
@@ -89,7 +89,7 @@ class TmdbMovie extends Movie {
     private void parseProductionCountries(List<TmdbProductionCountry> list) {
         productionCountries = list.stream()
                                   .map(TmdbProductionCountry::getCountry)
-                                  .map(MovieUtils::countryLocale)
+                                  .map(ReleaseUtils::countryLocale)
                                   .filter(Objects::nonNull)
                                   .collect(toSet());
     }

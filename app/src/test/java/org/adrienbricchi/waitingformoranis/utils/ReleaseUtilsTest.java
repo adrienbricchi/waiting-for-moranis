@@ -29,18 +29,18 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Locale.*;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.*;
-import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.getRelease;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.getRelease;
 import static org.junit.Assert.*;
 
 
-public class MovieUtilsTest {
+public class ReleaseUtilsTest {
 
 
     @Test
     public void countryLocale() {
 
-        assertEquals(CANADA.getCountry(), MovieUtils.countryLocale("CA").getCountry());
-        Assert.assertNotNull(MovieUtils.countryLocale("NOTEXISTINGCOUNTRY").getCountry());
+        assertEquals(CANADA.getCountry(), ReleaseUtils.countryLocale("CA").getCountry());
+        Assert.assertNotNull(ReleaseUtils.countryLocale("NOTEXISTINGCOUNTRY").getCountry());
 
         assertEquals("United States", US.getDisplayCountry(US));
         assertEquals("Etats-Unis", US.getDisplayCountry(Locale.FRANCE));
@@ -64,9 +64,9 @@ public class MovieUtilsTest {
                 new Release(THEATRICAL, new Date(3L), FRANCE)
         ));
 
-        assertEquals(-1L, MovieUtils.generateMovieReleaseDateComparator(US).compare(movie1, movie2));
-        assertEquals(1L, MovieUtils.generateMovieReleaseDateComparator(FRANCE).compare(movie1, movie2));
-        assertEquals(-1, MovieUtils.generateMovieReleaseDateComparator(US).compare(movie1, new Movie()));
+        assertEquals(-1L, ReleaseUtils.generateMovieReleaseDateComparator(US).compare(movie1, movie2));
+        assertEquals(1L, ReleaseUtils.generateMovieReleaseDateComparator(FRANCE).compare(movie1, movie2));
+        assertEquals(-1, ReleaseUtils.generateMovieReleaseDateComparator(US).compare(movie1, new Movie()));
     }
 
 
@@ -140,7 +140,7 @@ public class MovieUtilsTest {
 
         // Testing
 
-        movieList.sort(MovieUtils.generateMovieReleaseDateComparator(CANADA_FRENCH));
+        movieList.sort(ReleaseUtils.generateMovieReleaseDateComparator(CANADA_FRENCH));
         movieList.forEach(System.out::println);
     }
 
@@ -158,7 +158,7 @@ public class MovieUtilsTest {
                 new Release(THEATRICAL, new Date(4L), FRANCE)
         ));
 
-        Release originalRelease = MovieUtils.getOriginalRelease(movie);
+        Release originalRelease = ReleaseUtils.getOriginalRelease(movie);
         assertNotNull(originalRelease);
         assertEquals(CANADA, originalRelease.getCountry());
         assertEquals(DIGITAL, originalRelease.getType());
@@ -172,20 +172,9 @@ public class MovieUtilsTest {
         movie.setProductionCountries(new HashSet<>(asList(US, CANADA)));
         movie.setReleaseDates(emptyList());
 
-        Release originalRelease = MovieUtils.getOriginalRelease(movie);
+        Release originalRelease = ReleaseUtils.getOriginalRelease(movie);
         assertNull(originalRelease);
     }
 
-
-    @Test
-    public void getIdFromCalendarDescription() {
-        assertNull(MovieUtils.getIdFromCalendarDescription(null));
-        assertNull(MovieUtils.getIdFromCalendarDescription(""));
-        assertNull(MovieUtils.getIdFromCalendarDescription("123"));
-        assertNull(MovieUtils.getIdFromCalendarDescription("Plop"));
-        assertEquals("123456", MovieUtils.getIdFromCalendarDescription("123456"));
-        assertEquals("123", MovieUtils.getIdFromCalendarDescription("[TMDB id:123]"));
-        assertEquals("123", MovieUtils.getIdFromCalendarDescription("Plop [TMDB id:123] plop"));
-    }
 
 }

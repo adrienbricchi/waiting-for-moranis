@@ -33,7 +33,7 @@ import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
-import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
+import org.adrienbricchi.waitingformoranis.utils.ReleaseUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -95,8 +95,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
         Movie currentMovie = dataSet.get(position);
         Context currentContext = holder.binding.getRoot().getContext();
-        Locale currentLocale = MovieUtils.countryLocale(Locale.getDefault().getCountry());
-        Release release = MovieUtils.getRelease(currentMovie, currentLocale);
+        Locale currentLocale = ReleaseUtils.countryLocale(Locale.getDefault().getCountry());
+        Release release = ReleaseUtils.getRelease(currentMovie, currentLocale);
 
         Picasso.get()
                .load(dataSet.get(position).getImageUrl())

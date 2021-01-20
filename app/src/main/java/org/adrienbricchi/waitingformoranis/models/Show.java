@@ -52,7 +52,6 @@ public class Show {
     protected boolean isInProduction;
     protected Long releaseDate;
 
-    protected Long lastEpisodeAirDate;
     protected Long nextEpisodeAirDate;
     protected Integer nextEpisodeNumber;
     protected Integer nextEpisodeSeasonNumber;

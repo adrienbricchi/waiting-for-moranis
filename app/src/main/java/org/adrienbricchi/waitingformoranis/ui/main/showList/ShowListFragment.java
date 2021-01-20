@@ -49,8 +49,8 @@ import static androidx.recyclerview.selection.StorageStrategy.createStringStorag
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
-import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
-import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.generateShowReleaseDateComparator;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.checkForCalendarUpgradeNeed;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.generateShowDateComparator;
 
 
 @Getter
@@ -349,7 +349,7 @@ public class ShowListFragment extends Fragment {
                               .forEach(e -> {
                                   Show s = new Show(
                                           e.getKey(), null, null, false, null, e.getValue(),
-                                          null, null, null, null,
+                                          null, null, null,
                                           true
                                   );
                                   oldShowsMap.put(e.getKey(), s);
@@ -420,7 +420,7 @@ public class ShowListFragment extends Fragment {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Show> shows = database.showDao().getAll();
-            shows.sort(generateShowReleaseDateComparator());
+            shows.sort(generateShowDateComparator());
 
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(shows);

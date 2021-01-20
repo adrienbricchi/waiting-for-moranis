@@ -30,7 +30,7 @@ import java.util.function.Function;
 import static java.util.Comparator.*;
 
 
-public class MovieUtils {
+public class ReleaseUtils {
 
 
     private static final Function<Release, Integer> COUNTRY_HASH_EXTRACTOR = r -> Optional.ofNullable(r.getCountry())
@@ -70,7 +70,7 @@ public class MovieUtils {
     }
 
 
-    public static Comparator<Show> generateShowReleaseDateComparator() {
+    public static Comparator<Show> generateShowDateComparator() {
         return comparing(Show::isInProduction, nullsLast(reverseOrder()))
                 .thenComparing(Show::getNextEpisodeAirDate, nullsLast(naturalOrder()))
                 .thenComparing(Show::getTitle, nullsLast(naturalOrder()))
