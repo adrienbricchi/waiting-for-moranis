@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.adrienbricchi.waitingformoranis.components.preferences;
+package org.adrienbricchi.waitingformoranis.ui.preferences;
 
 import android.app.Activity;
 import android.app.AlertDialog;

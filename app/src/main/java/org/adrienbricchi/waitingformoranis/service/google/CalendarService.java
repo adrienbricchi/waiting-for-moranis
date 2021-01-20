@@ -25,17 +25,19 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
-import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
+import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
-import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
+import org.adrienbricchi.waitingformoranis.utils.ReleaseUtils;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.Manifest.permission.READ_CALENDAR;
 import static android.Manifest.permission.WRITE_CALENDAR;
@@ -44,8 +46,7 @@ import static android.provider.CalendarContract.Events.*;
 import static androidx.core.app.ActivityCompat.requestPermissions;
 import static androidx.core.content.ContextCompat.checkSelfPermission;
 import static java.util.Arrays.asList;
-import static org.adrienbricchi.waitingformoranis.R.string.google_calendar_event_description;
-import static org.adrienbricchi.waitingformoranis.R.string.hashtagged_movie;
+import static org.adrienbricchi.waitingformoranis.R.string.*;
 
 
 @SuppressLint("MissingPermission")
@@ -155,7 +156,7 @@ public class CalendarService {
     }
 
 
-    public @NonNull Map<String, Long> getEvents(@Nullable Long calendarId) {
+    public @NonNull Map<String, Long> getEvents(@Nullable Long calendarId, boolean retrieveMovies) {
         Map<String, Long> result = new HashMap<>();
 
         if ((calendarId == null) || !hasPermissions()) {
@@ -179,9 +180,16 @@ public class CalendarService {
             while (cursor.moveToNext()) {
                 long eventId = cursor.getLong(EVENT_PROJECTION.indexOf(_ID));
                 String eventDescription = cursor.getString(EVENT_PROJECTION.indexOf(DESCRIPTION));
-                check100To101Patch(calendarId, eventDescription);
 
-                Optional.ofNullable(MovieUtils.getIdFromCalendarDescription(eventDescription))
+                check101To120Patch(calendarId, eventDescription);
+
+                Optional.ofNullable(eventDescription)
+                        .map(d -> Pattern.compile(retrieveMovies
+                                                  ? ".*?\\[TMDB movieId:(?<movieId>.*?)].*"
+                                                  : ".*?\\[TMDB showId:(?<showId>.*?)].*")
+                                         .matcher(d))
+                        .filter(Matcher::matches)
+                        .map(m -> m.group(1))
                         .ifPresent(id -> result.put(id, eventId));
             }
             cursor.close();
@@ -194,7 +202,7 @@ public class CalendarService {
     public @Nullable Long addMovieToCalendar(@Nullable Long calendarId, @NonNull Movie movie) {
         Log.v(LOG_TAG, "addMovieToCalendar title:" + movie.getTitle());
 
-        Release release = MovieUtils.getRelease(movie, Locale.getDefault());
+        Release release = ReleaseUtils.getRelease(movie, Locale.getDefault());
         if ((calendarId == null) || (release == null) || !hasPermissions()) {
             return null;
         }
@@ -206,7 +214,43 @@ public class CalendarService {
         values.put(ALL_DAY, true);
         values.put(TITLE, activity.getString(hashtagged_movie, movie.getTitle()));
         values.put(CALENDAR_ID, calendarId);
-        values.put(DESCRIPTION, activity.getString(google_calendar_event_description, movie.getId()));
+        values.put(DESCRIPTION, activity.getString(google_calendar_movie_event_description, movie.getId()));
+        values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
+
+        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+        if (uri == null) { return null; }
+
+        // Return the event Id that is the last element in the Uri
+        return Optional.ofNullable(uri.getLastPathSegment())
+                       .map(Long::parseLong)
+                       .orElse(null);
+    }
+
+
+    public @Nullable Long addShowToCalendar(@Nullable Long calendarId, @NonNull Show show) {
+        Log.v(LOG_TAG, "addShowToCalendar title:" + show.getTitle());
+
+        if ((calendarId == null) || (show.getNextEpisodeAirDate() == null) || !hasPermissions()) {
+            return null;
+        }
+
+        ContentResolver cr = activity.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(DTSTART, show.getNextEpisodeAirDate());
+        values.put(DTEND, show.getNextEpisodeAirDate());
+        values.put(ALL_DAY, true);
+        values.put(TITLE, Optional.of(show)
+                                  .filter(s -> s.getNextEpisodeSeasonNumber() != null)
+                                  .filter(s -> s.getNextEpisodeNumber() != null)
+                                  .map(s -> activity.getString(
+                                          title_episode_code,
+                                          s.getTitle(),
+                                          s.getNextEpisodeSeasonNumber(),
+                                          s.getNextEpisodeNumber()
+                                  ))
+                                  .orElse(show.getTitle()));
+        values.put(CALENDAR_ID, calendarId);
+        values.put(DESCRIPTION, activity.getString(google_calendar_show_event_description, show.getId()));
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
@@ -224,10 +268,43 @@ public class CalendarService {
     }
 
 
+    public boolean editShowInCalendar(@Nullable Long calendarId, @NonNull Show show) {
+        Log.v(LOG_TAG, "editMovieInCalendar title:" + show.getTitle());
+
+        if ((calendarId == null) || (show.getNextEpisodeSeasonNumber() == null) || !hasPermissions()) {
+            return false;
+        }
+
+        ContentResolver cr = activity.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(DTSTART, show.getNextEpisodeAirDate());
+        values.put(DTEND, show.getNextEpisodeAirDate());
+        values.put(ALL_DAY, true);
+        values.put(TITLE, Optional.of(show)
+                                  .filter(s -> s.getNextEpisodeSeasonNumber() != null)
+                                  .filter(s -> s.getNextEpisodeNumber() != null)
+                                  .map(s -> activity.getString(
+                                          title_episode_code,
+                                          s.getTitle(),
+                                          s.getNextEpisodeSeasonNumber(),
+                                          s.getNextEpisodeNumber()
+                                  ))
+                                  .orElse(show.getTitle()));
+        values.put(CALENDAR_ID, calendarId);
+        values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
+        values.put(DESCRIPTION, activity.getString(google_calendar_show_event_description, show.getId()));
+
+        Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, show.getCalendarEventId());
+        int numRowsUpdated = cr.update(updateUri, values, null, null);
+
+        return (numRowsUpdated != 0);
+    }
+
+
     private boolean editMovieInCalendar(@Nullable Long calendarId, @NonNull Movie movie, boolean refreshDescription) {
         Log.v(LOG_TAG, "editMovieInCalendar title:" + movie.getTitle());
 
-        Release release = MovieUtils.getRelease(movie, Locale.getDefault());
+        Release release = ReleaseUtils.getRelease(movie, Locale.getDefault());
         if ((calendarId == null) || (release == null) || !hasPermissions()) {
             return false;
         }
@@ -242,7 +319,7 @@ public class CalendarService {
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
         if (refreshDescription) {
-            values.put(DESCRIPTION, activity.getString(google_calendar_event_description, movie.getId()));
+            values.put(DESCRIPTION, activity.getString(google_calendar_movie_event_description, movie.getId()));
         }
 
         Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, movie.getCalendarEventId());
@@ -253,15 +330,15 @@ public class CalendarService {
 
 
     @SuppressWarnings("UnusedReturnValue")
-    public boolean deleteMovieInCalendar(@NonNull Movie movie) {
-        Log.v(LOG_TAG, "deleteMovieInCalendar title:" + movie.getTitle());
+    public boolean deleteEventInCalendar(@Nullable Long calendarEventId) {
+        Log.v(LOG_TAG, "deleteEventInCalendar id:{}" + calendarEventId);
 
-        if ((movie.getCalendarEventId() == null) || !hasPermissions()) {
+        if ((calendarEventId == null) || !hasPermissions()) {
             return false;
         }
 
         ContentResolver cr = activity.getContentResolver();
-        Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, movie.getCalendarEventId());
+        Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, calendarEventId);
         int numRowsUpdated = cr.delete(updateUri, null, null);
 
         return (numRowsUpdated != 0);
@@ -271,27 +348,23 @@ public class CalendarService {
     // <editor-fold desc="Patches">
 
 
-    private void check100To101Patch(@Nullable Long calendarId, @Nullable String desc) {
+    private void check101To120Patch(@Nullable Long calendarId, @Nullable String desc) {
 
         if ((calendarId == null) || (desc == null)) {
             return;
         }
 
         // Refreshing entirely the event.
-        // Title and description were improved from 1.0.0 to 1.0.1
-        if (desc.matches("\\d{5,6}")) {
-            AppDatabase.getDatabase(activity).movieDao().get(desc)
-                       .stream()
-                       .peek(m -> Log.i(LOG_TAG, "Patch 1.0.0 → 1.0.1 - Updating title:" + m.getTitle()))
-                       .findFirst()
-                       .ifPresent(m -> this.editMovieInCalendar(calendarId, m, true));
-        }
-
-        // Removing non-movie events from the DB
-        if ((!TextUtils.isEmpty(desc)) && MovieUtils.getIdFromCalendarDescription(desc) == null) {
-            Log.i(LOG_TAG, "Patch 1.0.0 → 1.0.1 - Deleting : " + desc);
-            AppDatabase.getDatabase(activity).movieDao().remove(desc);
-        }
+        // Ids were slightly renamed from 1.0.1 to 1.2.0, to separate movies and shows
+        Optional.of(desc)
+                .map(d -> Pattern.compile("\\[TMDB id:(?<movieId>.*?)]").matcher(d))
+                .filter(Matcher::find)
+                .map(m -> m.group(1))
+                .flatMap(i -> AppDatabase.getDatabase(activity).movieDao().get(i).stream().findFirst())
+                .ifPresent(m -> {
+                    Log.i(LOG_TAG, "Patch 1.0.1 → 1.2.0 - Updating title:" + m.getTitle());
+                    editMovieInCalendar(calendarId, m, true);
+                });
     }
 
 

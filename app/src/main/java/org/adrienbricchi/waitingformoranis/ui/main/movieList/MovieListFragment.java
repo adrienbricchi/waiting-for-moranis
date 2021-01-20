@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.adrienbricchi.waitingformoranis.components;
+package org.adrienbricchi.waitingformoranis.ui.main.movieList;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -26,7 +26,6 @@ import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
@@ -38,21 +37,20 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
+import org.adrienbricchi.waitingformoranis.ui.main.MainActivity;
 
 import java.util.*;
 import java.util.stream.StreamSupport;
 
 import static android.content.Intent.ACTION_VIEW;
 import static android.os.Looper.getMainLooper;
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static androidx.recyclerview.selection.StorageStrategy.createStringStorage;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
-import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.checkForCalendarUpgradeNeed;
-import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.generateReleaseDateComparator;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.checkForCalendarUpgradeNeed;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.generateMovieReleaseDateComparator;
 
 
 @Getter
@@ -61,12 +59,22 @@ public class MovieListFragment extends Fragment {
     private static final String LOG_TAG = "MovieListFragment";
     private static final String SELECTION_ID_MOVIES_ID = "selection_id_movies_id";
 
+    public static final String FRAGMENT_TAG = "MovieListFragment";
+    public static final String FRAGMENT_REQUEST = "movie_list_fragment";
+    public static final String FRAGMENT_RESULT_MOVIES_COUNT = "movies_count";
+
+
     private MovieListAdapter adapter;
     private MovieListBinding binding;
     private ActionMode actionMode;
 
 
     // <editor-fold desc="LifeCycle">
+
+
+    public static @NonNull MovieListFragment newInstance() {
+        return new MovieListFragment();
+    }
 
 
     @Override
@@ -98,7 +106,17 @@ public class MovieListFragment extends Fragment {
         adapter.getSelectionTracker().addObserver(buildMovieSelectionObserver());
 
         binding.movieListSwipeRefreshLayout.setOnRefreshListener(this::onPullToRefresh);
-        binding.addMovieFab.setOnClickListener(v -> onAddMovieFloatingButtonClicked());
+
+        getParentFragmentManager().setFragmentResultListener(
+                AddMovieDialogFragment.FRAGMENT_REQUEST,
+                this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(AddMovieDialogFragment.FRAGMENT_RESULT_VALID, false)) {
+                        refreshListFromDb(false);
+                        onPullToRefresh();
+                    }
+                }
+        );
     }
 
 
@@ -110,13 +128,27 @@ public class MovieListFragment extends Fragment {
 
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onResume() {
+        super.onResume();
 
-        if (requestCode == AddMovieDialogFragment.REQUEST_CODE) {
-            refreshListFromDb(false);
-            onPullToRefresh();
-        }
+        getParentFragmentManager().setFragmentResultListener(
+                MainActivity.FRAGMENT_REQUEST,
+                this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(MainActivity.FRAGMENT_ADD_FAB_BUTTON_CLICKED, false)) {
+                        AddMovieDialogFragment addMovieDialogFragment = new AddMovieDialogFragment();
+                        addMovieDialogFragment.setKnownMovies(adapter.getDataSet());
+                        addMovieDialogFragment.show(getParentFragmentManager(), AddMovieDialogFragment.TAG);
+                    }
+                }
+        );
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getParentFragmentManager().clearFragmentResultListener(MainActivity.FRAGMENT_REQUEST);
     }
 
 
@@ -202,42 +234,40 @@ public class MovieListFragment extends Fragment {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
-                switch (item.getItemId()) {
+                if (item.getItemId() == R.id.delete) {
 
-                    case R.id.delete:
+                    deleteMovies(adapter.getSelectionTracker().getSelection().spliterator());
+                    mode.finish(); // Action picked, so close the CAB
 
-                        deleteMovies(adapter.getSelectionTracker().getSelection().spliterator());
-                        mode.finish(); // Action picked, so close the CAB
-
-                        return true;
-
-                    case R.id.edit:
-
-                        Movie selectedMovie = StreamSupport
-                                .stream(adapter.getSelectionTracker().getSelection().spliterator(), false)
-                                .findFirst()
-                                .map(adapter::getMovie)
-                                .orElse(null);
-
-                        Intent intent = TmdbService
-                                .init(getActivity())
-                                .filter(t -> selectedMovie != null)
-                                .map(t -> t.getEditReleaseDatesUrl(selectedMovie))
-                                .map(u -> new Intent(ACTION_VIEW, u))
-                                .orElse(null);
-
-                        Optional.ofNullable(getActivity())
-                                .map(Activity::getPackageManager)
-                                .filter(pm -> intent != null)
-                                .filter(pm -> intent.resolveActivity(pm) != null)
-                                .ifPresent(pm -> startActivity(intent));
-
-                        mode.finish();
-                        return true;
-
-                    default:
-                        return false;
+                    return true;
                 }
+
+                if (item.getItemId() == R.id.edit) {
+
+                    Movie selectedMovie = StreamSupport
+                            .stream(adapter.getSelectionTracker().getSelection().spliterator(), false)
+                            .findFirst()
+                            .map(adapter::getMovie)
+                            .orElse(null);
+
+                    Intent intent = TmdbService
+                            .init(getActivity())
+                            .filter(t -> selectedMovie != null)
+                            .map(t -> t.getEditReleaseDatesUrl(selectedMovie))
+                            .map(u -> new Intent(ACTION_VIEW, u))
+                            .orElse(null);
+
+                    Optional.ofNullable(getActivity())
+                            .map(Activity::getPackageManager)
+                            .filter(pm -> intent != null)
+                            .filter(pm -> intent.resolveActivity(pm) != null)
+                            .ifPresent(pm -> startActivity(intent));
+
+                    mode.finish();
+                    return true;
+                }
+
+                return false;
             }
 
 
@@ -293,17 +323,6 @@ public class MovieListFragment extends Fragment {
     // </editor-fold desc="Setup">
 
 
-    private void onAddMovieFloatingButtonClicked() {
-
-        FragmentManager navFragmentManager = getParentFragmentManager();
-
-        AddMovieDialogFragment fragment = new AddMovieDialogFragment();
-        fragment.setKnownMovies(adapter.getDataSet());
-        fragment.setTargetFragment(this, AddMovieDialogFragment.REQUEST_CODE);
-        fragment.show(navFragmentManager, AddMovieDialogFragment.TAG);
-    }
-
-
     private void onPullToRefresh() {
         new Thread(() -> {
 
@@ -320,7 +339,7 @@ public class MovieListFragment extends Fragment {
             if (calendarId != null) {
 
                 Map<String, Long> existingEvents = CalendarService.init(getActivity())
-                                                                  .map(c -> c.getEvents(calendarId))
+                                                                  .map(c -> c.getEvents(calendarId, true))
                                                                   .orElseGet(Collections::emptyMap);
 
                 // Movies that are in the Calendar, but not in the DB
@@ -400,13 +419,17 @@ public class MovieListFragment extends Fragment {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Movie> movies = database.movieDao().getAll();
-            Collections.sort(movies, generateReleaseDateComparator(Locale.getDefault()));
+            movies.sort(generateMovieReleaseDateComparator(Locale.getDefault()));
 
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(movies);
 
             new Handler(getMainLooper()).post(() -> {
-                binding.onboardingView.setVisibility(adapter.getDataSet().size() > 0 ? GONE : VISIBLE);
+
+                Bundle result = new Bundle();
+                result.putInt(FRAGMENT_RESULT_MOVIES_COUNT, adapter.getDataSet().size());
+                getParentFragmentManager().setFragmentResult(FRAGMENT_REQUEST, result);
+
                 adapter.notifyDataSetChanged();
                 binding.movieListSwipeRefreshLayout.setRefreshing(!disableSpinnerOnCompletion);
             });
@@ -426,9 +449,9 @@ public class MovieListFragment extends Fragment {
                                                       .map(id -> adapter.getMovie(id))
                                                       .filter(Objects::nonNull)
                                                       .forEach(m -> {
-                                                          // Wrong "may be null" warning on Android Studio 3.6.3
-                                                          //noinspection ConstantConditions
-                                                          c.deleteMovieInCalendar(m);
+                                                          // Wrong "may be null" warning
+                                                          // noinspection ConstantConditions
+                                                          c.deleteEventInCalendar(m.getCalendarEventId());
                                                           database.movieDao().remove(m.getId());
                                                       }));
 
@@ -436,5 +459,6 @@ public class MovieListFragment extends Fragment {
 
         }).start();
     }
+
 
 }

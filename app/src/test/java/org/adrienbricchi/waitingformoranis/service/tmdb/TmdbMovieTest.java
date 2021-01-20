@@ -25,7 +25,7 @@ import org.junit.Test;
 import java.util.Date;
 
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
-import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.countryLocale;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.countryLocale;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

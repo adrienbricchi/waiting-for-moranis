@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.adrienbricchi.waitingformoranis.components;
+package org.adrienbricchi.waitingformoranis.ui.main.movieList;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static android.app.Activity.RESULT_OK;
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.os.Looper.getMainLooper;
 import static android.view.View.GONE;
@@ -52,8 +51,10 @@ import static java.util.stream.Collectors.toSet;
 public class AddMovieDialogFragment extends DialogFragment {
 
     private static final String LOG_TAG = "AddMovieDialogFragment";
+
     public static final String TAG = "AddMovieDialogFragment";
-    public static final int REQUEST_CODE = 10404;
+    public static final String FRAGMENT_REQUEST = "add_movie_dialog_fragment";
+    public static final String FRAGMENT_RESULT_VALID = "result_valid";
 
     private AddMovieDialogListAdapter adapter;
     private AddMovieMainBinding binding;
@@ -99,8 +100,10 @@ public class AddMovieDialogFragment extends DialogFragment {
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
-        Optional.ofNullable(getTargetFragment())
-                .ifPresent(f -> f.onActivityResult(REQUEST_CODE, RESULT_OK, null));
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(FRAGMENT_RESULT_VALID, true);
+        getParentFragmentManager().setFragmentResult(FRAGMENT_REQUEST, bundle);
     }
 
 

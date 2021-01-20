@@ -24,7 +24,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".ui.main.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -45,7 +45,7 @@
 
         <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/settings_fragment_container"
-                android:name="org.adrienbricchi.waitingformoranis.components.preferences.SettingsFragment"
+                android:name="org.adrienbricchi.waitingformoranis.ui.preferences.SettingsFragment"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"

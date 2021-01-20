@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.adrienbricchi.waitingformoranis.components;
+package org.adrienbricchi.waitingformoranis.ui.main.movieList;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -33,7 +33,7 @@ import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
-import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
+import org.adrienbricchi.waitingformoranis.utils.ReleaseUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -44,7 +44,7 @@ import java.util.stream.IntStream;
 
 import static java.text.DateFormat.FULL;
 import static org.adrienbricchi.waitingformoranis.R.drawable.ic_local_movies_48dp;
-import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_parenthesis;
+import static org.adrienbricchi.waitingformoranis.R.string.unknown_release_date;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.DIGITAL;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
 
@@ -95,8 +95,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
         Movie currentMovie = dataSet.get(position);
         Context currentContext = holder.binding.getRoot().getContext();
-        Locale currentLocale = MovieUtils.countryLocale(Locale.getDefault().getCountry());
-        Release release = MovieUtils.getRelease(currentMovie, currentLocale);
+        Locale currentLocale = ReleaseUtils.countryLocale(Locale.getDefault().getCountry());
+        Release release = ReleaseUtils.getRelease(currentMovie, currentLocale);
 
         Picasso.get()
                .load(dataSet.get(position).getImageUrl())
@@ -139,7 +139,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                                 return dateString;
                             }
                         })
-                        .orElseGet(() -> currentContext.getString(unknown_between_parenthesis)));
+                        .orElseGet(() -> currentContext.getString(unknown_release_date)));
 
         holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentMovie.getId()));
     }
@@ -181,6 +181,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     }
 
 
-    // <editor-fold desc="Utils">
+    // </editor-fold desc="Utils">
+
 
 }

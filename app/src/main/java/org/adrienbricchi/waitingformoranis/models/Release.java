@@ -48,7 +48,7 @@ public class Release {
         PREMIERE(premiere),
         UNKNOWN(-1);
 
-        private @StringRes int labelStringResource;
+        private final @StringRes int labelStringResource;
     }
 
 

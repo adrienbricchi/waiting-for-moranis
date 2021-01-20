@@ -21,28 +21,28 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
-import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.models.Show;
 
 import java.util.List;
 
 import static androidx.room.OnConflictStrategy.REPLACE;
-import static org.adrienbricchi.waitingformoranis.models.Movie.TABLE_NAME;
+import static org.adrienbricchi.waitingformoranis.models.Show.TABLE_NAME;
 
 
 @Dao
-public interface MovieDao {
+public interface ShowDao {
 
     @Insert(onConflict = REPLACE)
-    void add(Movie show);
+    void add(Show show);
 
     @Query("select * from " + TABLE_NAME)
-    List<Movie> getAll();
+    List<Show> getAll();
 
     @Query("select * from " + TABLE_NAME + " where id = :id limit 1")
-    List<Movie> get(String id);
+    List<Show> get(String id);
 
     @Update(onConflict = REPLACE)
-    void update(Movie show);
+    void update(Show show);
 
     @Query("delete from " + TABLE_NAME + " where id = :id")
     void remove(String id);

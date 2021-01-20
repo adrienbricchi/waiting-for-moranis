@@ -23,6 +23,9 @@
     <string name="app_name">Waiting For Moranis</string>
     <string name="onboarding_text">Add a movie to your watchlist</string>
 
+    <string name="movies">Movies</string>
+    <string name="shows">Shows</string>
+
     <string name="settings">Settings</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
@@ -30,8 +33,12 @@
 
     <string name="movie_list">Movie list</string>
     <string name="hashtagged_movie">%s #movie</string>
+    <string name="next_episode_code_date">s%02de%02d : %s</string>
+    <string name="title_episode_code">%s - s%02de%02d</string>
+    <string name="next_episode_date">Next episode: %s</string>
     <string name="search_movie_title_hint">Search a movie title</string>
-    <string name="unknown_between_parenthesis">(unknown)</string>
+    <string name="search_show_title_hint">Search a show title</string>
+    <string name="unknown_release_date">Unknown release date</string>
 
     <string name="add_calendar_tutorial_text1">Consider creating a dedicated calendar from your account.</string>
     <string name="add_calendar_tutorial_text2">At the time these lines were written, it could only be done on the desktop web version of Google Calendar.</string>
@@ -48,6 +55,8 @@
     <string name="theatrical_limited">Limited theatrical</string>
     <string name="tv">TV</string>
     <string name="premiere">Premiere</string>
+
+    <string name="ended">Ended</string>
 
     <!-- <editor-fold desc="Settings" -->
 
