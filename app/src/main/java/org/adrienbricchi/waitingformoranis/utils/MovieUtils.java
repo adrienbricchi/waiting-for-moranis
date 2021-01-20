@@ -24,10 +24,7 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.adrienbricchi.waitingformoranis.models.Show;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,7 +56,7 @@ public class MovieUtils {
 
 
     public static boolean checkForCalendarUpgradeNeed(@Nullable Show previous, @NonNull Show recent) {
-        return (previous == null) || !(previous.getNextEpisodeAirDate().equals(recent.getNextEpisodeAirDate()));
+        return (previous == null) || !Objects.equals(previous.getNextEpisodeAirDate(), recent.getNextEpisodeAirDate());
     }
 
 
@@ -75,13 +72,9 @@ public class MovieUtils {
     }
 
 
-    public static Comparator<Show> generateSeasonReleaseDateComparator(@NonNull Locale locale) {
-        // TODO
-        Function<Show, Date> movieReleaseExtractor = season -> Optional.ofNullable(getRelease(season, locale))
-                                                                       .map(Release::getDate)
-                                                                       .orElse(null);
-
-        return comparing(movieReleaseExtractor, comparing(d -> d, nullsLast(naturalOrder())))
+    public static Comparator<Show> generateShowReleaseDateComparator() {
+        return comparing(Show::isInProduction, nullsLast(reverseOrder()))
+                .thenComparing(Show::getNextEpisodeAirDate, nullsLast(naturalOrder()))
                 .thenComparing(Show::getTitle, nullsLast(naturalOrder()))
                 .thenComparing(Show::getId, nullsLast(naturalOrder()));
     }
@@ -102,12 +95,6 @@ public class MovieUtils {
                     .filter(r -> movie.getProductionCountries().contains(r.getCountry()))
                     .min(RELEASE_COMPARATOR)
                     .orElse(null);
-    }
-
-
-    public static @Nullable Release getRelease(@NonNull Show show, @NonNull Locale locale) {
-        // TODO
-        return null;
     }
 
 

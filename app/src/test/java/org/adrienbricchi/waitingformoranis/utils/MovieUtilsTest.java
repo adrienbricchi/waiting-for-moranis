@@ -140,7 +140,7 @@ public class MovieUtilsTest {
 
         // Testing
 
-        Collections.sort(movieList, MovieUtils.generateMovieReleaseDateComparator(CANADA_FRENCH));
+        movieList.sort(MovieUtils.generateMovieReleaseDateComparator(CANADA_FRENCH));
         movieList.forEach(System.out::println);
     }
 

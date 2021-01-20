@@ -17,6 +17,8 @@
  */
 package org.adrienbricchi.waitingformoranis.ui.main.showList;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -40,12 +42,14 @@ import org.adrienbricchi.waitingformoranis.ui.main.MainActivity;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
+import static android.content.Intent.ACTION_VIEW;
 import static android.os.Looper.getMainLooper;
 import static androidx.recyclerview.selection.ItemKeyProvider.SCOPE_MAPPED;
 import static androidx.recyclerview.selection.StorageStrategy.createStringStorage;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
+import static org.adrienbricchi.waitingformoranis.utils.MovieUtils.generateShowReleaseDateComparator;
 
 
 @Getter
@@ -245,19 +249,18 @@ public class ShowListFragment extends Fragment {
                                 .map(adapter::getShow)
                                 .orElse(null);
 
-                        // TODO
-//                        Intent intent = TmdbService
-//                                .init(getActivity())
-//                                .filter(t -> selectedShow != null)
-//                                .map(t -> t.getEditReleaseDatesUrl(selectedShow))
-//                                .map(u -> new Intent(ACTION_VIEW, u))
-//                                .orElse(null);
-//
-//                        Optional.ofNullable(getActivity())
-//                                .map(Activity::getPackageManager)
-//                                .filter(pm -> intent != null)
-//                                .filter(pm -> intent.resolveActivity(pm) != null)
-//                                .ifPresent(pm -> startActivity(intent));
+                        Intent intent = TmdbService
+                                .init(getActivity())
+                                .filter(t -> selectedShow != null)
+                                .map(t -> t.getEditReleaseDatesUrl(selectedShow))
+                                .map(u -> new Intent(ACTION_VIEW, u))
+                                .orElse(null);
+
+                        Optional.ofNullable(getActivity())
+                                .map(Activity::getPackageManager)
+                                .filter(pm -> intent != null)
+                                .filter(pm -> intent.resolveActivity(pm) != null)
+                                .ifPresent(pm -> startActivity(intent));
 
                         mode.finish();
                         return true;
@@ -372,8 +375,6 @@ public class ShowListFragment extends Fragment {
 
             //TODO
 //            refreshedShows.stream()
-//                          .flatMap(s -> s.getSeasonList().stream())
-//                          .filter(Objects::nonNull)
 //                          .peek(s -> s.setUpdateNeededInCalendar(checkForCalendarUpgradeNeed(oldShowsMap.get(s.getId()), s)))
 //                          .forEach(s -> s.setCalendarEventId(Optional.ofNullable(oldShowsMap.get(s.getId()))
 //                                                                     .map(Show.Season::getCalendarEventId)
@@ -420,8 +421,7 @@ public class ShowListFragment extends Fragment {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Show> shows = database.showDao().getAll();
-            // TODO
-            // Collections.sort(shows, generateShowReleaseDateComparator(Locale.getDefault()));
+            shows.sort(generateShowReleaseDateComparator());
 
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(shows);

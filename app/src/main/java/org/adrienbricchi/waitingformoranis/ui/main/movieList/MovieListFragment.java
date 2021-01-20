@@ -421,7 +421,7 @@ public class MovieListFragment extends Fragment {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Movie> movies = database.movieDao().getAll();
-            Collections.sort(movies, generateMovieReleaseDateComparator(Locale.getDefault()));
+            movies.sort(generateMovieReleaseDateComparator(Locale.getDefault()));
 
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(movies);
@@ -451,8 +451,6 @@ public class MovieListFragment extends Fragment {
                                                       .map(id -> adapter.getMovie(id))
                                                       .filter(Objects::nonNull)
                                                       .forEach(m -> {
-                                                          // Wrong "may be null" warning on Android Studio 3.6.3
-                                                          //noinspection ConstantConditions
                                                           c.deleteMovieInCalendar(m);
                                                           database.movieDao().remove(m.getId());
                                                       }));

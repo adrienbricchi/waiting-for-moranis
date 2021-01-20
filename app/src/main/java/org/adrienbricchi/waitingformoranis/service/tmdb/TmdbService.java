@@ -102,6 +102,15 @@ public class TmdbService {
     }
 
 
+    public @NonNull Uri getEditReleaseDatesUrl(@NonNull Show show) {
+        return new Uri.Builder()
+                .scheme(HTTPS).authority(WEB_URL)
+                .appendPath(PATH_TV).appendPath(show.getId()).appendPath(PATH_EDIT)
+                .appendQueryParameter(PATH_QUERY_ACTIVE_NAV_ITEM, PATH_QUERY_RELEASE_INFORMATION)
+                .build();
+    }
+
+
     public void setPrivateApiKey(@Nullable String apiKey) {
 
         if (TextUtils.isEmpty(apiKey)) {
