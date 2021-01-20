@@ -32,10 +32,13 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
+import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.utils.MovieUtils;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.Manifest.permission.READ_CALENDAR;
 import static android.Manifest.permission.WRITE_CALENDAR;
@@ -44,7 +47,7 @@ import static android.provider.CalendarContract.Events.*;
 import static androidx.core.app.ActivityCompat.requestPermissions;
 import static androidx.core.content.ContextCompat.checkSelfPermission;
 import static java.util.Arrays.asList;
-import static org.adrienbricchi.waitingformoranis.R.string.google_calendar_event_description;
+import static org.adrienbricchi.waitingformoranis.R.string.google_calendar_movie_event_description;
 import static org.adrienbricchi.waitingformoranis.R.string.hashtagged_movie;
 
 
@@ -180,6 +183,7 @@ public class CalendarService {
                 long eventId = cursor.getLong(EVENT_PROJECTION.indexOf(_ID));
                 String eventDescription = cursor.getString(EVENT_PROJECTION.indexOf(DESCRIPTION));
                 check100To101Patch(calendarId, eventDescription);
+                check101To120Patch(calendarId, eventDescription);
 
                 Optional.ofNullable(MovieUtils.getIdFromCalendarDescription(eventDescription))
                         .ifPresent(id -> result.put(id, eventId));
@@ -206,7 +210,7 @@ public class CalendarService {
         values.put(ALL_DAY, true);
         values.put(TITLE, activity.getString(hashtagged_movie, movie.getTitle()));
         values.put(CALENDAR_ID, calendarId);
-        values.put(DESCRIPTION, activity.getString(google_calendar_event_description, movie.getId()));
+        values.put(DESCRIPTION, activity.getString(google_calendar_movie_event_description, movie.getId()));
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
@@ -242,7 +246,7 @@ public class CalendarService {
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
         if (refreshDescription) {
-            values.put(DESCRIPTION, activity.getString(google_calendar_event_description, movie.getId()));
+            values.put(DESCRIPTION, activity.getString(google_calendar_movie_event_description, movie.getId()));
         }
 
         Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, movie.getCalendarEventId());
@@ -284,7 +288,7 @@ public class CalendarService {
                        .stream()
                        .peek(m -> Log.i(LOG_TAG, "Patch 1.0.0 → 1.0.1 - Updating title:" + m.getTitle()))
                        .findFirst()
-                       .ifPresent(m -> this.editMovieInCalendar(calendarId, m, true));
+                       .ifPresent(m -> editMovieInCalendar(calendarId, m, true));
         }
 
         // Removing non-movie events from the DB
@@ -292,6 +296,26 @@ public class CalendarService {
             Log.i(LOG_TAG, "Patch 1.0.0 → 1.0.1 - Deleting : " + desc);
             AppDatabase.getDatabase(activity).movieDao().remove(desc);
         }
+    }
+
+
+    private void check101To120Patch(@Nullable Long calendarId, @Nullable String desc) {
+
+        if ((calendarId == null) || (desc == null)) {
+            return;
+        }
+
+        // Refreshing entirely the event.
+        // Ids were slightly renamed from 1.0.1 to 1.2.0, to separate movies and shows
+        Optional.of(desc)
+                .map(d -> Pattern.compile("\\[TMDB id:(.*?)]").matcher(d))
+                .filter(Matcher::find)
+                .map(m -> m.group(1))
+                .flatMap(i -> AppDatabase.getDatabase(activity).movieDao().get(i).stream().findFirst())
+                .ifPresent(m -> {
+                    Log.i(LOG_TAG, "Patch 1.0.1 → 1.2.0 - Updating title:" + m.getTitle());
+                    editMovieInCalendar(calendarId, m, true);
+                });
     }
 
 
