@@ -22,6 +22,9 @@
 
     <string name="app_name">Waiting For Moranis</string>
 
+    <string name="onboarding_text_movie">Ajouter un film\nà surveiller</string>
+    <string name="onboarding_text_show">Ajouter une série\nà surveiller</string>
+
     <string name="movies">Films</string>
     <string name="shows">Séries</string>
 
@@ -71,7 +74,6 @@
     <string name="settings_github_title">Code source</string>
     <string name="settings_github_summary">Contribuer, ou signaler un bug</string>
     <string name="settings_open_source_licenses_title">Licences open source</string>
-    <string name="onboarding_text">Ajouter un film à surveiller</string>
 
     <!-- </editor-fold desc="Settings" -->
 

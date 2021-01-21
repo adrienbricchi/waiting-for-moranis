@@ -21,7 +21,9 @@
 <resources>
 
     <string name="app_name">Waiting For Moranis</string>
-    <string name="onboarding_text">Add a movie to your watchlist</string>
+
+    <string name="onboarding_text_movie">Add a movie\nto your watchlist</string>
+    <string name="onboarding_text_show">Add a show\nto your watchlist</string>
 
     <string name="movies">Movies</string>
     <string name="shows">Shows</string>
