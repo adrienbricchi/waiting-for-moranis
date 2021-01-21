@@ -43,7 +43,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static java.text.DateFormat.FULL;
-import static org.adrienbricchi.waitingformoranis.R.drawable.ic_local_movies_48dp;
+import static org.adrienbricchi.waitingformoranis.R.drawable.ic_local_movies_color_background_48dp;
 import static org.adrienbricchi.waitingformoranis.R.string.unknown_release_date;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.DIGITAL;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
@@ -100,7 +100,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
         Picasso.get()
                .load(dataSet.get(position).getImageUrl())
-               .placeholder(ic_local_movies_48dp)
+               .placeholder(ic_local_movies_color_background_48dp)
                .into(holder.binding.coverImageView);
 
         holder.binding.coverImageView.setContentDescription(currentMovie.getTitle());

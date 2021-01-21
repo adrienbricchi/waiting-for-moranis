@@ -41,6 +41,8 @@ import static androidx.viewpager2.widget.ViewPager2.*;
 import static org.adrienbricchi.waitingformoranis.R.dimen.fab_margin;
 import static org.adrienbricchi.waitingformoranis.R.id.action_settings;
 import static org.adrienbricchi.waitingformoranis.R.menu.menu_main;
+import static org.adrienbricchi.waitingformoranis.R.string.onboarding_text_movie;
+import static org.adrienbricchi.waitingformoranis.R.string.onboarding_text_show;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -221,8 +223,8 @@ public class MainActivity extends AppCompatActivity {
             @Override public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 binding.onboardingViewText.setText((binding.viewPager.getCurrentItem() == 0)
-                                                   ? R.string.onboarding_text_movie
-                                                   : R.string.onboarding_text_show);
+                                                   ? onboarding_text_movie
+                                                   : onboarding_text_show);
 
                 binding.onboardingView.setVisibility(VISIBLE);
             }

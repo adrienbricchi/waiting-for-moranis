@@ -26,6 +26,11 @@ import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.ui.main.movieList.MovieListFragment;
 import org.adrienbricchi.waitingformoranis.ui.main.showList.ShowListFragment;
 
+import static org.adrienbricchi.waitingformoranis.R.drawable.ic_live_tv_24dp;
+import static org.adrienbricchi.waitingformoranis.R.drawable.ic_local_movies_24dp;
+import static org.adrienbricchi.waitingformoranis.R.string.movies;
+import static org.adrienbricchi.waitingformoranis.R.string.shows;
+
 
 /**
  * A {@link FragmentStateAdapter} that returns a fragment corresponding to
@@ -55,11 +60,13 @@ public class SectionsPagerAdapter extends FragmentStateAdapter {
     }
 
 
-    public void getPageTitle(@NonNull TabLayout.Tab tab, int position) {
+    public void setupTabTitleAndIcon(@NonNull TabLayout.Tab tab, int position) {
         if (position == 0) {
-            tab.setText(R.string.movies);
+            tab.setContentDescription(movies);
+            tab.setIcon(ic_local_movies_24dp);
         } else {
-            tab.setText(R.string.shows);
+            tab.setContentDescription(shows);
+            tab.setIcon(ic_live_tv_24dp);
         }
     }
 

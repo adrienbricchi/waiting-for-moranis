@@ -40,7 +40,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static java.text.DateFormat.SHORT;
-import static org.adrienbricchi.waitingformoranis.R.drawable.ic_baseline_live_tv_48;
+import static org.adrienbricchi.waitingformoranis.R.drawable.ic_live_tv_color_background_48dp;
 import static org.adrienbricchi.waitingformoranis.R.string.*;
 
 
@@ -95,7 +95,7 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
 
         Picasso.get()
                .load(dataSet.get(position).getImageUrl())
-               .placeholder(ic_baseline_live_tv_48)
+               .placeholder(ic_live_tv_color_background_48dp)
                .into(holder.binding.coverImageView);
 
         String nextEpisodeDateLabel = Optional.ofNullable(currentShow.getNextEpisodeAirDate())
