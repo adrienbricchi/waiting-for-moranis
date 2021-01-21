@@ -50,11 +50,13 @@ import static java.util.stream.Collectors.toSet;
 @Setter
 public class AddShowDialogFragment extends DialogFragment {
 
+
     private static final String LOG_TAG = "AddShowDialogFragment";
 
     public static final String TAG = "AddShowDialogFragment";
     public static final String FRAGMENT_REQUEST = "add_show_dialog_fragment";
     public static final String FRAGMENT_RESULT_VALID = "result_valid";
+
 
     private AddShowDialogListAdapter adapter;
     private AddShowMainBinding binding;

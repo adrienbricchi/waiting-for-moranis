@@ -22,6 +22,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,10 +31,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayoutMediator;
-import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 import org.adrienbricchi.waitingformoranis.ui.main.movieList.MovieListFragment;
+import org.adrienbricchi.waitingformoranis.ui.main.showList.ShowListFragment;
 import org.adrienbricchi.waitingformoranis.ui.preferences.SettingsActivity;
+
+import java.util.Optional;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -48,12 +51,13 @@ import static org.adrienbricchi.waitingformoranis.R.string.onboarding_text_show;
 public class MainActivity extends AppCompatActivity {
 
 
+    private static final String LOG_TAG = "MainActivity";
+
     public static final String FRAGMENT_REQUEST = "main_activity";
     public static final String FRAGMENT_ADD_FAB_BUTTON_CLICKED = "add_fab_button_clicked";
 
+
     private ActivityMainBinding binding;
-
-
     private Animator openingAnimation;
     private Animator closingAnimation;
 
@@ -76,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 binding.tabs,
                 binding.viewPager,
                 true,
-                sectionsPagerAdapter::getPageTitle
+                sectionsPagerAdapter::setupTabTitleAndIcon
         ).attach();
 
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -85,7 +89,16 @@ public class MainActivity extends AppCompatActivity {
                 switch (state) {
 
                     case SCROLL_STATE_DRAGGING:
-                        triggerOnBoardCloseAnimation();
+                        int previousFragmentItemsCount = (binding.viewPager.getCurrentItem() == 0)
+                                                         ? sectionsPagerAdapter.getMovieListFragment().getAdapter().getItemCount()
+                                                         : sectionsPagerAdapter.getShowListFragment().getAdapter().getItemCount();
+
+                        if (previousFragmentItemsCount == 0) {
+                            Log.d(LOG_TAG, "previousFragmentItemsCount == 0");
+                            triggerOnBoardCloseAnimation();
+                        }
+
+                        binding.addMovieFab.hide();
                         break;
 
                     case SCROLL_STATE_SETTLING:
@@ -93,8 +106,15 @@ public class MainActivity extends AppCompatActivity {
 
                     case SCROLL_STATE_IDLE:
                     default:
-                        triggerOnBoardOpeningAnimation();
+                        int newFragmentItemsCount = (binding.viewPager.getCurrentItem() == 0)
+                                                    ? sectionsPagerAdapter.getMovieListFragment().getAdapter().getItemCount()
+                                                    : sectionsPagerAdapter.getShowListFragment().getAdapter().getItemCount();
 
+                        if (newFragmentItemsCount == 0) {
+                            triggerOnBoardOpeningAnimation();
+                        }
+
+                        binding.addMovieFab.show();
                 }
             }
 
@@ -110,8 +130,34 @@ public class MainActivity extends AppCompatActivity {
                 MovieListFragment.FRAGMENT_REQUEST,
                 this,
                 (requestKey, bundle) -> {
-                    int moviesCount = bundle.getInt(MovieListFragment.FRAGMENT_RESULT_MOVIES_COUNT);
-                    binding.onboardingView.setVisibility((moviesCount == 0) ? VISIBLE : GONE);
+                    Log.d(LOG_TAG, "MovieListFragment.FRAGMENT_RESULT_MOVIES_COUNT");
+                    boolean isOnBoardVisible = binding.onboardingView.getVisibility() == VISIBLE;
+                    boolean hasMovies = bundle.getInt(MovieListFragment.FRAGMENT_RESULT_MOVIES_COUNT) > 0;
+
+                    if (!hasMovies && !isOnBoardVisible) {
+                        Log.d(LOG_TAG, "!hasMovies && !isOnBoardVisible");
+                        triggerOnBoardOpeningAnimation();
+                    } else if (isOnBoardVisible && hasMovies) {
+                        Log.d(LOG_TAG, "isOnBoardVisible && hasMovies");
+                        triggerOnBoardCloseAnimation();
+                    }
+                }
+        );
+
+        getSupportFragmentManager().setFragmentResultListener(
+                ShowListFragment.FRAGMENT_REQUEST,
+                this,
+                (requestKey, bundle) -> {
+                    Log.d(LOG_TAG, "ShowListFragment.FRAGMENT_RESULT_SHOWS_COUNT");
+                    boolean isOnBoardVisible = binding.onboardingView.getVisibility() == VISIBLE;
+                    boolean hasShows = bundle.getInt(ShowListFragment.FRAGMENT_RESULT_SHOWS_COUNT) > 0;
+                    if (!hasShows && !isOnBoardVisible) {
+                        Log.d(LOG_TAG, "!hasShows && !isOnBoardVisible");
+                        triggerOnBoardOpeningAnimation();
+                    } else if (isOnBoardVisible && hasShows) {
+                        Log.d(LOG_TAG, "isOnBoardVisible && hasShows");
+                        triggerOnBoardCloseAnimation();
+                    }
                 }
         );
     }
@@ -181,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
+                Log.d(LOG_TAG, "closingAnimation onAnimationStart");
                 binding.onboardingView.setVisibility(VISIBLE);
             }
 
@@ -188,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
             @Override public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 if (closingAnimation != null) {
+                    Log.d(LOG_TAG, "closingAnimation onAnimationEnd");
                     binding.onboardingView.setVisibility(GONE);
                 }
             }
@@ -198,12 +246,16 @@ public class MainActivity extends AppCompatActivity {
         openingAnimation = null;
         binding.onboardingView.clearAnimation();
         closingAnimation.start();
-
-        binding.addMovieFab.hide();
     }
 
 
     private void triggerOnBoardOpeningAnimation() {
+
+        if (Optional.ofNullable(openingAnimation)
+                    .map(a -> a.isStarted() || a.isRunning())
+                    .orElse(false)) {
+            return;
+        }
 
         Point fabCenter = computeFabCenterCoordinates();
         float finalRadius = (float) Math.hypot(fabCenter.x, fabCenter.y);
@@ -222,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
+                Log.d(LOG_TAG, "openingAnimation onAnimationStart");
                 binding.onboardingViewText.setText((binding.viewPager.getCurrentItem() == 0)
                                                    ? onboarding_text_movie
                                                    : onboarding_text_show);
@@ -233,6 +286,7 @@ public class MainActivity extends AppCompatActivity {
             @Override public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 if (openingAnimation != null) {
+                    Log.d(LOG_TAG, "openingAnimation onAnimationEnd");
                     binding.onboardingView.setVisibility(VISIBLE);
                 }
             }
@@ -243,8 +297,6 @@ public class MainActivity extends AppCompatActivity {
         closingAnimation = null;
         binding.onboardingView.clearAnimation();
         openingAnimation.start();
-
-        binding.addMovieFab.show();
     }
 
 

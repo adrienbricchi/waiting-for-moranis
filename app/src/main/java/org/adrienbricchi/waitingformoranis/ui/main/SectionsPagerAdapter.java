@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.google.android.material.tabs.TabLayout;
-import org.adrienbricchi.waitingformoranis.R;
+import lombok.Getter;
 import org.adrienbricchi.waitingformoranis.ui.main.movieList.MovieListFragment;
 import org.adrienbricchi.waitingformoranis.ui.main.showList.ShowListFragment;
 
@@ -36,7 +36,12 @@ import static org.adrienbricchi.waitingformoranis.R.string.shows;
  * A {@link FragmentStateAdapter} that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
+@Getter
 public class SectionsPagerAdapter extends FragmentStateAdapter {
+
+
+    private final MovieListFragment movieListFragment = MovieListFragment.newInstance();
+    private final ShowListFragment showListFragment = ShowListFragment.newInstance();
 
 
     public SectionsPagerAdapter(FragmentActivity fa) {
@@ -47,9 +52,9 @@ public class SectionsPagerAdapter extends FragmentStateAdapter {
     @Override
     public @NonNull Fragment createFragment(int position) {
         if (position == 0) {
-            return MovieListFragment.newInstance();
+            return movieListFragment;
         } else {
-            return ShowListFragment.newInstance();
+            return showListFragment;
         }
     }
 
