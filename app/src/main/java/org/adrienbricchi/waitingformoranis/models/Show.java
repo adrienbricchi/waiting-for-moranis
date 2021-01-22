@@ -33,7 +33,6 @@ import java.util.UUID;
 @Data
 @Keep
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity(tableName = Show.TABLE_NAME,
         indices = {@Index(value = Show.FIELD_ID)})
 public class Show {

@@ -130,7 +130,6 @@ public class ShowListFragment extends Fragment {
 
     @Override public void onResume() {
         super.onResume();
-
         getParentFragmentManager().setFragmentResultListener(
                 MainActivity.FRAGMENT_REQUEST,
                 this,
@@ -459,8 +458,6 @@ public class ShowListFragment extends Fragment {
                                                       .map(id -> adapter.getShow(id))
                                                       .filter(Objects::nonNull)
                                                       .forEach(s -> {
-                                                          // Wrong "may be null" warning
-                                                          // noinspection ConstantConditions
                                                           c.deleteEventInCalendar(s.getCalendarEventId());
                                                           database.showDao().remove(s.getId());
                                                       }));

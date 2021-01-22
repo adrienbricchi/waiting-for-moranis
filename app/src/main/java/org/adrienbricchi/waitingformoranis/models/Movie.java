@@ -32,7 +32,6 @@ import java.util.*;
 @Data
 @Keep
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity(tableName = Movie.TABLE_NAME,
         indices = {@Index(value = Movie.FIELD_ID)})
 public class Movie {

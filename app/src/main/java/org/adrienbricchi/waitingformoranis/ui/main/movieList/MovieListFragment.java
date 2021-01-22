@@ -130,7 +130,6 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         getParentFragmentManager().setFragmentResultListener(
                 MainActivity.FRAGMENT_REQUEST,
                 this,
@@ -459,8 +458,6 @@ public class MovieListFragment extends Fragment {
                                                       .map(id -> adapter.getMovie(id))
                                                       .filter(Objects::nonNull)
                                                       .forEach(m -> {
-                                                          // Wrong "may be null" warning
-                                                          // noinspection ConstantConditions
                                                           c.deleteEventInCalendar(m.getCalendarEventId());
                                                           database.movieDao().remove(m.getId());
                                                       }));
