@@ -343,15 +343,25 @@ public class MovieListFragment extends Fragment {
                                                                   .orElseGet(Collections::emptyMap);
 
                 // Movies that are in the Calendar, but not in the DB
-                existingEvents.entrySet()
+                existingEvents.keySet()
                               .stream()
-                              .filter(e -> oldMoviesMap.get(e.getKey()) == null)
-                              .forEach(e -> {
-                                  Movie m = new Movie(
-                                          e.getKey(), null, null, e.getValue(),
-                                          new HashSet<>(), new ArrayList<>(), null, true
-                                  );
-                                  oldMoviesMap.put(e.getKey(), m);
+                              .filter(i -> !oldMoviesMap.containsKey(i))
+                              .map(i -> TmdbService.init(getActivity())
+                                                   .map(t -> t.getMovie(i))
+                                                   .orElse(null))
+                              .filter(Objects::nonNull)
+                              .peek(m -> new Handler(getMainLooper()).post(() -> {
+                                  // Adding movies to the list,
+                                  // on-the-fly, without going through the DB
+                                  adapter.getDataSet().add(adapter.getDataSet().size(), m);
+                                  adapter.notifyDataSetChanged();
+                                  // Notify the parent Activity
+                                  Bundle result = new Bundle();
+                                  result.putInt(FRAGMENT_RESULT_MOVIES_COUNT, adapter.getDataSet().size());
+                                  getParentFragmentManager().setFragmentResult(FRAGMENT_REQUEST, result);
+                              }))
+                              .forEach(m -> {
+                                  oldMoviesMap.put(m.getId(), m);
                                   database.movieDao().add(m);
                               });
 

@@ -343,16 +343,25 @@ public class ShowListFragment extends Fragment {
                                                                   .orElseGet(Collections::emptyMap);
 
                 // Movies that are in the Calendar, but not in the DB
-                existingEvents.entrySet()
+                existingEvents.keySet()
                               .stream()
-                              .filter(e -> oldShowsMap.get(e.getKey()) == null)
-                              .forEach(e -> {
-                                  Show s = new Show(
-                                          e.getKey(), null, null, false, null, e.getValue(),
-                                          null, null, null,
-                                          true
-                                  );
-                                  oldShowsMap.put(e.getKey(), s);
+                              .filter(i -> !oldShowsMap.containsKey(i))
+                              .map(i -> TmdbService.init(getActivity())
+                                                   .map(t -> t.getShow(i))
+                                                   .orElse(null))
+                              .filter(Objects::nonNull)
+                              .peek(m -> new Handler(getMainLooper()).post(() -> {
+                                  // Adding shows to the list,
+                                  // on-the-fly, without going through the DB
+                                  adapter.getDataSet().add(adapter.getDataSet().size(), m);
+                                  adapter.notifyDataSetChanged();
+                                  // Notify the parent Activity
+                                  Bundle result = new Bundle();
+                                  result.putInt(FRAGMENT_RESULT_SHOWS_COUNT, adapter.getDataSet().size());
+                                  getParentFragmentManager().setFragmentResult(FRAGMENT_REQUEST, result);
+                              }))
+                              .forEach(s -> {
+                                  oldShowsMap.put(s.getId(), s);
                                   database.showDao().add(s);
                               });
 

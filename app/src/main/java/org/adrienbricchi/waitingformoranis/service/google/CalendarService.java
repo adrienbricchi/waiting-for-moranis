@@ -181,7 +181,9 @@ public class CalendarService {
                 long eventId = cursor.getLong(EVENT_PROJECTION.indexOf(_ID));
                 String eventDescription = cursor.getString(EVENT_PROJECTION.indexOf(DESCRIPTION));
 
-                check101To120Patch(calendarId, eventDescription);
+                if (retrieveMovies) {
+                    check101To120Patch(calendarId, eventId, eventDescription);
+                }
 
                 Optional.ofNullable(eventDescription)
                         .map(d -> Pattern.compile(retrieveMovies
@@ -348,7 +350,7 @@ public class CalendarService {
     // <editor-fold desc="Patches">
 
 
-    private void check101To120Patch(@Nullable Long calendarId, @Nullable String desc) {
+    private void check101To120Patch(@Nullable Long calendarId, long eventId, @Nullable String desc) {
 
         if ((calendarId == null) || (desc == null)) {
             return;
@@ -360,9 +362,14 @@ public class CalendarService {
                 .map(d -> Pattern.compile("\\[TMDB id:(?<movieId>.*?)]").matcher(d))
                 .filter(Matcher::find)
                 .map(m -> m.group(1))
-                .flatMap(i -> AppDatabase.getDatabase(activity).movieDao().get(i).stream().findFirst())
+                .flatMap(i -> {
+                    Optional<Movie> movie = AppDatabase.getDatabase(activity).movieDao().get(i).stream().findFirst();
+                    movie.ifPresent(m -> m.setCalendarEventId(eventId));
+                    return movie;
+                })
                 .ifPresent(m -> {
                     Log.i(LOG_TAG, "Patch 1.0.1 → 1.2.0 - Updating title:" + m.getTitle());
+
                     editMovieInCalendar(calendarId, m, true);
                 });
     }
