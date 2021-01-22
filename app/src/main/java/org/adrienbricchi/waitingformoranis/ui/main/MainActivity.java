@@ -30,6 +30,7 @@ import android.view.ViewAnimationUtils;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 import org.adrienbricchi.waitingformoranis.ui.main.movieList.MovieListFragment;
@@ -83,6 +84,24 @@ public class MainActivity extends AppCompatActivity {
                 sectionsPagerAdapter::setupTabTitleAndIcon
         ).attach();
 
+        binding.addMovieFab.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(FRAGMENT_ADD_FAB_BUTTON_CLICKED, true);
+            getSupportFragmentManager().setFragmentResult(FRAGMENT_REQUEST, bundle);
+        });
+
+        binding.tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+            @Override public void onTabSelected(TabLayout.Tab tab) { triggerOnBoardCloseAnimation(); }
+
+
+            @Override public void onTabUnselected(TabLayout.Tab tab) { }
+
+
+            @Override public void onTabReselected(TabLayout.Tab tab) { }
+
+        });
+
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
 
             @Override public void onPageScrollStateChanged(int state) {
@@ -118,12 +137,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-        });
-
-        binding.addMovieFab.setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(FRAGMENT_ADD_FAB_BUTTON_CLICKED, true);
-            getSupportFragmentManager().setFragmentResult(FRAGMENT_REQUEST, bundle);
         });
 
         getSupportFragmentManager().setFragmentResultListener(
@@ -209,6 +222,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void triggerOnBoardCloseAnimation() {
+
+        if (Optional.ofNullable(closingAnimation)
+                    .map(a -> a.isStarted() || a.isRunning())
+                    .orElse(false)) {
+            return;
+        }
 
         Point fabCenter = computeFabCenterCoordinates();
         float initialRadius = (float) Math.hypot(fabCenter.x, fabCenter.y);
