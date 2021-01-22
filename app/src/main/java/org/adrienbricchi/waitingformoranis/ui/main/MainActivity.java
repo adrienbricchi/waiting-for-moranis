@@ -37,6 +37,8 @@ import org.adrienbricchi.waitingformoranis.ui.main.movieList.MovieListFragment;
 import org.adrienbricchi.waitingformoranis.ui.main.showList.ShowListFragment;
 import org.adrienbricchi.waitingformoranis.ui.preferences.SettingsActivity;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static android.view.View.GONE;
@@ -57,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String FRAGMENT_REQUEST = "main_activity";
     public static final String FRAGMENT_ADD_FAB_BUTTON_CLICKED = "add_fab_button_clicked";
 
+
+    // Every time a DB request is performed in sub-fragments, It gives back the result count to this main activity cache.
+    // This is not very elegant, but this cache prevents some painful-ugly callbacks to the sub-Fragments.
+    private final Map<Integer, Integer> itemsCountCache = new HashMap<>();
 
     private ActivityMainBinding binding;
     private Animator openingAnimation;
@@ -92,7 +98,9 @@ public class MainActivity extends AppCompatActivity {
 
         binding.tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
-            @Override public void onTabSelected(TabLayout.Tab tab) { triggerOnBoardCloseAnimation(); }
+            @Override public void onTabSelected(TabLayout.Tab tab) {
+                binding.addMovieFab.hide();
+            }
 
 
             @Override public void onTabUnselected(TabLayout.Tab tab) { }
@@ -102,21 +110,73 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        binding.addMovieFab.addOnShowAnimationListener(new Animator.AnimatorListener() {
+
+            @Override public void onAnimationStart(Animator animation) {
+                Log.d(LOG_TAG, "--SHOW------- onFabAnimationStart " + itemsCountCache);
+                int newFragmentItemsCount = itemsCountCache.getOrDefault(binding.viewPager.getCurrentItem(), 0);
+                if (newFragmentItemsCount == 0) {
+                    triggerOnBoardOpeningAnimation();
+                }
+            }
+
+
+            @Override public void onAnimationEnd(Animator animation) {
+                Log.d(LOG_TAG, "--SHOW------- onFabAnimationEnd");
+            }
+
+
+            @Override public void onAnimationCancel(Animator animation) {
+                Log.d(LOG_TAG, "--SHOW------- onFabAnimationCancel " + itemsCountCache);
+                Optional.ofNullable(openingAnimation)
+                        .filter(a -> a.isRunning() || a.isStarted())
+                        .ifPresent(Animator::cancel);
+            }
+
+
+            @Override public void onAnimationRepeat(Animator animation) {
+                Log.d(LOG_TAG, "--SHOW------- onFabAnimationRepeat");
+            }
+
+        });
+
+        binding.addMovieFab.addOnHideAnimationListener(new Animator.AnimatorListener() {
+
+            @Override public void onAnimationStart(Animator animation) {
+                Log.d(LOG_TAG, "-------HIDE-- onFabAnimationStart");
+                int previousFragmentItemsCount = itemsCountCache.getOrDefault(binding.viewPager.getCurrentItem(), 0);
+                if (previousFragmentItemsCount == 0) {
+                    Log.d(LOG_TAG, "previousFragmentItemsCount == 0");
+                    triggerOnBoardCloseAnimation();
+                }
+            }
+
+
+            @Override public void onAnimationEnd(Animator animation) {
+                Log.d(LOG_TAG, "-------HIDE-- onFabAnimationEnd");
+            }
+
+
+            @Override public void onAnimationCancel(Animator animation) {
+                Log.d(LOG_TAG, "-------HIDE-- onFabAnimationCancel");
+                Optional.ofNullable(closingAnimation)
+                        .filter(a -> a.isRunning() || a.isStarted())
+                        .ifPresent(Animator::cancel);
+            }
+
+
+            @Override public void onAnimationRepeat(Animator animation) {
+                Log.d(LOG_TAG, "-------HIDE-- onFabAnimationRepeat");
+            }
+
+        });
+
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
 
             @Override public void onPageScrollStateChanged(int state) {
                 switch (state) {
 
                     case SCROLL_STATE_DRAGGING:
-                        int previousFragmentItemsCount = (binding.viewPager.getCurrentItem() == 0)
-                                                         ? sectionsPagerAdapter.getMovieListFragment().getAdapter().getItemCount()
-                                                         : sectionsPagerAdapter.getShowListFragment().getAdapter().getItemCount();
-
-                        if (previousFragmentItemsCount == 0) {
-                            Log.d(LOG_TAG, "previousFragmentItemsCount == 0");
-                            triggerOnBoardCloseAnimation();
-                        }
-
                         binding.addMovieFab.hide();
                         break;
 
@@ -125,14 +185,6 @@ public class MainActivity extends AppCompatActivity {
 
                     case SCROLL_STATE_IDLE:
                     default:
-                        int newFragmentItemsCount = (binding.viewPager.getCurrentItem() == 0)
-                                                    ? sectionsPagerAdapter.getMovieListFragment().getAdapter().getItemCount()
-                                                    : sectionsPagerAdapter.getShowListFragment().getAdapter().getItemCount();
-
-                        if (newFragmentItemsCount == 0) {
-                            triggerOnBoardOpeningAnimation();
-                        }
-
                         binding.addMovieFab.show();
                 }
             }
@@ -144,6 +196,8 @@ public class MainActivity extends AppCompatActivity {
                 this,
                 (requestKey, bundle) -> {
                     Log.d(LOG_TAG, "MovieListFragment.FRAGMENT_RESULT_MOVIES_COUNT");
+
+                    itemsCountCache.put(0, bundle.getInt(MovieListFragment.FRAGMENT_RESULT_MOVIES_COUNT));
                     boolean isOnBoardVisible = binding.onboardingView.getVisibility() == VISIBLE;
                     boolean hasMovies = bundle.getInt(MovieListFragment.FRAGMENT_RESULT_MOVIES_COUNT) > 0;
 
@@ -162,8 +216,11 @@ public class MainActivity extends AppCompatActivity {
                 this,
                 (requestKey, bundle) -> {
                     Log.d(LOG_TAG, "ShowListFragment.FRAGMENT_RESULT_SHOWS_COUNT");
+
+                    itemsCountCache.put(1, bundle.getInt(ShowListFragment.FRAGMENT_RESULT_SHOWS_COUNT));
                     boolean isOnBoardVisible = binding.onboardingView.getVisibility() == VISIBLE;
                     boolean hasShows = bundle.getInt(ShowListFragment.FRAGMENT_RESULT_SHOWS_COUNT) > 0;
+
                     if (!hasShows && !isOnBoardVisible) {
                         Log.d(LOG_TAG, "!hasShows && !isOnBoardVisible");
                         triggerOnBoardOpeningAnimation();

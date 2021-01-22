@@ -19,6 +19,7 @@ package org.adrienbricchi.waitingformoranis.ui.main.movieList;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -54,6 +55,8 @@ import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL
 @EqualsAndHashCode(callSuper = true)
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder> {
 
+
+    private static final String LOG_TAG = "MovieListAdapter";
 
     private @NonNull List<Movie> dataSet;
     private SelectionTracker<String> selectionTracker;
@@ -92,6 +95,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
      */
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
+
+        Log.d(LOG_TAG, "onBindViewHolder holder:" + holder + " position:" + position);
 
         Movie currentMovie = dataSet.get(position);
         Context currentContext = holder.binding.getRoot().getContext();
