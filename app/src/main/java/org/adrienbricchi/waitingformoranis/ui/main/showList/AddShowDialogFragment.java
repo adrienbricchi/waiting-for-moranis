@@ -27,6 +27,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import lombok.Setter;
@@ -44,6 +45,7 @@ import static android.os.Looper.getMainLooper;
 import static android.view.KeyEvent.KEYCODE_ENTER;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH;
 import static java.util.stream.Collectors.toSet;
 
@@ -99,6 +101,14 @@ public class AddShowDialogFragment extends DialogFragment {
                 .ifPresent(w -> w.getAttributes().gravity = Gravity.TOP);
 
         return dialog;
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        binding.searchAppCompatEditText.requestFocus();
+        getDialog().getWindow().setSoftInputMode(SOFT_INPUT_STATE_VISIBLE);
     }
 
 
