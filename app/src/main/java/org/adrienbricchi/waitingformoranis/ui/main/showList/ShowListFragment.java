@@ -353,6 +353,7 @@ public class ShowListFragment extends Fragment {
                                   // Adding shows to the list,
                                   // on-the-fly, without going through the DB
                                   adapter.getDataSet().add(adapter.getDataSet().size(), m);
+                                  binding.showListRecyclerView.getRecycledViewPool().clear();
                                   adapter.notifyDataSetChanged();
                                   // Notify the parent Activity
                                   Bundle result = new Bundle();
@@ -439,6 +440,7 @@ public class ShowListFragment extends Fragment {
                 result.putInt(FRAGMENT_RESULT_SHOWS_COUNT, adapter.getDataSet().size());
                 getParentFragmentManager().setFragmentResult(FRAGMENT_REQUEST, result);
 
+                binding.showListRecyclerView.getRecycledViewPool().clear();
                 adapter.notifyDataSetChanged();
                 binding.showListSwipeRefreshLayout.setRefreshing(!disableSpinnerOnCompletion);
             });

@@ -353,6 +353,7 @@ public class MovieListFragment extends Fragment {
                                   // Adding movies to the list,
                                   // on-the-fly, without going through the DB
                                   adapter.getDataSet().add(adapter.getDataSet().size(), m);
+                                  binding.movieListRecyclerView.getRecycledViewPool().clear();
                                   adapter.notifyDataSetChanged();
                                   // Notify the parent Activity
                                   Bundle result = new Bundle();
@@ -439,6 +440,7 @@ public class MovieListFragment extends Fragment {
                 result.putInt(FRAGMENT_RESULT_MOVIES_COUNT, adapter.getDataSet().size());
                 getParentFragmentManager().setFragmentResult(FRAGMENT_REQUEST, result);
 
+                binding.movieListRecyclerView.getRecycledViewPool().clear();
                 adapter.notifyDataSetChanged();
                 binding.movieListSwipeRefreshLayout.setRefreshing(!disableSpinnerOnCompletion);
             });
