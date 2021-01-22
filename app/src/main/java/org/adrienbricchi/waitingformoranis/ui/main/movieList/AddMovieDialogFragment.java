@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.NonNull;
@@ -82,7 +83,9 @@ public class AddMovieDialogFragment extends DialogFragment {
         binding.addMovieListRecyclerView.setVisibility(GONE);
 
         binding.searchAppCompatEditText.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == IME_ACTION_SEARCH) {
+            boolean keyboardEnterPressed = (event != null) && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER);
+            boolean searchButtonPressed = (actionId == IME_ACTION_SEARCH);
+            if (searchButtonPressed || keyboardEnterPressed) {
                 searchMovie(v.getText().toString());
                 return true;
             }

@@ -41,6 +41,7 @@ import java.util.Set;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.os.Looper.getMainLooper;
+import static android.view.KeyEvent.KEYCODE_ENTER;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH;
@@ -84,7 +85,9 @@ public class AddShowDialogFragment extends DialogFragment {
         binding.addShowListRecyclerView.setVisibility(GONE);
 
         binding.searchAppCompatEditText.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == IME_ACTION_SEARCH) {
+            boolean keyboardEnterPressed = (event != null) && (event.getKeyCode() == KEYCODE_ENTER);
+            boolean searchButtonPressed = (actionId == IME_ACTION_SEARCH);
+            if (searchButtonPressed || keyboardEnterPressed) {
                 searchShow(v.getText().toString());
                 return true;
             }
