@@ -114,7 +114,7 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
 
         holder.binding.titleTextView.setText(currentShow.getTitle());
         holder.binding.coverImageView.setContentDescription(currentShow.getTitle());
-        holder.binding.dateTextView.setText(currentShow.isInProduction() ? dateLabel : currentContext.getText(ended));
+        holder.binding.dateTextView.setText(currentShow.isInProduction() ? dateLabel : currentShow.getStatus());
 
         holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentShow.getId()));
     }

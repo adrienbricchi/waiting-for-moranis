@@ -147,6 +147,7 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Optional.ofNullable(actionMode).ifPresent(ActionMode::finish);
         getParentFragmentManager().clearFragmentResultListener(MainActivity.FRAGMENT_REQUEST);
     }
 
@@ -225,7 +226,8 @@ public class MovieListFragment extends Fragment {
             // may be called multiple times if the mode is invalidated.
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false; // Return false if nothing is done
+                // Nothing to do
+                return false;
             }
 
 
