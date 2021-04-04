@@ -30,6 +30,7 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.utils.JacksonRequest;
 
 import java.util.*;
@@ -41,6 +42,8 @@ import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
 
 
 public class TmdbService {
+
+    public static final String COVER_URL = "https://image.tmdb.org/t/p/w154%s";
 
     private static final String LOG_TAG = "TmdbService";
 
@@ -56,11 +59,15 @@ public class TmdbService {
 
     private static final String PATH_SEARCH = "search";
     private static final String PATH_MOVIE = "movie";
+    private static final String PATH_TV = "tv";
     private static final String PATH_EDIT = "edit";
+    private static final String PATH_SEASON = "season";
     private static final String PATH_RELEASE_DATES = "release_dates";
 
     private static final String PATH_QUERY_ACTIVE_NAV_ITEM = "active_nav_item";
     private static final String PATH_QUERY_RELEASE_INFORMATION = "release_information";
+    private static final String PATH_QUERY_EPISODES = "episodes";
+    private static final String PATH_QUERY_SEASONS = "seasons";
 
     private static final String API_KEY_PARAM = "api_key";
     private static final String LANGUAGE_PARAM = "language";
@@ -95,6 +102,31 @@ public class TmdbService {
                 .appendPath(PATH_MOVIE).appendPath(movie.getId()).appendPath(PATH_EDIT)
                 .appendQueryParameter(PATH_QUERY_ACTIVE_NAV_ITEM, PATH_QUERY_RELEASE_INFORMATION)
                 .build();
+    }
+
+
+    public @NonNull Uri getEditReleaseDatesUrl(@NonNull Show show) {
+
+        if (show.getNextEpisodeSeasonNumber() != null) {
+
+            // https://www.themoviedb.org/tv/85271-wandavision/season/1/edit?active_nav_item=episodes
+            return new Uri.Builder()
+                    .scheme(HTTPS).authority(WEB_URL)
+                    .appendPath(PATH_TV).appendPath(show.getId())
+                    .appendPath(PATH_SEASON).appendPath(String.valueOf(show.getNextEpisodeSeasonNumber()))
+                    .appendPath(PATH_EDIT)
+                    .appendQueryParameter(PATH_QUERY_ACTIVE_NAV_ITEM, PATH_QUERY_EPISODES)
+                    .build();
+        } else {
+
+            // https://www.themoviedb.org/tv/85271-wandavision/edit?active_nav_item=seasons
+            return new Uri.Builder()
+                    .scheme(HTTPS).authority(WEB_URL)
+                    .appendPath(PATH_TV).appendPath(show.getId()).appendPath(PATH_EDIT)
+                    .appendQueryParameter(PATH_QUERY_ACTIVE_NAV_ITEM, PATH_QUERY_SEASONS)
+                    .build();
+        }
+
     }
 
 
@@ -136,6 +168,34 @@ public class TmdbService {
         JacksonRequest<TmdbPage<TmdbMovie>> jacksonRequest = new JacksonRequest<>(
                 url,
                 new TypeReference<TmdbPage<TmdbMovie>>() {},
+                response -> onSuccess.onResponse(response.getResults()),
+                onError
+        );
+
+        // Add the request to the RequestQueue.
+        queue.add(jacksonRequest);
+    }
+
+
+    public void searchShow(@NonNull String searchTerm,
+                           @NonNull final Response.Listener<List<? extends Show>> onSuccess,
+                           @NonNull final Response.ErrorListener onError) {
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        String url = new Uri.Builder()
+                .scheme(HTTPS).authority(API_URL)
+                .appendPath(API_VERSION).appendPath(PATH_SEARCH).appendPath(PATH_TV)
+                .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
+                .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
+                .appendQueryParameter(QUERY_PARAM, searchTerm)
+                .build().toString();
+
+        // Request response from the provided URL.
+        JacksonRequest<TmdbPage<TmdbShow>> jacksonRequest = new JacksonRequest<>(
+                url,
+                new TypeReference<TmdbPage<TmdbShow>>() {},
                 response -> onSuccess.onResponse(response.getResults()),
                 onError
         );
@@ -194,5 +254,56 @@ public class TmdbService {
             return null;
         }
     }
+
+
+    public @Nullable Show getShow(@NonNull String id) {
+        Log.v(LOG_TAG, "getShow id:" + id);
+
+        // Delay test
+
+        if (Optional.ofNullable(sDelaySinceLastRequest.get(id))
+                    .filter(t -> t < currentTimeMillis() + DELAY_TIMEOUT_MS)
+                    .isPresent()) {
+
+            Log.i(LOG_TAG, format("getShow postponed id:%s, timeout delay not yet finished", id));
+            return null;
+        }
+
+        // Instantiate the RequestQueue.
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestFuture<TmdbShow> future = RequestFuture.newFuture();
+
+        String url = new Uri.Builder()
+                .scheme(HTTPS).authority(API_URL)
+                .appendPath(API_VERSION).appendPath(PATH_TV).appendPath(id)
+                .appendQueryParameter(APPEND_TO_RESPONSE_PARAM, PATH_RELEASE_DATES)
+                .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
+                .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
+                .build().toString();
+
+        Log.v(LOG_TAG, url);
+
+        // Request from the provided URL.
+        JacksonRequest<TmdbShow> jacksonRequest = new JacksonRequest<>(
+                url,
+                new TypeReference<TmdbShow>() {},
+                future,
+                future
+        );
+
+        // Add the request to the RequestQueue.
+        queue.add(jacksonRequest);
+
+        try {
+            TmdbShow tmdbShow = future.get();
+            sDelaySinceLastRequest.put(tmdbShow.getId(), currentTimeMillis());
+            return tmdbShow;
+        }
+        catch (InterruptedException | ExecutionException e) {
+            return null;
+        }
+    }
+
 
 }

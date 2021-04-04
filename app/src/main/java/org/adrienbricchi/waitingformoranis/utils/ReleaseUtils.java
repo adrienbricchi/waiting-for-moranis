@@ -22,19 +22,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
+import org.adrienbricchi.waitingformoranis.models.Show;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static java.util.Comparator.*;
 
 
-public class MovieUtils {
+public class ReleaseUtils {
 
 
     private static final Function<Release, Integer> COUNTRY_HASH_EXTRACTOR = r -> Optional.ofNullable(r.getCountry())
@@ -57,7 +53,12 @@ public class MovieUtils {
     }
 
 
-    public static Comparator<Movie> generateReleaseDateComparator(@NonNull Locale locale) {
+    public static boolean checkForCalendarUpgradeNeed(@Nullable Show previous, @NonNull Show recent) {
+        return (previous == null) || !Objects.equals(previous.getNextEpisodeAirDate(), recent.getNextEpisodeAirDate());
+    }
+
+
+    public static Comparator<Movie> generateMovieReleaseDateComparator(@NonNull Locale locale) {
 
         Function<Movie, Date> movieReleaseExtractor = movie -> Optional.ofNullable(getRelease(movie, locale))
                                                                        .map(Release::getDate)
@@ -66,6 +67,14 @@ public class MovieUtils {
         return comparing(movieReleaseExtractor, comparing(d -> d, nullsLast(naturalOrder())))
                 .thenComparing(Movie::getTitle, nullsLast(naturalOrder()))
                 .thenComparing(Movie::getId, nullsLast(naturalOrder()));
+    }
+
+
+    public static Comparator<Show> generateShowDateComparator() {
+        return comparing(Show::isInProduction, nullsLast(reverseOrder()))
+                .thenComparing(Show::getNextEpisodeAirDate, nullsLast(naturalOrder()))
+                .thenComparing(Show::getTitle, nullsLast(naturalOrder()))
+                .thenComparing(Show::getId, nullsLast(naturalOrder()));
     }
 
 
@@ -86,21 +95,5 @@ public class MovieUtils {
                     .orElse(null);
     }
 
-
-    public static @Nullable String getIdFromCalendarDescription(@Nullable String desc) {
-
-        if (desc == null) {
-            return null;
-        }
-
-        if (desc.matches("\\d{5,6}")) {
-            return desc;
-        }
-
-        return Optional.of(Pattern.compile(".*?\\[TMDB id:(?<id>.*?)].*").matcher(desc))
-                       .filter(Matcher::matches)
-                       .map(m -> m.group(1))
-                       .orElse(null);
-    }
 
 }

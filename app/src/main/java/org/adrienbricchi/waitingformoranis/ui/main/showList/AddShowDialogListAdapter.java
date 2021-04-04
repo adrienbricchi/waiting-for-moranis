@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.adrienbricchi.waitingformoranis.components;
+package org.adrienbricchi.waitingformoranis.ui.main.showList;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -26,25 +26,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.adrienbricchi.waitingformoranis.databinding.AddMovieListCellBinding;
-import org.adrienbricchi.waitingformoranis.models.Movie;
+import org.adrienbricchi.waitingformoranis.databinding.AddShowListCellBinding;
+import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static java.text.DateFormat.SHORT;
-import static org.adrienbricchi.waitingformoranis.R.string.unknown_between_parenthesis;
+import static org.adrienbricchi.waitingformoranis.R.string.unknown_release_date;
 
 
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDialogListAdapter.MovieViewHolder> {
+public class AddShowDialogListAdapter extends RecyclerView.Adapter<AddShowDialogListAdapter.ShowViewHolder> {
 
 
     private Set<String> knownIds;
-    private List<Movie> dataSet;
+    private List<Show> dataSet;
 
 
     /**
@@ -52,24 +52,24 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
      * Complex data items may need more than one view per item, and
      * you provide access to all the views for a data item in a view holder
      */
-    static class MovieViewHolder extends RecyclerView.ViewHolder {
+    static class ShowViewHolder extends RecyclerView.ViewHolder {
 
-        Movie currentMovie;
-        final AddMovieListCellBinding binding;
+        Show currentShow;
+        final AddShowListCellBinding binding;
         final CompoundButton.OnCheckedChangeListener listener;
 
 
-        MovieViewHolder(AddMovieListCellBinding binding) {
+        ShowViewHolder(AddShowListCellBinding binding) {
             super(binding.getRoot());
-            this.currentMovie = null;
+            this.currentShow = null;
             this.binding = binding;
             this.listener = (buttonView, isChecked) ->
                     new Thread(() -> {
                         AppDatabase database = AppDatabase.getDatabase(buttonView.getContext());
                         if (isChecked) {
-                            database.movieDao().add(currentMovie);
+                            database.showDao().add(currentShow);
                         } else {
-                            database.movieDao().remove(currentMovie.getId());
+                            database.showDao().remove(currentShow.getId());
                         }
                     }).start();
         }
@@ -80,15 +80,15 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
      * Create new views (invoked by the layout manager)
      */
     @Override
-    public @NonNull AddMovieDialogListAdapter.MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public @NonNull ShowViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        AddMovieListCellBinding binding = AddMovieListCellBinding.inflate(
+        AddShowListCellBinding binding = AddShowListCellBinding.inflate(
                 LayoutInflater.from(parent.getContext()),
                 parent,
                 false
         );
 
-        return new MovieViewHolder(binding);
+        return new ShowViewHolder(binding);
     }
 
 
@@ -96,22 +96,22 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
      * Replace the contents of a view (invoked by the layout manager)
      */
     @Override
-    public void onBindViewHolder(MovieViewHolder holder, int position) {
+    public void onBindViewHolder(ShowViewHolder holder, int position) {
 
-        Movie currentMovie = dataSet.get(position);
+        Show currentShow = dataSet.get(position);
         Context currentContext = holder.binding.getRoot().getContext();
 
-        holder.currentMovie = currentMovie;
-        holder.binding.addMovieTitleTextView.setText(currentMovie.getTitle());
-        holder.binding.addMovieDateTextView.setText(
-                Optional.ofNullable(currentMovie.getReleaseDate())
+        holder.currentShow = currentShow;
+        holder.binding.addShowTitleTextView.setText(currentShow.getTitle());
+        holder.binding.addShowDateTextView.setText(
+                Optional.ofNullable(currentShow.getReleaseDate())
                         .map(Date::new)
                         .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
-                        .orElseGet(() -> currentContext.getString(unknown_between_parenthesis)));
+                        .orElseGet(() -> currentContext.getString(unknown_release_date)));
 
-        holder.binding.addMovieMaterialCheckBox.setOnCheckedChangeListener(null);
-        holder.binding.addMovieMaterialCheckBox.setChecked(knownIds.contains(currentMovie.getId()));
-        holder.binding.addMovieMaterialCheckBox.setOnCheckedChangeListener(holder.listener);
+        holder.binding.addShowMaterialCheckBox.setOnCheckedChangeListener(null);
+        holder.binding.addShowMaterialCheckBox.setChecked(knownIds.contains(currentShow.getId()));
+        holder.binding.addShowMaterialCheckBox.setOnCheckedChangeListener(holder.listener);
     }
 
 

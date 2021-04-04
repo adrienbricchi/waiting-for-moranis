@@ -18,14 +18,26 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<menu
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context="org.adrienbricchi.waitingformoranis.ui.main.MainActivity">
-    <item
-            android:id="@+id/action_settings"
-            android:orderInCategory="100"
-            android:title="@string/settings"
-            app:showAsAction="never" />
-</menu>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/show_list_swipe_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.main.showList.showListFragment">
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/show_list_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingVertical="8dp"
+                tools:listitem="@layout/show_list_cell" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</FrameLayout>

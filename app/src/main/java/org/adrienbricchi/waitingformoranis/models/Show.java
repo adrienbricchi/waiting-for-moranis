@@ -19,35 +19,42 @@ package org.adrienbricchi.waitingformoranis.models;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
+import java.util.UUID;
 
 
 @Data
 @Keep
 @NoArgsConstructor
-@Entity(tableName = Movie.TABLE_NAME,
-        indices = {@Index(value = Movie.FIELD_ID)})
-public class Movie {
+@Entity(tableName = Show.TABLE_NAME,
+        indices = {@Index(value = Show.FIELD_ID)})
+public class Show {
 
-    public static final String TABLE_NAME = "movie";
+    public static final String TABLE_NAME = "show";
     public static final String FIELD_ID = "id";
 
-    protected @PrimaryKey @NonNull String id = UUID.randomUUID().toString();
+
+    @PrimaryKey
+    @ColumnInfo(name = FIELD_ID)
+    protected @NonNull String id = UUID.randomUUID().toString();
+
     protected String title;
     protected String imageUrl;
-    protected Long calendarEventId;
 
-    protected @NonNull Set<Locale> productionCountries = new HashSet<>();
-    protected @NonNull List<Release> releaseDates = new ArrayList<>();
-
+    protected boolean isInProduction;
     protected Long releaseDate;
+
+    protected Long nextEpisodeAirDate;
+    protected Integer nextEpisodeNumber;
+    protected Integer nextEpisodeSeasonNumber;
+
+    protected Long calendarEventId;
     protected boolean isUpdateNeededInCalendar = false;
 
 }

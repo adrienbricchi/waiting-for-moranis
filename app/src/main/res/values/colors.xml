@@ -53,7 +53,6 @@
     <color name="movieIconColor">@color/white</color>
     <color name="movieIconColorBackground">@color/colorPrimaryDark</color>
 
-
     <color name="settingsColorPrimary">@color/grey_100</color>
     <color name="settingsColorPrimaryDark">@color/grey_100_dark</color>
     <color name="settingsStatusBarColor">@color/settingsColorPrimary</color>

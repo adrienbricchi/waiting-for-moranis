@@ -22,6 +22,12 @@
 
     <string name="app_name">Waiting For Moranis</string>
 
+    <string name="onboarding_text_movie">Ajouter un film\nà surveiller</string>
+    <string name="onboarding_text_show">Ajouter une série\nà surveiller</string>
+
+    <string name="movies">Films</string>
+    <string name="shows">Séries</string>
+
     <string name="settings">Préférences</string>
     <string name="edit">Éditer</string>
     <string name="delete">Supprimer</string>
@@ -29,8 +35,12 @@
 
     <string name="movie_list">Liste de films</string>
     <string name="hashtagged_movie">%s #film</string>
+    <string name="next_episode_code_date">s%02de%02d : %s</string>
+    <string name="title_episode_code">%s - s%02de%02d</string>
+    <string name="next_episode_date">Prochain épisode : %s</string>
     <string name="search_movie_title_hint">Rechercher un titre de film</string>
-    <string name="unknown_between_parenthesis">(inconnu)</string>
+    <string name="search_show_title_hint">Rechercher un titre de série</string>
+    <string name="unknown_release_date">Date de sortie inconnue</string>
 
     <string name="add_calendar_tutorial_text1">Vous pouvez créer un sous-calendrier dédié sur votre compte.</string>
     <string name="add_calendar_tutorial_text2">À ce jour, on peut les créer depuis la version web (bureau) de Google Calendar.</string>
@@ -47,6 +57,8 @@
     <string name="tv">Télévision</string>
     <string name="premiere">Avant-premiere</string>
 
+    <string name="ended">Terminée</string>
+
     <!-- <editor-fold desc="Settings" -->
 
     <string name="external_services">Services externes</string>
@@ -62,7 +74,6 @@
     <string name="settings_github_title">Code source</string>
     <string name="settings_github_summary">Contribuer, ou signaler un bug</string>
     <string name="settings_open_source_licenses_title">Licences open source</string>
-    <string name="onboarding_text">Ajouter un film à surveiller</string>
 
     <!-- </editor-fold desc="Settings" -->
 
