@@ -1,6 +1,9 @@
 Waiting for Moranis
 ===================
 
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)]
+[Get it on Google Play]: https://play.google.com/store/apps/details?id=org.adrienbricchi.waitingformoranis
+
 ## Summary
 
 A simple app to retrieve movie releases dates.  
