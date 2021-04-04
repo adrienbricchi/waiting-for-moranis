@@ -104,6 +104,14 @@ public class TmdbShow extends Show {
     }
 
 
+    @JsonProperty("last_episode_to_air")
+    private void parseLastEpisode(@Nullable EpisodeToAir lastEpisode) {
+        lastEpisodeAirDate = Optional.ofNullable(lastEpisode).map(EpisodeToAir::getAirDate).orElse(null);
+        lastEpisodeNumber = Optional.ofNullable(lastEpisode).map(EpisodeToAir::getNumber).orElse(null);
+        lastEpisodeSeasonNumber = Optional.ofNullable(lastEpisode).map(EpisodeToAir::getSeasonNumber).orElse(null);
+    }
+
+
     @JsonProperty("next_episode_to_air")
     private void parseNextEpisode(@Nullable EpisodeToAir nextEpisode) {
         nextEpisodeAirDate = Optional.ofNullable(nextEpisode).map(EpisodeToAir::getAirDate).orElse(null);
