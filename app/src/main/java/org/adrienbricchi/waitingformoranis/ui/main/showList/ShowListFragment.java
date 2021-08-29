@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020
+ * Copyright (C) 2020-2021
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,8 +49,7 @@ import static androidx.recyclerview.selection.StorageStrategy.createStringStorag
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
-import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.checkForCalendarUpgradeNeed;
-import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.generateShowDateComparator;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.*;
 
 
 @Getter
@@ -343,7 +342,7 @@ public class ShowListFragment extends Fragment {
                                                                   .map(c -> c.getEvents(calendarId, false))
                                                                   .orElseGet(Collections::emptyMap);
 
-                // Movies that are in the Calendar, but not in the DB
+                // Shows that are in the Calendar, but not in the DB
                 existingEvents.keySet()
                               .stream()
                               .filter(i -> !oldShowsMap.containsKey(i))
@@ -367,7 +366,7 @@ public class ShowListFragment extends Fragment {
                                   database.showDao().add(s);
                               });
 
-                // Movies that are in the Calendar and the DB, but not mapped together
+                // Shows that are in the Calendar and the DB, but not mapped together
                 oldShowsMap.entrySet()
                            .stream()
                            .filter(s -> s.getValue().getCalendarEventId() == null)
@@ -431,7 +430,7 @@ public class ShowListFragment extends Fragment {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Show> shows = database.showDao().getAll();
-            shows.sort(generateShowDateComparator());
+            shows.sort(SHOW_COMPARATOR);
 
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(shows);

@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020
+ * Copyright (C) 2020-2021
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,7 @@ import static java.util.Comparator.*;
 public class ReleaseUtils {
 
 
-    private static final Function<Release, Integer> COUNTRY_HASH_EXTRACTOR = r -> Optional.ofNullable(r.getCountry())
+    private static final Function<Release, Integer> COUNTRY_HASH_EXTRACTOR = r -> Optional.of(r.getCountry())
                                                                                           .map(Locale::hashCode)
                                                                                           .orElse(null);
 
@@ -41,6 +41,13 @@ public class ReleaseUtils {
             comparing(COUNTRY_HASH_EXTRACTOR, comparing(r -> r, nullsLast(naturalOrder())))
                     .thenComparing(Release::getType, nullsLast(naturalOrder()))
                     .thenComparing(Release::getDate, nullsLast(naturalOrder()));
+
+
+    public static final Comparator<Show> SHOW_COMPARATOR =
+            comparing(Show::getProductionStatus, nullsLast(naturalOrder()))
+                    .thenComparing(Show::getNextEpisodeAirDate, nullsLast(naturalOrder()))
+                    .thenComparing(Show::getTitle, nullsLast(naturalOrder()))
+                    .thenComparing(Show::getId, nullsLast(naturalOrder()));
 
 
     public static @NonNull Locale countryLocale(@NonNull String iso639) {
@@ -67,14 +74,6 @@ public class ReleaseUtils {
         return comparing(movieReleaseExtractor, comparing(d -> d, nullsLast(naturalOrder())))
                 .thenComparing(Movie::getTitle, nullsLast(naturalOrder()))
                 .thenComparing(Movie::getId, nullsLast(naturalOrder()));
-    }
-
-
-    public static Comparator<Show> generateShowDateComparator() {
-        return comparing(Show::isInProduction, nullsLast(reverseOrder()))
-                .thenComparing(Show::getNextEpisodeAirDate, nullsLast(naturalOrder()))
-                .thenComparing(Show::getTitle, nullsLast(naturalOrder()))
-                .thenComparing(Show::getId, nullsLast(naturalOrder()));
     }
 
 

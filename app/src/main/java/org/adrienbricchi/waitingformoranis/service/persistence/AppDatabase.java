@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020
+ * Copyright (C) 2020-2021
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,7 +28,7 @@ import org.adrienbricchi.waitingformoranis.models.Show;
 
 @Database(
         entities = {Movie.class, Show.class},
-        version = 12,
+        version = 14,
         exportSchema = false
 )
 @TypeConverters({CustomTypeConverters.class})

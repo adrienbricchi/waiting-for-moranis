@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020
+ * Copyright (C) 2020-2021
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,6 +42,7 @@ import java.util.stream.IntStream;
 import static java.text.DateFormat.SHORT;
 import static org.adrienbricchi.waitingformoranis.R.drawable.ic_live_tv_color_background_48dp;
 import static org.adrienbricchi.waitingformoranis.R.string.*;
+import static org.adrienbricchi.waitingformoranis.models.Show.Status.RETURNING_SERIES;
 
 
 @Data
@@ -112,9 +113,11 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
                                    )
                            : currentContext.getString(next_episode_date, nextEpisodeDateLabel);
 
+        String statusLabel = currentContext.getString(currentShow.getProductionStatus().getStringRes());
+
         holder.binding.titleTextView.setText(currentShow.getTitle());
         holder.binding.coverImageView.setContentDescription(currentShow.getTitle());
-        holder.binding.dateTextView.setText(currentShow.isInProduction() ? dateLabel : currentShow.getStatus());
+        holder.binding.dateTextView.setText(currentShow.getProductionStatus() == RETURNING_SERIES ? dateLabel : statusLabel);
 
         holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentShow.getId()));
     }
