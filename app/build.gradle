@@ -27,13 +27,13 @@ apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 
 android {
 
-    compileSdkVersion 30
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 31
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "org.adrienbricchi.waitingformoranis"
         minSdkVersion 24
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "develop"
 

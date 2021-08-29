@@ -41,7 +41,8 @@
                 android:configChanges="orientation|colorMode|screenSize|keyboardHidden"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme"
-                android:windowSoftInputMode="adjustPan">
+                android:windowSoftInputMode="adjustPan"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
