@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.adrienbricchi.waitingformoranis.models.Show;
+import org.adrienbricchi.waitingformoranis.service.persistence.CustomTypeConverters;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,12 +77,6 @@ public class TmdbShow extends Show {
     }
 
 
-    @JsonProperty("in_production")
-    private void parseInProduction(boolean inProduction) {
-        isInProduction = inProduction;
-    }
-
-
     @JsonProperty("poster_path")
     private void parsePosterPath(String posterPath) {
         // https://www.themoviedb.org/talk/53c11d4ec3a3684cf4006400
@@ -117,6 +112,14 @@ public class TmdbShow extends Show {
         nextEpisodeAirDate = Optional.ofNullable(nextEpisode).map(EpisodeToAir::getAirDate).orElse(null);
         nextEpisodeNumber = Optional.ofNullable(nextEpisode).map(EpisodeToAir::getNumber).orElse(null);
         nextEpisodeSeasonNumber = Optional.ofNullable(nextEpisode).map(EpisodeToAir::getSeasonNumber).orElse(null);
+    }
+
+
+    @JsonProperty("status")
+    private void parseProductionStatus(@Nullable String status) {
+        this.productionStatus = Optional.ofNullable(status)
+                                        .map(s -> new CustomTypeConverters().fromStatusString(status))
+                                        .orElse(Status.UNKNOWN);
     }
 
 

@@ -19,14 +19,17 @@ package org.adrienbricchi.waitingformoranis.models;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
+import androidx.annotation.StringRes;
+import androidx.room.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.adrienbricchi.waitingformoranis.service.persistence.CustomTypeConverters;
 
 import java.util.UUID;
+
+import static org.adrienbricchi.waitingformoranis.R.string.*;
 
 
 @Data
@@ -40,6 +43,20 @@ public class Show {
     public static final String FIELD_ID = "id";
 
 
+    @Getter
+    @AllArgsConstructor
+    public enum Status {
+
+        CANCELED(canceled),
+        ENDED(ended),
+        RETURNING_SERIES(unknown_release_date),
+        UNKNOWN(unknown_release_date);
+
+        private final @StringRes int stringRes;
+
+    }
+
+
     @PrimaryKey
     @ColumnInfo(name = FIELD_ID)
     protected @NonNull String id = UUID.randomUUID().toString();
@@ -47,8 +64,7 @@ public class Show {
     protected String title;
     protected String imageUrl;
 
-    protected String status;
-    protected boolean isInProduction;
+    protected Status productionStatus;
     protected Long releaseDate;
 
     protected Long lastEpisodeAirDate;
