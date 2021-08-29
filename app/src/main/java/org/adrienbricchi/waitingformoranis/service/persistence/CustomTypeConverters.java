@@ -23,16 +23,41 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.adrienbricchi.waitingformoranis.models.Release;
+import org.adrienbricchi.waitingformoranis.models.Show;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Collections.emptySet;
+import static org.adrienbricchi.waitingformoranis.models.Show.Status.*;
 
 
-class CustomTypeConverters {
+public class CustomTypeConverters {
+
+
+    @TypeConverter
+    public @NonNull Show.Status fromStatusString(String value) {
+        switch (value) {
+            case "Returning Series":
+            case "RETURNING_SERIES":
+                return RETURNING_SERIES;
+            case "Canceled":
+            case "CANCELED":
+                return CANCELED;
+            case "Ended":
+            case "ENDED":
+                return ENDED;
+            default:
+                return UNKNOWN;
+        }
+    }
+
+
+    @TypeConverter
+    public @NonNull String toStatusString(Show.Status status) {
+        return Optional.ofNullable(status)
+                       .map(Show.Status::name)
+                       .orElse(UNKNOWN.name());
+    }
 
 
     @TypeConverter
