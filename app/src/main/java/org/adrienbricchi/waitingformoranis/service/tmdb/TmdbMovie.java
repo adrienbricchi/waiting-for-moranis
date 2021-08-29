@@ -71,7 +71,7 @@ class TmdbMovie extends Movie {
 
 
     @JsonProperty("release_dates")
-    private void parseReleaseDates(TmdbPage<TmdbReleaseDate> page) {
+    private void parseReleaseDates(TmdbPage<ReleaseDate> page) {
         releaseDates = new ArrayList<>();
 
         page.getResults()
@@ -86,9 +86,9 @@ class TmdbMovie extends Movie {
 
 
     @JsonProperty("production_countries")
-    private void parseProductionCountries(List<TmdbProductionCountry> list) {
+    private void parseProductionCountries(List<ProductionCountry> list) {
         productionCountries = list.stream()
-                                  .map(TmdbProductionCountry::getCountry)
+                                  .map(ProductionCountry::getCountry)
                                   .map(ReleaseUtils::countryLocale)
                                   .filter(Objects::nonNull)
                                   .collect(toSet());
@@ -105,7 +105,7 @@ class TmdbMovie extends Movie {
     @Data
     @Keep
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class TmdbProductionCountry {
+    private static class ProductionCountry {
 
         private @JsonAlias("iso_3166_1") String country;
         private String name;
@@ -116,7 +116,7 @@ class TmdbMovie extends Movie {
     @Data
     @Keep
     @JsonIgnoreProperties(ignoreUnknown = true)
-    static class TmdbReleaseDate {
+    static class ReleaseDate {
 
         private @JsonAlias("iso_3166_1") String country;
         private @JsonAlias("release_dates") List<TmdbDateWrapper> dateWrapper;
