@@ -41,6 +41,8 @@
     <string name="search_movie_title_hint">Rechercher un titre de film</string>
     <string name="search_show_title_hint">Rechercher un titre de série</string>
     <string name="unknown_release_date">Date de sortie inconnue</string>
+    <string name="ended">Terminée</string>
+    <string name="canceled">Annulée</string>
 
     <string name="add_calendar_tutorial_text1">Vous pouvez créer un sous-calendrier dédié sur votre compte.</string>
     <string name="add_calendar_tutorial_text2">À ce jour, on peut les créer depuis la version web (bureau) de Google Calendar.</string>
@@ -56,8 +58,6 @@
     <string name="theatrical_limited">Sortie limitée</string>
     <string name="tv">Télévision</string>
     <string name="premiere">Avant-premiere</string>
-
-    <string name="ended">Terminée</string>
 
     <!-- <editor-fold desc="Settings" -->
 
