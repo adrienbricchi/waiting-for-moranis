@@ -1,3 +1,24 @@
+#
+# Waiting For Moranis
+# Copyright (C) 2020-2021
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
+### Android
+### https://raw.githubusercontent.com/github/gitignore/master/Android.gitignore
+
 # Built application files
 *.apk
 *.aar
@@ -42,13 +63,14 @@ captures/
 .idea/tasks.xml
 .idea/gradle.xml
 .idea/assetWizardSettings.xml
+# .idea/dictionaries
 .idea/libraries
+.idea/jarRepositories.xml
 # Android Studio 3 in .gitignore file.
 .idea/caches
 .idea/modules.xml
 # Comment next line if keeping position of elements in Navigation Editor is relevant for you
 .idea/navEditor.xml
-.idea/deploymentTargetDropDown.xml
 
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.
@@ -84,6 +106,12 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-apikey.properties
+# Android Profiling
+*.hprof
 
-app/release/
+
+### Waiting for Moranis
+### Project specific files
+
+apikey.properties
+app/release/output-metadata.json

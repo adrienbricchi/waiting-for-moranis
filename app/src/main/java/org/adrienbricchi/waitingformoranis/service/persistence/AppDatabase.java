@@ -29,7 +29,9 @@ import org.adrienbricchi.waitingformoranis.models.Show;
 @Database(
         entities = {Movie.class, Show.class},
         version = 14,
-        exportSchema = false
+        autoMigrations = {
+                // @AutoMigration(from = 14, to = 15)
+        }
 )
 @TypeConverters({CustomTypeConverters.class})
 public abstract class AppDatabase extends RoomDatabase {
@@ -39,22 +41,18 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract MovieDao movieDao();
 
+
     public abstract ShowDao showDao();
 
 
     public static AppDatabase getDatabase(Context context) {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context, AppDatabase.class, "appdatabase")
-                           // recreate the database if necessary
                            .fallbackToDestructiveMigration()
                            .build();
         }
         return INSTANCE;
     }
 
-
-    public static void destroyInstance() {
-        INSTANCE = null;
-    }
 
 }
