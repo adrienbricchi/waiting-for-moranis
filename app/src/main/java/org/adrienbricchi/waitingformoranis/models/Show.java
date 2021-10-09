@@ -31,8 +31,8 @@ import java.util.UUID;
 import static org.adrienbricchi.waitingformoranis.R.string.*;
 
 
-@Data
 @Keep
+@Data
 @NoArgsConstructor
 @Entity(tableName = Show.TABLE_NAME,
         indices = {@Index(value = Show.FIELD_ID)})
@@ -42,6 +42,7 @@ public class Show {
     public static final String FIELD_ID = "id";
 
 
+    @Keep
     @Getter
     @AllArgsConstructor
     public enum Status {

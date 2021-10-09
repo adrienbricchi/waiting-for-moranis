@@ -22,15 +22,14 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
 
 
-@Data
 @Keep
+@Data
 @NoArgsConstructor
 @Entity(tableName = Movie.TABLE_NAME,
         indices = {@Index(value = Movie.FIELD_ID)})
