@@ -44,6 +44,7 @@ import static org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService.COVER
 public class TmdbShow extends Show {
 
 
+    @Keep
     @Data
     @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)

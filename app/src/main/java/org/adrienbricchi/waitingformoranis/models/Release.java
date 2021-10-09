@@ -27,8 +27,8 @@ import java.util.Locale;
 import static org.adrienbricchi.waitingformoranis.R.string.*;
 
 
-@Data
 @Keep
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
