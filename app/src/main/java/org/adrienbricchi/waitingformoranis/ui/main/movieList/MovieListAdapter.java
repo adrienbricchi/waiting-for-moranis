@@ -116,7 +116,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                         .map(r -> {
                             boolean isWeirdType = (r.getType() != THEATRICAL);
                             boolean isLocal = r.getCountry().equals(currentLocale);
-                            String dateString = SimpleDateFormat.getDateInstance(FULL, r.getCountry()).format(r.getDate());
+                            String dateString = SimpleDateFormat.getDateInstance(FULL, Locale.getDefault()).format(r.getDate());
 
                             if (isWeirdType && !isLocal) {
                                 return currentContext.getString(
