@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.adrienbricchi.waitingformoranis.service.persistence;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,12 @@ public class CustomTypeConverters {
         switch (value) {
             case "Returning Series":
             case "RETURNING_SERIES":
+            case "In Production":
+            case "IN_PRODUCTION":
+            case "Pilot":
+            case "PILOT":
+            case "Planned":
+            case "PLANNED":
                 return RETURNING_SERIES;
             case "Canceled":
             case "CANCELED":
