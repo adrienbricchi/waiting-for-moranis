@@ -40,6 +40,12 @@ public class CustomTypeConverters {
         switch (value) {
             case "Returning Series":
             case "RETURNING_SERIES":
+            case "In Production":
+            case "IN_PRODUCTION":
+            case "Pilot":
+            case "PILOT":
+            case "Planned":
+            case "PLANNED":
                 return RETURNING_SERIES;
             case "Canceled":
             case "CANCELED":
