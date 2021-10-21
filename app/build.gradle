@@ -80,16 +80,16 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    def lombok_version = '1.18.20'
+    def lombok_version = '1.18.22'
     compileOnly group: 'org.projectlombok', name: 'lombok', version: lombok_version
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombok_version
 
-    def room_version = '2.4.0-alpha04'
+    def room_version = '2.4.0-beta01'
     implementation group: 'androidx.room', name: 'room-runtime', version: room_version
     annotationProcessor group: 'androidx.room', name: 'room-compiler', version: room_version
     testImplementation group: 'androidx.room', name: 'room-testing', version: room_version
 
-    def jackson_version = '2.12.4'
+    def jackson_version = '2.13.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jackson_version
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jackson_version
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jackson_version
@@ -107,9 +107,9 @@ dependencies {
     implementation group: 'androidx.coordinatorlayout', name: 'coordinatorlayout', version: '1.1.0'
     implementation group: 'androidx.recyclerview', name: 'recyclerview', version: '1.2.1'
     implementation group: 'androidx.recyclerview', name: 'recyclerview-selection', version: '1.1.0'
-    implementation group: 'com.google.android.material', name: 'material', version: '1.5.0-alpha03'
+    implementation group: 'com.google.android.material', name: 'material', version: '1.5.0-alpha04'
     implementation group: 'androidx.viewpager2', name: 'viewpager2', version: '1.1.0-beta01'
-    implementation group: 'androidx.constraintlayout', name: 'constraintlayout', version: '2.1.0'
+    implementation group: 'androidx.constraintlayout', name: 'constraintlayout', version: '2.1.1'
     implementation group: 'androidx.swiperefreshlayout', name: 'swiperefreshlayout', version: '1.1.0'
     implementation group: 'androidx.preference', name: 'preference', version: '1.1.1'
 
