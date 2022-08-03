@@ -19,6 +19,7 @@
 plugins {
     id 'com.android.application'
     id 'com.google.android.gms.oss-licenses-plugin'
+    id 'org.jetbrains.kotlin.android'
 }
 
 def apikeyPropertiesFile = rootProject.file("apikey.properties")
