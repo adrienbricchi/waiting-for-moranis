@@ -23,7 +23,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 
 /**
- * For some reasons, this tutorial : https://developer.android.com/guide/navigation/navigation-getting-started
+ * For some reasons, <a href="https://developer.android.com/guide/navigation/navigation-getting-started">this tutorial</a>
  * Crashes randomly with a {@link ClassNotFoundException(NavHostFragment)}, here :
  * <code>
  *     <androidx.fragment.app.FragmentContainerView
