@@ -125,6 +125,7 @@ class TmdbMovie extends Movie {
 
         @Data
         @Keep
+        @JsonIgnoreProperties(ignoreUnknown = true)
         static class TmdbDateWrapper {
 
             private Release.Type releaseType;
