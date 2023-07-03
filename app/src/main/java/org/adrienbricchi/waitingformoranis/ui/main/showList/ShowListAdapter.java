@@ -26,7 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
-import com.squareup.picasso.Picasso;
+import com.squareup.picasso3.Picasso;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -95,7 +95,7 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
         Show currentShow = dataSet.get(position);
         Context currentContext = holder.binding.getRoot().getContext();
 
-        Picasso.get()
+        new Picasso.Builder(currentContext).build()
                .load(dataSet.get(position).getImageUrl())
                .placeholder(ic_live_tv_color_background_48dp)
                .into(holder.binding.coverImageView);

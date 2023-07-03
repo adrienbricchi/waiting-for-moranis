@@ -27,7 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
-import com.squareup.picasso.Picasso;
+import com.squareup.picasso3.Picasso;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -104,7 +104,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         Locale currentLocale = ReleaseUtils.countryLocale(Locale.getDefault().getCountry());
         Release release = ReleaseUtils.getRelease(currentMovie, currentLocale);
 
-        Picasso.get()
+        new Picasso.Builder(currentContext).build()
                .load(dataSet.get(position).getImageUrl())
                .placeholder(ic_local_movies_color_background_48dp)
                .into(holder.binding.coverImageView);
