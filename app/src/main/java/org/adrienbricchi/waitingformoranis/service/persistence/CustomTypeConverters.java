@@ -18,6 +18,7 @@
 
 package org.adrienbricchi.waitingformoranis.service.persistence;
 
+import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.room.TypeConverter;
 import androidx.room.util.StringUtil;
@@ -42,6 +43,7 @@ public class CustomTypeConverters {
     public @NonNull Movie.Status fromMovieStatusString(String value) {
 
         String cleanString = Optional.ofNullable(value)
+                .filter(string -> !TextUtils.isEmpty(string))
                 .map(string -> string.toUpperCase(ROOT))
                 .map(string -> string.replace(" ", "_"))
                 .orElse("");
@@ -73,6 +75,7 @@ public class CustomTypeConverters {
     public @NonNull Show.Status fromShowStatusString(String value) {
 
         String cleanString = Optional.ofNullable(value)
+                                     .filter(string -> !TextUtils.isEmpty(string))
                                      .map(string -> string.toUpperCase(ROOT))
                                      .map(string -> string.replace(" ", "_"))
                                      .orElse("");
