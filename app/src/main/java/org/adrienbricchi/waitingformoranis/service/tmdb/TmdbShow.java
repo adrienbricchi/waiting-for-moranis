@@ -120,7 +120,7 @@ public class TmdbShow extends Show {
     @JsonProperty("status")
     private void parseProductionStatus(@Nullable String status) {
         this.productionStatus = Optional.ofNullable(status)
-                                        .map(s -> new CustomTypeConverters().fromStatusString(status))
+                                        .map(s -> new CustomTypeConverters().fromShowStatusString(status))
                                         .orElse(Status.UNKNOWN);
     }
 

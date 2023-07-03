@@ -41,10 +41,10 @@ public class ReleaseUtilsTest {
     public void countryLocale() {
 
         assertEquals(CANADA.getCountry(), ReleaseUtils.countryLocale("CA").getCountry());
-        Assert.assertNotNull(ReleaseUtils.countryLocale("NOTEXISTINGCOUNTRY").getCountry());
+        assertNotNull(ReleaseUtils.countryLocale("NOTEXISTINGCOUNTRY").getCountry());
 
         assertEquals("United States", US.getDisplayCountry(US));
-        assertEquals("Etats-Unis", US.getDisplayCountry(Locale.FRANCE));
+        assertEquals("États-Unis", US.getDisplayCountry(FRANCE));
     }
 
 

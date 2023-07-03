@@ -20,13 +20,19 @@ package org.adrienbricchi.waitingformoranis.models;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
+
+import static org.adrienbricchi.waitingformoranis.R.string.*;
+import static org.adrienbricchi.waitingformoranis.R.string.unknown_release_date;
 
 
 @Keep
@@ -39,6 +45,23 @@ public class Movie {
     public static final String TABLE_NAME = "movie";
     public static final String FIELD_ID = "id";
 
+
+    @Keep
+    @Getter
+    @AllArgsConstructor
+    public enum Status {
+
+        CANCELED(canceled),
+        IN_PRODUCTION(in_production),
+        POST_PRODUCTION(post_production),
+        RELEASED(released),
+        UNKNOWN(unknown_release_date);
+
+        private final @StringRes int stringRes;
+
+    }
+
+
     protected @PrimaryKey @NonNull String id = UUID.randomUUID().toString();
     protected String title;
     protected String imageUrl;
@@ -49,5 +72,7 @@ public class Movie {
 
     protected Long releaseDate;
     protected boolean isUpdateNeededInCalendar = false;
+
+    protected Movie.Status productionStatus;
 
 }
