@@ -75,4 +75,9 @@ public class Movie {
 
     protected Movie.Status productionStatus;
 
+
+    public Movie(@NonNull String id) {
+        this.id = id;
+    }
+
 }

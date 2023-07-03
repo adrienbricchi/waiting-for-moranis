@@ -50,8 +50,7 @@ import static androidx.recyclerview.selection.StorageStrategy.createStringStorag
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
-import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.checkForCalendarUpgradeNeed;
-import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.generateMovieReleaseDateComparator;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.*;
 
 
 @Getter
@@ -348,8 +347,9 @@ public class MovieListFragment extends Fragment {
                 existingEvents.keySet()
                               .stream()
                               .filter(i -> !oldMoviesMap.containsKey(i))
-                              .map(i -> TmdbService.init(getActivity())
-                                                   .map(t -> t.getMovie(i))
+                              .map(Movie::new)
+                              .map(m -> TmdbService.init(getActivity())
+                                                   .map(t -> t.refreshMovie(m))
                                                    .orElse(null))
                               .filter(Objects::nonNull)
                               .peek(m -> new Handler(getMainLooper()).post(() -> {
@@ -380,7 +380,7 @@ public class MovieListFragment extends Fragment {
             List<Movie> refreshedMovies = oldMoviesMap.values()
                                                       .stream()
                                                       .map(m -> TmdbService.init(getActivity())
-                                                                           .map(t -> t.getMovie(m.getId()))
+                                                                           .map(t -> t.refreshMovie(m))
                                                                            .orElse(null))
                                                       .filter(Objects::nonNull)
                                                       .collect(toList());
@@ -432,7 +432,7 @@ public class MovieListFragment extends Fragment {
 
             AppDatabase database = AppDatabase.getDatabase(getContext());
             List<Movie> movies = database.movieDao().getAll();
-            movies.sort(generateMovieReleaseDateComparator(Locale.getDefault()));
+            movies.sort(CANCELED_MOVIE_FIRST_COMPARATOR.thenComparing(generateMovieReleaseDateComparator(Locale.getDefault())));
 
             adapter.getDataSet().clear();
             adapter.getDataSet().addAll(movies);
