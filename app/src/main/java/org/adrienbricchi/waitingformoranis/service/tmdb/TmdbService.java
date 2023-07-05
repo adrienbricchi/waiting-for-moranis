@@ -230,13 +230,14 @@ public class TmdbService {
         RequestFuture<TmdbMovie> future = RequestFuture.newFuture();
         AtomicReference<TmdbError> atomicError = new AtomicReference<>(null);
         Response.ErrorListener errorListener = error -> {
-            if (error.networkResponse != null &&error.networkResponse.statusCode == 404 && error.networkResponse.data != null) {
+            if (error.networkResponse != null && error.networkResponse.statusCode == 404 && error.networkResponse.data != null) {
                 try {
                     String errorCharset = parseCharset(error.networkResponse.headers);
                     String responseBody = new String(error.networkResponse.data, errorCharset);
                     TmdbError tmdbError = objectMapper.readValue(responseBody, TmdbError.class);
                     atomicError.set(tmdbError);
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     Log.w(LOG_TAG, e);
                 }
             }
@@ -273,8 +274,8 @@ public class TmdbService {
             return movie;
         }
         catch (ExecutionException | InterruptedException e) {
-            if (atomicError.get() != null) {
-                Log.w(LOG_TAG, "Deleted movie from TMDB: " + oldMovie.getId());
+            if (atomicError.get() != null && atomicError.get().getStatusCode() == 34) {
+                Log.w(LOG_TAG, format("getMovie deleted from IMDB id:%s title:%s", oldMovie.getId(), oldMovie.getTitle()));
                 oldMovie.setProductionStatus(Movie.Status.CANCELED);
                 return oldMovie;
             }

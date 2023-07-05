@@ -56,12 +56,12 @@ import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.*;
 @Getter
 public class MovieListFragment extends Fragment {
 
-    private static final String LOG_TAG = "MovieListFragment";
-    private static final String SELECTION_ID_MOVIES_ID = "selection_id_movies_id";
-
     public static final String FRAGMENT_TAG = "MovieListFragment";
     public static final String FRAGMENT_REQUEST = "movie_list_fragment";
     public static final String FRAGMENT_RESULT_MOVIES_COUNT = "movies_count";
+
+    private static final String LOG_TAG = "MovieListFragment";
+    private static final String SELECTION_ID_MOVIES_ID = "selection_id_movies_id";
 
 
     private MovieListAdapter adapter;
@@ -295,7 +295,7 @@ public class MovieListFragment extends Fragment {
             public void onSelectionChanged() {
                 Log.i(LOG_TAG, "onSelectionChanged");
 
-                if (getActivity() == null) { return; }
+                if (getActivity() == null) {return;}
 
                 int rowsSelected = adapter.getSelectionTracker().getSelection().size();
                 if (rowsSelected == 0) {
