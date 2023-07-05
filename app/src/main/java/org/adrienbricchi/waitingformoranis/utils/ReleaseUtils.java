@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2021
+ * Copyright (C) 2020-2023
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.Comparator.*;
+import static org.adrienbricchi.waitingformoranis.models.Movie.Status.CANCELED;
 
 
 public class ReleaseUtils {
@@ -49,6 +50,13 @@ public class ReleaseUtils {
                     .thenComparing(Show::getNextEpisodeAirDate, nullsLast(naturalOrder()))
                     .thenComparing(Show::getTitle, nullsLast(naturalOrder()))
                     .thenComparing(Show::getId, nullsLast(naturalOrder()));
+
+
+    public static final Comparator<Movie> CANCELED_MOVIE_FIRST_COMPARATOR = comparing(
+                    Movie::getProductionStatus,
+                    (status1, status2) -> (status1 == status2) ? 0 : (status1 == CANCELED) ? -1 : (status2 == CANCELED) ? 1 : 0
+            );
+
 
 
     public static @NonNull Locale countryLocale(@NonNull String iso639) {

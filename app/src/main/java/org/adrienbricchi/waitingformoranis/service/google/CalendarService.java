@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2021
+ * Copyright (C) 2020-2023
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -68,15 +68,15 @@ public class CalendarService {
     // <editor-fold desc="Constructor">
 
 
+    private CalendarService(@NonNull Activity activity) {
+        this.activity = activity;
+    }
+
+
     public static Optional<CalendarService> init(@Nullable Activity activity) {
         return (activity == null)
                ? Optional.empty()
                : Optional.of(new CalendarService(activity));
-    }
-
-
-    private CalendarService(@NonNull Activity activity) {
-        this.activity = activity;
     }
 
 
@@ -221,7 +221,7 @@ public class CalendarService {
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
-        if (uri == null) { return null; }
+        if (uri == null) {return null;}
 
         // Return the event Id that is the last element in the Uri
         return Optional.ofNullable(uri.getLastPathSegment())
@@ -257,7 +257,7 @@ public class CalendarService {
         values.put(EVENT_TIMEZONE, TimeZone.getDefault().getID());
 
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
-        if (uri == null) { return null; }
+        if (uri == null) {return null;}
 
         // Return the event Id that is the last element in the Uri
         return Optional.ofNullable(uri.getLastPathSegment())

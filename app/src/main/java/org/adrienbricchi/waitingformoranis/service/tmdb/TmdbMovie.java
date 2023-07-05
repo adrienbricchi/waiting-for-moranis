@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2021
+ * Copyright (C) 2020-2023
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,7 @@
 package org.adrienbricchi.waitingformoranis.service.tmdb;
 
 import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,6 +27,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
+import org.adrienbricchi.waitingformoranis.models.Show;
+import org.adrienbricchi.waitingformoranis.service.persistence.CustomTypeConverters;
 import org.adrienbricchi.waitingformoranis.utils.ReleaseUtils;
 
 import java.text.ParseException;
@@ -165,5 +168,13 @@ class TmdbMovie extends Movie {
         }
 
     }
+
+
+    @JsonProperty("status")
+    private void parseProductionStatus(@Nullable String status) {
+        this.productionStatus = new CustomTypeConverters().fromMovieStatusString(status);
+    }
+
+
 
 }

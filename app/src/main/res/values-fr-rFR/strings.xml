@@ -2,7 +2,7 @@
 
 <!--
   ~ Waiting For Moranis
-  ~ Copyright (C) 2020-2021
+  ~ Copyright (C) 2020-2023
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -41,6 +41,9 @@
     <string name="search_movie_title_hint">Rechercher un titre de film</string>
     <string name="search_show_title_hint">Rechercher un titre de série</string>
     <string name="unknown_release_date">Date de sortie inconnue</string>
+    <string name="in_production">En production</string>
+    <string name="post_production">En post-production</string>
+    <string name="released">Sorti</string>
     <string name="ended">Terminée</string>
     <string name="canceled">Annulée</string>
 

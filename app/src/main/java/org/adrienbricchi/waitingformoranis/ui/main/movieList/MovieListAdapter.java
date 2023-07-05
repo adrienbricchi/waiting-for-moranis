@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2021
+ * Copyright (C) 2020-2023
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
-import com.squareup.picasso.Picasso;
+import com.squareup.picasso3.Picasso;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,8 @@ import java.util.stream.IntStream;
 
 import static java.text.DateFormat.FULL;
 import static org.adrienbricchi.waitingformoranis.R.drawable.ic_local_movies_color_background_48dp;
-import static org.adrienbricchi.waitingformoranis.R.string.unknown_release_date;
+import static org.adrienbricchi.waitingformoranis.R.string.*;
+import static org.adrienbricchi.waitingformoranis.models.Movie.Status.CANCELED;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.DIGITAL;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
 
@@ -104,10 +105,10 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         Locale currentLocale = ReleaseUtils.countryLocale(Locale.getDefault().getCountry());
         Release release = ReleaseUtils.getRelease(currentMovie, currentLocale);
 
-        Picasso.get()
-               .load(dataSet.get(position).getImageUrl())
-               .placeholder(ic_local_movies_color_background_48dp)
-               .into(holder.binding.coverImageView);
+        new Picasso.Builder(currentContext).build()
+                                           .load(dataSet.get(position).getImageUrl())
+                                           .placeholder(ic_local_movies_color_background_48dp)
+                                           .into(holder.binding.coverImageView);
 
         holder.binding.coverImageView.setContentDescription(currentMovie.getTitle());
         holder.binding.titleTextView.setText(currentMovie.getTitle());
@@ -120,7 +121,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
                             if (isWeirdType && !isLocal) {
                                 return currentContext.getString(
-                                        R.string.movie_double_parenthesis,
+                                        movie_double_parenthesis,
                                         dateString,
                                         r.getCountry().getDisplayCountry(Locale.getDefault()),
                                         (r.getType() == DIGITAL) && !TextUtils.isEmpty(r.getDescription())
@@ -129,7 +130,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                                 );
                             } else if (isWeirdType) {
                                 return currentContext.getString(
-                                        R.string.movie_single_parenthesis,
+                                        movie_single_parenthesis,
                                         dateString,
                                         (r.getType() == DIGITAL) && !TextUtils.isEmpty(r.getDescription())
                                         ? r.getDescription()
@@ -137,7 +138,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                                 );
                             } else if (!isLocal) {
                                 return currentContext.getString(
-                                        R.string.movie_single_parenthesis,
+                                        movie_single_parenthesis,
                                         dateString,
                                         r.getCountry().getDisplayCountry(Locale.getDefault())
                                 );
@@ -145,7 +146,13 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
                                 return dateString;
                             }
                         })
-                        .orElseGet(() -> currentContext.getString(unknown_release_date)));
+                        .orElseGet(() -> {
+                            if (currentMovie.getProductionStatus() == CANCELED) {
+                                return currentContext.getString(canceled);
+                            } else {
+                                return currentContext.getString(unknown_release_date);
+                            }
+                        }));
 
         holder.binding.getRoot().setActivated(selectionTracker.isSelected(currentMovie.getId()));
     }

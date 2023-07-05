@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2021
+ * Copyright (C) 2020-2023
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,19 +19,16 @@
 package org.adrienbricchi.waitingformoranis.service.persistence;
 
 import android.content.Context;
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.TypeConverters;
+import androidx.room.*;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Show;
 
 
 @Database(
         entities = {Movie.class, Show.class},
-        version = 14,
+        version = 15,
         autoMigrations = {
-                // @AutoMigration(from = 14, to = 15)
+                @AutoMigration(from = 14, to = 15)
         }
 )
 @TypeConverters({CustomTypeConverters.class})

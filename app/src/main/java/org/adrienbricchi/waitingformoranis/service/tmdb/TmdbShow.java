@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2021
+ * Copyright (C) 2020-2023
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -119,9 +119,7 @@ public class TmdbShow extends Show {
 
     @JsonProperty("status")
     private void parseProductionStatus(@Nullable String status) {
-        this.productionStatus = Optional.ofNullable(status)
-                                        .map(s -> new CustomTypeConverters().fromStatusString(status))
-                                        .orElse(Status.UNKNOWN);
+        this.productionStatus = new CustomTypeConverters().fromShowStatusString(status);;
     }
 
 
