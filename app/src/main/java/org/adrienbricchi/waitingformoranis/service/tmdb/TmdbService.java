@@ -30,13 +30,17 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.utils.JacksonRequest;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static com.android.volley.toolbox.HttpHeaderParser.parseCharset;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static org.adrienbricchi.waitingformoranis.BuildConfig.TMDB_KEY;
@@ -77,6 +81,7 @@ public class TmdbService {
 
 
     private @NonNull final Context context;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
 
     // <editor-fold desc="Constructor">
@@ -206,16 +211,16 @@ public class TmdbService {
     }
 
 
-    public @Nullable Movie getMovie(@NonNull String id) {
-        Log.v(LOG_TAG, "getMovie id:" + id);
+    public @Nullable Movie refreshMovie(@NonNull Movie oldMovie) {
+        Log.v(LOG_TAG, "getMovie id:" + oldMovie.getId());
 
         // Delay test
 
-        if (Optional.ofNullable(sDelaySinceLastRequest.get(id))
+        if (Optional.ofNullable(sDelaySinceLastRequest.get(oldMovie.getId()))
                     .filter(t -> t < currentTimeMillis() + DELAY_TIMEOUT_MS)
                     .isPresent()) {
 
-            Log.i(LOG_TAG, format("getMovie postponed id:%s, timeout delay not yet finished", id));
+            Log.i(LOG_TAG, format("getMovie postponed id:%s, timeout delay not yet finished", oldMovie.getId()));
             return null;
         }
 
@@ -223,10 +228,27 @@ public class TmdbService {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         RequestFuture<TmdbMovie> future = RequestFuture.newFuture();
+        AtomicReference<TmdbError> atomicError = new AtomicReference<>(null);
+        Response.ErrorListener errorListener = error -> {
+            if (error.networkResponse != null && error.networkResponse.statusCode == 404 && error.networkResponse.data != null) {
+                try {
+                    String errorCharset = parseCharset(error.networkResponse.headers);
+                    String responseBody = new String(error.networkResponse.data, errorCharset);
+                    TmdbError tmdbError = objectMapper.readValue(responseBody, TmdbError.class);
+                    atomicError.set(tmdbError);
+                }
+                catch (IOException e) {
+                    Log.w(LOG_TAG, e);
+                }
+            }
+            // The future method has to be called too,
+            // otherwise the request will never end.
+            future.onErrorResponse(error);
+        };
 
         String url = new Uri.Builder()
                 .scheme(HTTPS).authority(API_URL)
-                .appendPath(API_VERSION).appendPath(PATH_MOVIE).appendPath(id)
+                .appendPath(API_VERSION).appendPath(PATH_MOVIE).appendPath(oldMovie.getId())
                 .appendQueryParameter(APPEND_TO_RESPONSE_PARAM, PATH_RELEASE_DATES)
                 .appendQueryParameter(API_KEY_PARAM, getPrivateApiKey().orElse(TMDB_KEY))
                 .appendQueryParameter(LANGUAGE_PARAM, Locale.getDefault().toLanguageTag())
@@ -239,7 +261,7 @@ public class TmdbService {
                 url,
                 new TypeReference<TmdbMovie>() {},
                 future,
-                future
+                errorListener
         );
 
         // Add the request to the RequestQueue.
@@ -251,7 +273,13 @@ public class TmdbService {
             sDelaySinceLastRequest.put(movie.getId(), currentTimeMillis());
             return movie;
         }
-        catch (InterruptedException | ExecutionException e) {
+        catch (ExecutionException | InterruptedException e) {
+            if (atomicError.get() != null && atomicError.get().getStatusCode() == 34) {
+                Log.w(LOG_TAG, format("getMovie deleted from IMDB id:%s title:%s", oldMovie.getId(), oldMovie.getTitle()));
+                oldMovie.setProductionStatus(Movie.Status.CANCELED);
+                return oldMovie;
+            }
+            Log.w(LOG_TAG, e);
             return null;
         }
     }

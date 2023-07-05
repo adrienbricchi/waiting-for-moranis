@@ -119,9 +119,7 @@ public class TmdbShow extends Show {
 
     @JsonProperty("status")
     private void parseProductionStatus(@Nullable String status) {
-        this.productionStatus = Optional.ofNullable(status)
-                                        .map(s -> new CustomTypeConverters().fromStatusString(status))
-                                        .orElse(Status.UNKNOWN);
+        this.productionStatus = new CustomTypeConverters().fromShowStatusString(status);;
     }
 
 

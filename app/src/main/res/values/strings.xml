@@ -41,6 +41,9 @@
     <string name="search_movie_title_hint">Search a movie title</string>
     <string name="search_show_title_hint">Search a show title</string>
     <string name="unknown_release_date">Unknown release date</string>
+    <string name="in_production">In production</string>
+    <string name="post_production">Post production</string>
+    <string name="released">Released</string>
     <string name="ended">Ended</string>
     <string name="canceled">Canceled</string>
 

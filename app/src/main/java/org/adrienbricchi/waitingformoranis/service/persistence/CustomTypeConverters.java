@@ -18,17 +18,21 @@
 
 package org.adrienbricchi.waitingformoranis.service.persistence;
 
+import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.room.TypeConverter;
+import androidx.room.util.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.adrienbricchi.waitingformoranis.models.Show;
 
 import java.util.*;
 
 import static java.util.Collections.emptySet;
+import static java.util.Locale.ROOT;
 import static org.adrienbricchi.waitingformoranis.models.Show.Status.*;
 
 
@@ -36,25 +40,58 @@ public class CustomTypeConverters {
 
 
     @TypeConverter
-    public @NonNull Show.Status fromStatusString(String value) {
-        switch (value) {
-            case "Returning Series":
-            case "RETURNING_SERIES":
-            case "In Production":
+    public @NonNull Movie.Status fromMovieStatusString(String value) {
+
+        String cleanString = Optional.ofNullable(value)
+                .filter(string -> !TextUtils.isEmpty(string))
+                .map(string -> string.toUpperCase(ROOT))
+                .map(string -> string.replace(" ", "_"))
+                .orElse("");
+
+        switch (cleanString) {
             case "IN_PRODUCTION":
-            case "Pilot":
-            case "PILOT":
-            case "Planned":
-            case "PLANNED":
-                return RETURNING_SERIES;
-            case "Canceled":
+                return Movie.Status.IN_PRODUCTION;
+            case "POST_PRODUCTION":
+                return Movie.Status.POST_PRODUCTION;
+            case "RELEASED":
+                return Movie.Status.RELEASED;
             case "CANCELED":
-                return CANCELED;
-            case "Ended":
-            case "ENDED":
-                return ENDED;
+                return Movie.Status.CANCELED;
             default:
-                return UNKNOWN;
+                return Movie.Status.UNKNOWN;
+        }
+    }
+
+
+    @TypeConverter
+    public @NonNull String toStatusString(Movie.Status status) {
+        return Optional.ofNullable(status)
+                       .map(Movie.Status::name)
+                       .orElse(UNKNOWN.name());
+    }
+
+
+    @TypeConverter
+    public @NonNull Show.Status fromShowStatusString(String value) {
+
+        String cleanString = Optional.ofNullable(value)
+                                     .filter(string -> !TextUtils.isEmpty(string))
+                                     .map(string -> string.toUpperCase(ROOT))
+                                     .map(string -> string.replace(" ", "_"))
+                                     .orElse("");
+
+        switch (cleanString) {
+            case "RETURNING_SERIES":
+            case "IN_PRODUCTION":
+            case "PILOT":
+            case "PLANNED":
+                return Show.Status.RETURNING_SERIES;
+            case "CANCELED":
+                return Show.Status.CANCELED;
+            case "ENDED":
+                return Show.Status.ENDED;
+            default:
+                return Show.Status.UNKNOWN;
         }
     }
 
