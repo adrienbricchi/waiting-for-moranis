@@ -35,8 +35,8 @@ android {
         applicationId "org.adrienbricchi.waitingformoranis"
         minSdkVersion 28
         targetSdkVersion 33
-        versionCode 17
-        versionName "1.4.0"
+        versionCode 18
+        versionName "1.4.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -53,7 +53,7 @@ android {
         release {
             // Enables code shrinking, obfuscation, and optimization for only
             // your project's release build type.
-            minifyEnabled true
+            minifyEnabled false
 
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
@@ -61,7 +61,7 @@ android {
 
             // Includes the default ProGuard rules files that are packaged with
             // the Android Gradle plugin.
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
