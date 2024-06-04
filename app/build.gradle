@@ -34,7 +34,7 @@ android {
     defaultConfig {
         applicationId "org.adrienbricchi.waitingformoranis"
         minSdkVersion 28
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 1
         versionName "develop"
 
@@ -73,6 +73,7 @@ android {
     buildFeatures {
         // dataBinding true
         viewBinding true
+        compose true
     }
 
 }
