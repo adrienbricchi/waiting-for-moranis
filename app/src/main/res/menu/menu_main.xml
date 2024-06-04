@@ -23,6 +23,14 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         tools:context="org.adrienbricchi.waitingformoranis.ui.main.MainActivity">
+
+    <item
+            android:id="@+id/action_search"
+            android:icon="@drawable/ic_search_white_24dp"
+            android:title="@android:string/search_go"
+            app:actionViewClass="androidx.appcompat.widget.SearchView"
+            app:showAsAction="ifRoom|collapseActionView" />
+
     <item
             android:id="@+id/action_settings"
             android:orderInCategory="100"
