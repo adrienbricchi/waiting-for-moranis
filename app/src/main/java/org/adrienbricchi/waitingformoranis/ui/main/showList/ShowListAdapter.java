@@ -41,6 +41,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static java.text.DateFormat.SHORT;
+import static java.util.stream.Collectors.toList;
 import static org.adrienbricchi.waitingformoranis.R.drawable.ic_live_tv_color_background_48dp;
 import static org.adrienbricchi.waitingformoranis.R.string.*;
 import static org.adrienbricchi.waitingformoranis.models.Show.Status.RETURNING_SERIES;
@@ -54,6 +55,7 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
     private static final String LOG_TAG = "ShowListAdapter";
 
 
+    private String currentSearch;
     private @NonNull List<Show> dataSet;
     private SelectionTracker<String> selectionTracker;
 
@@ -92,13 +94,13 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
     @Override
     public void onBindViewHolder(ShowViewHolder holder, int position) {
 
-        Show currentShow = dataSet.get(position);
+        Show currentShow = getFilteredDataSet().get(position);
         Context currentContext = holder.binding.getRoot().getContext();
 
         new Picasso.Builder(currentContext).build()
-               .load(dataSet.get(position).getImageUrl())
-               .placeholder(ic_live_tv_color_background_48dp)
-               .into(holder.binding.coverImageView);
+                                           .load(getFilteredDataSet().get(position).getImageUrl())
+                                           .placeholder(ic_live_tv_color_background_48dp)
+                                           .into(holder.binding.coverImageView);
 
         String nextEpisodeDateLabel = Optional.ofNullable(currentShow.getNextEpisodeAirDate())
                                               .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
@@ -129,7 +131,7 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
      */
     @Override
     public int getItemCount() {
-        return dataSet.size();
+        return getFilteredDataSet().size();
     }
 
 
@@ -143,18 +145,31 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
                       .orElse(null);
     }
 
+    private @NonNull List<Show> getFilteredDataSet() {
+
+        if (TextUtils.isEmpty(currentSearch)) {
+            return dataSet;
+        }
+
+        return dataSet.stream()
+                      .filter(show -> !TextUtils.isEmpty(show.getTitle()))
+                      .filter(show -> show.getTitle().toLowerCase().contains(currentSearch.toLowerCase()))
+                      .collect(toList());
+    }
+
 
     @Nullable String getShowId(int position) {
-        return Optional.ofNullable(dataSet.get(position))
+        return Optional.ofNullable(getFilteredDataSet().get(position))
                        .map(Show::getId)
                        .orElse(null);
     }
 
 
     int getPosition(@NonNull String showId) {
-        return IntStream.range(0, dataSet.size())
+        List<Show> filteredDataSet = getFilteredDataSet();
+        return IntStream.range(0, filteredDataSet.size())
                         .filter(Objects::nonNull)
-                        .filter(i -> TextUtils.equals(showId, dataSet.get(i).getId()))
+                        .filter(i -> TextUtils.equals(showId, filteredDataSet.get(i).getId()))
                         .findFirst()
                         .orElse(-1);
     }

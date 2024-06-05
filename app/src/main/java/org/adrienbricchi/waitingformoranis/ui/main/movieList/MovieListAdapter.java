@@ -31,7 +31,6 @@ import com.squareup.picasso3.Picasso;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.MovieListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
@@ -45,6 +44,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static java.text.DateFormat.FULL;
+import static java.util.stream.Collectors.toList;
 import static org.adrienbricchi.waitingformoranis.R.drawable.ic_local_movies_color_background_48dp;
 import static org.adrienbricchi.waitingformoranis.R.string.*;
 import static org.adrienbricchi.waitingformoranis.models.Movie.Status.CANCELED;
@@ -60,6 +60,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     private static final String LOG_TAG = "MovieListAdapter";
 
+    private @Nullable String currentSearch;
     private @NonNull List<Movie> dataSet;
     private SelectionTracker<String> selectionTracker;
 
@@ -82,13 +83,13 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
         Log.d(LOG_TAG, "onBindViewHolder holder:" + holder + " position:" + position);
 
-        Movie currentMovie = dataSet.get(position);
+        Movie currentMovie = getFilteredDataSet().get(position);
         Context currentContext = holder.binding.getRoot().getContext();
         Locale currentLocale = ReleaseUtils.countryLocale(Locale.getDefault().getCountry());
         Release release = ReleaseUtils.getRelease(currentMovie, currentLocale);
 
         new Picasso.Builder(currentContext).build()
-                                           .load(dataSet.get(position).getImageUrl())
+                                           .load(getFilteredDataSet().get(position).getImageUrl())
                                            .placeholder(ic_local_movies_color_background_48dp)
                                            .into(holder.binding.coverImageView);
 
@@ -145,11 +146,24 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
      */
     @Override
     public int getItemCount() {
-        return dataSet.size();
+        return getFilteredDataSet().size();
     }
 
 
     // <editor-fold desc="Utils">
+
+
+    private @NonNull List<Movie> getFilteredDataSet() {
+
+        if (TextUtils.isEmpty(currentSearch)) {
+            return dataSet;
+        }
+
+        return dataSet.stream()
+                      .filter(movie -> !TextUtils.isEmpty(movie.getTitle()))
+                      .filter(movie -> movie.getTitle().toLowerCase().contains(currentSearch.toLowerCase()))
+                      .collect(toList());
+    }
 
 
     @Nullable Movie getMovie(@NonNull String id) {
@@ -161,16 +175,17 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
 
     @Nullable String getMovieId(int position) {
-        return Optional.ofNullable(dataSet.get(position))
+        return Optional.ofNullable(getFilteredDataSet().get(position))
                        .map(Movie::getId)
                        .orElse(null);
     }
 
 
     int getPosition(@NonNull String movieId) {
-        return IntStream.range(0, dataSet.size())
+        List<Movie> filteredDataSet = getFilteredDataSet();
+        return IntStream.range(0, filteredDataSet.size())
                         .filter(Objects::nonNull)
-                        .filter(i -> TextUtils.equals(movieId, dataSet.get(i).getId()))
+                        .filter(i -> TextUtils.equals(movieId, filteredDataSet.get(i).getId()))
                         .findFirst()
                         .orElse(-1);
     }

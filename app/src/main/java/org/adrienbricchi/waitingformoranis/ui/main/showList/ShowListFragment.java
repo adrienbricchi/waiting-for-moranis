@@ -39,6 +39,7 @@ import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 import org.adrienbricchi.waitingformoranis.ui.main.MainActivity;
+import org.adrienbricchi.waitingformoranis.ui.main.SearchEventListener;
 
 import java.util.*;
 import java.util.stream.StreamSupport;
@@ -325,7 +326,8 @@ public class ShowListFragment extends Fragment {
 
 
     public void onSearchEvent(@NonNull String searchTerm) {
-        Log.d(LOG_TAG, "search:" + searchTerm);
+        adapter.setCurrentSearch(searchTerm);
+        adapter.notifyDataSetChanged();
     }
 
 

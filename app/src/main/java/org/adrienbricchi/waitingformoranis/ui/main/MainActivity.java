@@ -31,6 +31,7 @@ import android.view.ViewAnimationUtils;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -40,9 +41,7 @@ import org.adrienbricchi.waitingformoranis.ui.main.movieList.MovieListFragment;
 import org.adrienbricchi.waitingformoranis.ui.main.showList.ShowListFragment;
 import org.adrienbricchi.waitingformoranis.ui.preferences.SettingsActivity;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -253,12 +252,13 @@ public class MainActivity extends AppCompatActivity {
 
 
                     @Override public boolean onQueryTextChange(String newText) {
-                        Optional.ofNullable(getSupportFragmentManager().findFragmentByTag(MovieListFragment.FRAGMENT_TAG))
-                                .map(fragment -> (MovieListFragment) fragment)
-                                .ifPresent(movieListFragment -> movieListFragment.onSearchEvent(newText));
-                        Optional.ofNullable(getSupportFragmentManager().findFragmentByTag(ShowListFragment.FRAGMENT_TAG))
-                                .map(fragment -> (ShowListFragment) fragment)
-                                .ifPresent(showListFragment -> showListFragment.onSearchEvent(newText));
+
+                        List<Fragment> fragments = new ArrayList<>(getSupportFragmentManager().getFragments());
+                        fragments.stream()
+                                 .filter(fragment -> fragment instanceof SearchEventListener)
+                                 .map(fragment -> (SearchEventListener) fragment)
+                                 .forEach(fragment -> fragment.onSearchEvent(newText));
+
                         return false;
                     }
 
