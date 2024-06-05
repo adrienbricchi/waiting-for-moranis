@@ -39,6 +39,7 @@ import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 import org.adrienbricchi.waitingformoranis.ui.main.MainActivity;
+import org.adrienbricchi.waitingformoranis.ui.main.SearchEventListener;
 
 import java.util.*;
 import java.util.stream.StreamSupport;
@@ -54,7 +55,7 @@ import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.*;
 
 
 @Getter
-public class MovieListFragment extends Fragment {
+public class MovieListFragment extends Fragment implements SearchEventListener {
 
     public static final String FRAGMENT_TAG = "MovieListFragment";
     public static final String FRAGMENT_REQUEST = "movie_list_fragment";
@@ -322,6 +323,12 @@ public class MovieListFragment extends Fragment {
 
 
     // </editor-fold desc="Setup">
+
+
+    public void onSearchEvent(@NonNull String searchTerm) {
+        adapter.setCurrentSearch(searchTerm);
+        adapter.notifyDataSetChanged();
+    }
 
 
     private void onPullToRefresh() {

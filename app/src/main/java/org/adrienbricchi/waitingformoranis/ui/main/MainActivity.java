@@ -24,20 +24,24 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.ViewAnimationUtils;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import org.adrienbricchi.waitingformoranis.R;
 import org.adrienbricchi.waitingformoranis.databinding.ActivityMainBinding;
 import org.adrienbricchi.waitingformoranis.ui.main.movieList.MovieListFragment;
 import org.adrienbricchi.waitingformoranis.ui.main.showList.ShowListFragment;
 import org.adrienbricchi.waitingformoranis.ui.preferences.SettingsActivity;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -235,6 +239,31 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(menu_main, menu);
+
+        Optional.ofNullable(menu.findItem(R.id.action_search))
+                .map(MenuItem::getActionView)
+                .filter(menuItem -> menuItem instanceof SearchView)
+                .map(menuItem -> (SearchView) menuItem)
+                .ifPresent(searchView -> searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+                    @Override public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+
+
+                    @Override public boolean onQueryTextChange(String newText) {
+
+                        List<Fragment> fragments = new ArrayList<>(getSupportFragmentManager().getFragments());
+                        fragments.stream()
+                                 .filter(fragment -> fragment instanceof SearchEventListener)
+                                 .map(fragment -> (SearchEventListener) fragment)
+                                 .forEach(fragment -> fragment.onSearchEvent(newText));
+
+                        return false;
+                    }
+
+                }));
+
         return true;
     }
 
