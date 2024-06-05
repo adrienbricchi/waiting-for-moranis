@@ -35,7 +35,7 @@ android {
         applicationId "org.adrienbricchi.waitingformoranis"
         minSdkVersion 28
         targetSdkVersion 34
-        versionCode 19
+        versionCode 20
         versionName "1.5.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
