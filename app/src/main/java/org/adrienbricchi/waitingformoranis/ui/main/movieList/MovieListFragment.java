@@ -244,6 +244,16 @@ public class MovieListFragment extends Fragment implements SearchEventListener {
                     return true;
                 }
 
+                if (item.getItemId() == R.id.select_all) {
+
+                    List<String> allIds = adapter.getDataSet().stream()
+                                                 .map(Movie::getId)
+                                                 .collect(toList());
+                    adapter.getSelectionTracker().setItemsSelected(allIds, true);
+
+                    return true;
+                }
+
                 if (item.getItemId() == R.id.edit) {
 
                     Movie selectedMovie = StreamSupport
