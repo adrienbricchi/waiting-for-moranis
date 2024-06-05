@@ -55,7 +55,7 @@ import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder> {
+public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
 
     private static final String LOG_TAG = "MovieListAdapter";
@@ -65,28 +65,10 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
 
     /**
-     * Provide a reference to the views for each data item
-     * Complex data items may need more than one view per item, and
-     * you provide access to all the views for a data item in a view holder
-     */
-    static class MovieViewHolder extends RecyclerView.ViewHolder {
-
-        final MovieListCellBinding binding;
-
-
-        MovieViewHolder(MovieListCellBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-        }
-
-    }
-
-
-    /**
      * Create new views (invoked by the layout manager)
      */
     @Override
-    public @NonNull MovieListAdapter.MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public @NonNull MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         MovieListCellBinding binding = MovieListCellBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new MovieViewHolder(binding);
     }
