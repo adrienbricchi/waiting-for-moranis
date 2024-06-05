@@ -30,6 +30,7 @@
 
     <string name="settings">Préférences</string>
     <string name="search">Rechercher</string>
+    <string name="select_all">Tout sélectionner</string>
     <string name="edit">Éditer</string>
     <string name="delete">Supprimer</string>
     <string name="disabled">Désactivé</string>

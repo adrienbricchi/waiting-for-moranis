@@ -20,10 +20,16 @@
 
 <menu
         xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
             android:id="@+id/edit"
             android:icon="@drawable/ic_edit_24dp"
             android:title="@string/edit" />
+
+    <item
+            android:id="@+id/select_all"
+            android:icon="@drawable/select_all_white_24dp"
+            android:title="@string/select_all" />
 
     <item
             android:id="@+id/delete"
