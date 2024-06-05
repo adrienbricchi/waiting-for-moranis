@@ -51,11 +51,12 @@ import static androidx.recyclerview.selection.StorageStrategy.createStringStorag
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
-import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.*;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.SHOW_COMPARATOR;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.checkForCalendarUpgradeNeed;
 
 
 @Getter
-public class ShowListFragment extends Fragment {
+public class ShowListFragment extends Fragment implements SearchEventListener {
 
     private static final String LOG_TAG = "ShowListFragment";
     private static final String SELECTION_ID_SHOWS_ID = "selection_id_shows_id";
