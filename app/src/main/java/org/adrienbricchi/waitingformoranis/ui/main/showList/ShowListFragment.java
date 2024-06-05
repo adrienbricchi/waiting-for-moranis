@@ -245,6 +245,16 @@ public class ShowListFragment extends Fragment implements SearchEventListener {
 
                 }
 
+                if (item.getItemId() == R.id.select_all) {
+
+                    List<String> allIds = adapter.getDataSet().stream()
+                                                 .map(Show::getId)
+                                                 .collect(toList());
+                    adapter.getSelectionTracker().setItemsSelected(allIds, true);
+
+                    return true;
+                }
+
                 if (item.getItemId() == R.id.edit) {
 
                     Show selectedShow = StreamSupport
