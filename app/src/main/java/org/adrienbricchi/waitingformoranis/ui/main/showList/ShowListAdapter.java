@@ -50,7 +50,7 @@ import static org.adrienbricchi.waitingformoranis.models.Show.Status.RETURNING_S
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowViewHolder> {
+public class ShowListAdapter extends RecyclerView.Adapter<ShowViewHolder> {
 
     private static final String LOG_TAG = "ShowListAdapter";
 
@@ -58,24 +58,6 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowListAdapter.ShowVi
     private String currentSearch;
     private @NonNull List<Show> dataSet;
     private SelectionTracker<String> selectionTracker;
-
-
-    /**
-     * Provide a reference to the views for each data item
-     * Complex data items may need more than one view per item, and
-     * you provide access to all the views for a data item in a view holder
-     */
-    static class ShowViewHolder extends RecyclerView.ViewHolder {
-
-        final ShowListCellBinding binding;
-
-
-        ShowViewHolder(ShowListCellBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-        }
-
-    }
 
 
     /**
