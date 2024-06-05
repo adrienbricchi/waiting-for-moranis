@@ -158,6 +158,11 @@ public class MovieListFragment extends Fragment {
     // <editor-fold desc="Setup">
 
 
+    public void onSearchEvent(@NonNull String searchTerm) {
+        Log.d(LOG_TAG, "search:" + searchTerm);
+    }
+
+
     private @NonNull ItemKeyProvider<String> buildAdapterMovieItemKeyProvider() {
 
         return new ItemKeyProvider<String>(SCOPE_MAPPED) {

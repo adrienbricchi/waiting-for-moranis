@@ -324,6 +324,11 @@ public class ShowListFragment extends Fragment {
     // </editor-fold desc="Setup">
 
 
+    public void onSearchEvent(@NonNull String searchTerm) {
+        Log.d(LOG_TAG, "search:" + searchTerm);
+    }
+
+
     private void onPullToRefresh() {
         new Thread(() -> {
 
