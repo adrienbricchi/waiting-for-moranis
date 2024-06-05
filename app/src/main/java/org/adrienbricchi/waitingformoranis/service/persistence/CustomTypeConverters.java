@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2023
+ * Copyright (C) 2020-2024
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,9 +19,9 @@
 package org.adrienbricchi.waitingformoranis.service.persistence;
 
 import android.text.TextUtils;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.room.TypeConverter;
-import androidx.room.util.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,12 +31,15 @@ import org.adrienbricchi.waitingformoranis.models.Show;
 
 import java.util.*;
 
+import static android.util.Log.getStackTraceString;
 import static java.util.Collections.emptySet;
 import static java.util.Locale.ROOT;
-import static org.adrienbricchi.waitingformoranis.models.Show.Status.*;
+import static org.adrienbricchi.waitingformoranis.models.Show.Status.UNKNOWN;
 
 
 public class CustomTypeConverters {
+
+    private static final String LOG_TAG = "CustomTypeConverters";
 
 
     @TypeConverter
@@ -112,7 +115,7 @@ public class CustomTypeConverters {
             return objectMapper.readValue(value, new TypeReference<List<Release>>() {});
         }
         catch (JsonProcessingException e) {
-            e.printStackTrace();
+            Log.w(LOG_TAG, getStackTraceString(e));
             return new ArrayList<>();
         }
     }
@@ -126,7 +129,7 @@ public class CustomTypeConverters {
             return objectMapper.writeValueAsString(list);
         }
         catch (JsonProcessingException e) {
-            e.printStackTrace();
+            Log.w(LOG_TAG, getStackTraceString(e));
             return "[]";
         }
     }
@@ -139,7 +142,7 @@ public class CustomTypeConverters {
             return objectMapper.readValue(value, new TypeReference<Set<Locale>>() {});
         }
         catch (JsonProcessingException e) {
-            e.printStackTrace();
+            Log.w(LOG_TAG, getStackTraceString(e));
             return emptySet();
         }
     }
@@ -152,7 +155,7 @@ public class CustomTypeConverters {
             return objectMapper.writeValueAsString(map);
         }
         catch (JsonProcessingException e) {
-            e.printStackTrace();
+            Log.w(LOG_TAG, getStackTraceString(e));
             return "[]";
         }
     }

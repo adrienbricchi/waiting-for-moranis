@@ -16,24 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.adrienbricchi.waitingformoranis.service.tmdb;
+package org.adrienbricchi.waitingformoranis.ui.main;
 
-import androidx.annotation.Keep;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-
-import java.util.List;
+import androidx.annotation.NonNull;
 
 
-@Data
-@Keep
-@JsonIgnoreProperties(ignoreUnknown = true)
-class TmdbPage<T> {
+public interface SearchEventListener {
 
-    private int page;
-    private List<T> results;
-    private @JsonAlias("total_results") int totalResults;
-    private @JsonAlias("total_pages") int totalPages;
+    void onSearchEvent(@NonNull String searchTerm);
 
 }

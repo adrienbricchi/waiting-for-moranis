@@ -16,24 +16,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.adrienbricchi.waitingformoranis.service.tmdb;
+package org.adrienbricchi.waitingformoranis.ui.main.movieList;
 
-import androidx.annotation.Keep;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-
-import java.util.List;
+import androidx.recyclerview.widget.RecyclerView;
+import org.adrienbricchi.waitingformoranis.databinding.MovieListCellBinding;
 
 
-@Data
-@Keep
-@JsonIgnoreProperties(ignoreUnknown = true)
-class TmdbPage<T> {
+/**
+ * Provide a reference to the views for each data item
+ * Complex data items may need more than one view per item, and
+ * you provide access to all the views for a data item in a view holder
+ */
+public class MovieViewHolder extends RecyclerView.ViewHolder {
 
-    private int page;
-    private List<T> results;
-    private @JsonAlias("total_results") int totalResults;
-    private @JsonAlias("total_pages") int totalPages;
+    final MovieListCellBinding binding;
+
+
+    MovieViewHolder(MovieListCellBinding binding) {
+        super(binding.getRoot());
+        this.binding = binding;
+    }
 
 }

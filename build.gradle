@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2023
+ * Copyright (C) 2020-2024
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,20 +26,13 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.2'
+        classpath 'com.android.tools.build:gradle:8.4.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath 'com.google.android.gms:oss-licenses-plugin:0.10.6'
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0'
     }
 
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
 }
 
 task clean(type: Delete) {

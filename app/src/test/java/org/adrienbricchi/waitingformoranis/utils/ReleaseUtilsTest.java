@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2023
+ * Copyright (C) 2020-2024
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,10 +20,12 @@ package org.adrienbricchi.waitingformoranis.utils;
 
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;

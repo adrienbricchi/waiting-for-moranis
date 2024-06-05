@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2023
+ * Copyright (C) 2020-2024
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,6 +34,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
+
     @Test
     public void useAppContext() {
         // Context of the app under test.

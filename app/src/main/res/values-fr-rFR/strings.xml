@@ -2,7 +2,7 @@
 
 <!--
   ~ Waiting For Moranis
-  ~ Copyright (C) 2020-2023
+  ~ Copyright (C) 2020-2024
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -29,6 +29,8 @@
     <string name="shows">Séries</string>
 
     <string name="settings">Préférences</string>
+    <string name="search">Rechercher</string>
+    <string name="select_all">Tout sélectionner</string>
     <string name="edit">Éditer</string>
     <string name="delete">Supprimer</string>
     <string name="disabled">Désactivé</string>

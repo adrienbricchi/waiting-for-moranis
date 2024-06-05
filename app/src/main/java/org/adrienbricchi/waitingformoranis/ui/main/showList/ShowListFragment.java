@@ -1,6 +1,6 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2023
+ * Copyright (C) 2020-2024
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,6 +39,7 @@ import org.adrienbricchi.waitingformoranis.service.google.CalendarService;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 import org.adrienbricchi.waitingformoranis.service.tmdb.TmdbService;
 import org.adrienbricchi.waitingformoranis.ui.main.MainActivity;
+import org.adrienbricchi.waitingformoranis.ui.main.SearchEventListener;
 
 import java.util.*;
 import java.util.stream.StreamSupport;
@@ -50,11 +51,12 @@ import static androidx.recyclerview.selection.StorageStrategy.createStringStorag
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.adrienbricchi.waitingformoranis.R.plurals.n_selected_items;
-import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.*;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.SHOW_COMPARATOR;
+import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.checkForCalendarUpgradeNeed;
 
 
 @Getter
-public class ShowListFragment extends Fragment {
+public class ShowListFragment extends Fragment implements SearchEventListener {
 
     private static final String LOG_TAG = "ShowListFragment";
     private static final String SELECTION_ID_SHOWS_ID = "selection_id_shows_id";
@@ -243,6 +245,16 @@ public class ShowListFragment extends Fragment {
 
                 }
 
+                if (item.getItemId() == R.id.select_all) {
+
+                    List<String> allIds = adapter.getDataSet().stream()
+                                                 .map(Show::getId)
+                                                 .collect(toList());
+                    adapter.getSelectionTracker().setItemsSelected(allIds, true);
+
+                    return true;
+                }
+
                 if (item.getItemId() == R.id.edit) {
 
                     Show selectedShow = StreamSupport
@@ -322,6 +334,12 @@ public class ShowListFragment extends Fragment {
 
 
     // </editor-fold desc="Setup">
+
+
+    public void onSearchEvent(@NonNull String searchTerm) {
+        adapter.setCurrentSearch(searchTerm);
+        adapter.notifyDataSetChanged();
+    }
 
 
     private void onPullToRefresh() {
