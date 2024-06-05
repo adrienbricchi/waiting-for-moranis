@@ -20,6 +20,7 @@ package org.adrienbricchi.waitingformoranis.ui.main.showList;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -76,11 +77,14 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowViewHolder> {
     @Override
     public void onBindViewHolder(ShowViewHolder holder, int position) {
 
-        Show currentShow = getFilteredDataSet().get(position);
+        Log.d(LOG_TAG, "onBindViewHolder holder:" + holder + " position:" + position);
+
+        List<Show> filteredDataSet = getFilteredDataSet();
+        Show currentShow = filteredDataSet.get(position);
         Context currentContext = holder.binding.getRoot().getContext();
 
         new Picasso.Builder(currentContext).build()
-                                           .load(getFilteredDataSet().get(position).getImageUrl())
+                                           .load(filteredDataSet.get(position).getImageUrl())
                                            .placeholder(ic_live_tv_color_background_48dp)
                                            .into(holder.binding.coverImageView);
 
@@ -126,6 +130,7 @@ public class ShowListAdapter extends RecyclerView.Adapter<ShowViewHolder> {
                       .findFirst()
                       .orElse(null);
     }
+
 
     private @NonNull List<Show> getFilteredDataSet() {
 

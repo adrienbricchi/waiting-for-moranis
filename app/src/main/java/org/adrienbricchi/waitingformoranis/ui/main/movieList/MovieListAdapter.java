@@ -83,13 +83,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
         Log.d(LOG_TAG, "onBindViewHolder holder:" + holder + " position:" + position);
 
-        Movie currentMovie = getFilteredDataSet().get(position);
+        List<Movie> filteredDataSet = getFilteredDataSet();
+        Movie currentMovie = filteredDataSet.get(position);
         Context currentContext = holder.binding.getRoot().getContext();
         Locale currentLocale = ReleaseUtils.countryLocale(Locale.getDefault().getCountry());
         Release release = ReleaseUtils.getRelease(currentMovie, currentLocale);
 
         new Picasso.Builder(currentContext).build()
-                                           .load(getFilteredDataSet().get(position).getImageUrl())
+                                           .load(filteredDataSet.get(position).getImageUrl())
                                            .placeholder(ic_local_movies_color_background_48dp)
                                            .into(holder.binding.coverImageView);
 
