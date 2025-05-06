@@ -91,7 +91,7 @@ public class CalendarService {
 
 
     public void askPermissions() {
-        requestPermissions(activity, PERMISSIONS.toArray(new String[]{}), PERMISSION_REQUEST_CODE);
+        requestPermissions(activity, PERMISSIONS.toArray(new String[0]), PERMISSION_REQUEST_CODE);
     }
 
 
@@ -136,7 +136,7 @@ public class CalendarService {
         Cursor cursor = activity.getContentResolver()
                                 .query(
                                         CalendarContract.Calendars.CONTENT_URI,
-                                        CALENDAR_PROJECTION.toArray(new String[]{}),
+                                        CALENDAR_PROJECTION.toArray(new String[0]),
                                         selection,
                                         selectionArgs,
                                         null
@@ -170,7 +170,7 @@ public class CalendarService {
         Cursor cursor = activity.getContentResolver()
                                 .query(
                                         CalendarContract.Events.CONTENT_URI,
-                                        EVENT_PROJECTION.toArray(new String[]{}),
+                                        EVENT_PROJECTION.toArray(new String[0]),
                                         selection,
                                         selectionArgs,
                                         null

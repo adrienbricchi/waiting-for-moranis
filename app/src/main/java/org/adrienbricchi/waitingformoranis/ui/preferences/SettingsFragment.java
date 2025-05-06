@@ -172,11 +172,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         preference.setEntryValues(calendars.keySet()
                                            .stream()
                                            .map(Object::toString)
-                                           .collect(toList())
-                                           .toArray(new String[]{}));
+                                           .toArray(String[]::new));
 
         preference.setEntries(calendars.values()
-                                       .toArray(new String[]{}));
+                                      .stream()
+                                       .map(Object::toString)
+                                       .toArray(String[]::new));
     }
 
 
