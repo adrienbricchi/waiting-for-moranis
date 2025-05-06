@@ -1,11 +1,10 @@
 /*
  * Waiting For Moranis
- * Copyright (C) 2020-2024
+ * Copyright (C) 2020-2025
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * the Free Software Foundation, version 3.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,6 +13,8 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 package org.adrienbricchi.waitingformoranis.service.google;
@@ -91,7 +92,7 @@ public class CalendarService {
 
 
     public void askPermissions() {
-        requestPermissions(activity, PERMISSIONS.toArray(new String[]{}), PERMISSION_REQUEST_CODE);
+        requestPermissions(activity, PERMISSIONS.toArray(new String[0]), PERMISSION_REQUEST_CODE);
     }
 
 
@@ -136,7 +137,7 @@ public class CalendarService {
         Cursor cursor = activity.getContentResolver()
                                 .query(
                                         CalendarContract.Calendars.CONTENT_URI,
-                                        CALENDAR_PROJECTION.toArray(new String[]{}),
+                                        CALENDAR_PROJECTION.toArray(new String[0]),
                                         selection,
                                         selectionArgs,
                                         null
@@ -170,7 +171,7 @@ public class CalendarService {
         Cursor cursor = activity.getContentResolver()
                                 .query(
                                         CalendarContract.Events.CONTENT_URI,
-                                        EVENT_PROJECTION.toArray(new String[]{}),
+                                        EVENT_PROJECTION.toArray(new String[0]),
                                         selection,
                                         selectionArgs,
                                         null
