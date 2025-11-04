@@ -22,14 +22,14 @@ package org.adrienbricchi.waitingformoranis.service.tmdb;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.adrienbricchi.waitingformoranis.models.Release;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
 import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.countryLocale;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class TmdbMovieTest {

@@ -21,7 +21,9 @@ package org.adrienbricchi.waitingformoranis.utils;
 
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
-import org.junit.Test;
+import org.adrienbricchi.waitingformoranis.models.Show;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -34,150 +36,382 @@ import static java.util.Collections.singletonList;
 import static java.util.Locale.*;
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.*;
 import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.getRelease;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ReleaseUtilsTest {
 
 
-    @Test
-    public void countryLocale() {
+    @Nested
+    class CountryLocaleTests {
 
-        assertEquals(CANADA.getCountry(), ReleaseUtils.countryLocale("CA").getCountry());
-        assertNotNull(ReleaseUtils.countryLocale("NOTEXISTINGCOUNTRY").getCountry());
+        @Test
+        public void shouldCreateLocaleFromValidCountryCode() {
 
-        assertEquals("United States", US.getDisplayCountry(US));
-        assertEquals("États-Unis", US.getDisplayCountry(FRANCE));
+            assertEquals(CANADA.getCountry(), ReleaseUtils.countryLocale("CA").getCountry());
+            assertEquals("CA", ReleaseUtils.countryLocale("CA").getCountry());
+        }
+
+
+        @Test
+        public void shouldCreateLocaleFromInvalidCountryCode() {
+
+            assertNotNull(ReleaseUtils.countryLocale("NOTEXISTINGCOUNTRY").getCountry());
+            assertEquals("NOTEXISTINGCOUNTRY", ReleaseUtils.countryLocale("NOTEXISTINGCOUNTRY").getCountry());
+        }
+
+
+        @Test
+        public void shouldCreateLocaleWithEmptyLanguage() {
+
+            assertEquals("", ReleaseUtils.countryLocale("US").getLanguage());
+            assertEquals("US", ReleaseUtils.countryLocale("US").getCountry());
+        }
+
+
+        @Test
+        public void shouldSupportLocaleDisplayVariations() {
+
+            // Demonstrates that created locales support standard locale display functionality
+            assertEquals("United States", US.getDisplayCountry(US));
+            assertEquals("États-Unis", US.getDisplayCountry(FRANCE));
+        }
     }
 
 
-    @Test
-    public void compareMovieRelease() {
+    @Nested
+    class GenerateMovieReleaseDateComparatorTests {
 
-        Movie movie1 = new Movie();
-        movie1.setProductionCountries(new HashSet<>(asList(US, CANADA)));
-        movie1.setReleaseDates(asList(
-                new Release(THEATRICAL, new Date(1L), US),
-                new Release(THEATRICAL, new Date(4L), FRANCE)
-        ));
+        @Test
+        public void shouldCompareMoviesByReleaseDate() {
 
-        Movie movie2 = new Movie();
-        movie2.setProductionCountries(new HashSet<>(asList(US, CANADA)));
-        movie2.setReleaseDates(asList(
-                new Release(THEATRICAL, new Date(2L), US),
-                new Release(THEATRICAL, new Date(3L), FRANCE)
-        ));
+            Movie movie1 = new Movie();
+            movie1.setProductionCountries(new HashSet<>(asList(US, CANADA)));
+            movie1.setReleaseDates(asList(
+                    new Release(THEATRICAL, new Date(1L), US),
+                    new Release(THEATRICAL, new Date(4L), FRANCE)
+            ));
 
-        assertEquals(-1L, ReleaseUtils.generateMovieReleaseDateComparator(US).compare(movie1, movie2));
-        assertEquals(1L, ReleaseUtils.generateMovieReleaseDateComparator(FRANCE).compare(movie1, movie2));
-        assertEquals(-1, ReleaseUtils.generateMovieReleaseDateComparator(US).compare(movie1, new Movie()));
+            Movie movie2 = new Movie();
+            movie2.setProductionCountries(new HashSet<>(asList(US, CANADA)));
+            movie2.setReleaseDates(asList(
+                    new Release(THEATRICAL, new Date(2L), US),
+                    new Release(THEATRICAL, new Date(3L), FRANCE)
+            ));
+
+            assertEquals(-1L, ReleaseUtils.generateMovieReleaseDateComparator(US).compare(movie1, movie2));
+            assertEquals(1L, ReleaseUtils.generateMovieReleaseDateComparator(FRANCE).compare(movie1, movie2));
+            assertEquals(-1, ReleaseUtils.generateMovieReleaseDateComparator(US).compare(movie1, new Movie()));
+        }
+
+
+        @Test
+        public void shouldSortMoviesByReleaseDateTitleAndId() {
+
+            // Building test case
+
+            Movie movie01 = new Movie() {{
+                setId("id_01");
+                setTitle("title_z1");
+                setReleaseDates(singletonList(new Release(THEATRICAL, new Date(0L), CANADA_FRENCH)));
+            }};
+
+            Movie movie02 = new Movie() {{
+                setId("id_02");
+                setTitle("title_z2");
+                setReleaseDates(singletonList(new Release(THEATRICAL, new Date(86400000L), CANADA_FRENCH)));
+            }};
+
+            Movie movie03 = new Movie() {{
+                setId("id_03");
+                setTitle("title_03");
+                setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
+            }};
+
+            Movie movie03bis = new Movie() {{
+                setId("id_03bis");
+                setTitle("title_03");
+                setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
+            }};
+
+            Movie movie03ter = new Movie() {{
+                setId("id_03ter");
+                setTitle(null);
+                setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
+            }};
+
+            Movie movie04 = new Movie() {{
+                setId("id_04");
+                setTitle("title_04");
+                setReleaseDates(emptyList());
+            }};
+
+            List<Movie> movieList = asList(movie04, movie02, movie03ter, movie01, movie03bis, movie03);
+
+            // Testing
+
+            movieList.sort(ReleaseUtils.generateMovieReleaseDateComparator(CANADA_FRENCH));
+            movieList.forEach(System.out::println);
+        }
     }
 
 
-    @Test
-    public void getReleaseDate() {
+    @Nested
+    class GetReleaseTests {
 
-        Movie movie = new Movie();
-        movie.setProductionCountries(new HashSet<>(asList(US, CANADA)));
-        movie.setReleaseDates(Arrays.asList(
-                new Release(TV, new Date(1L), US),
-                new Release(DIGITAL, new Date(3L), US),
-                new Release(THEATRICAL_LIMITED, new Date(1L), US),
-                new Release(DIGITAL, new Date(2L), CANADA),
-                new Release(THEATRICAL, new Date(4L), FRANCE)
-        ));
+        @Test
+        public void shouldGetReleaseForSpecificLocale() {
 
-        Release franceRelease = getRelease(movie, FRANCE);
-        assertNotNull(franceRelease);
-        assertEquals(FRANCE, franceRelease.getCountry());
-        assertEquals(THEATRICAL, franceRelease.getType());
+            Movie movie = new Movie();
+            movie.setProductionCountries(new HashSet<>(asList(US, CANADA)));
+            movie.setReleaseDates(Arrays.asList(
+                    new Release(TV, new Date(1L), US),
+                    new Release(DIGITAL, new Date(3L), US),
+                    new Release(THEATRICAL_LIMITED, new Date(1L), US),
+                    new Release(DIGITAL, new Date(2L), CANADA),
+                    new Release(THEATRICAL, new Date(4L), FRANCE)
+            ));
 
-        Release ukRelease = getRelease(movie, UK);
-        assertNotNull(ukRelease);
-        assertEquals(CANADA, ukRelease.getCountry());
-        assertEquals(DIGITAL, ukRelease.getType());
+            Release franceRelease = getRelease(movie, FRANCE);
+            assertNotNull(franceRelease);
+            assertEquals(FRANCE, franceRelease.getCountry());
+            assertEquals(THEATRICAL, franceRelease.getType());
+
+            Release ukRelease = getRelease(movie, UK);
+            assertNotNull(ukRelease);
+            assertEquals(CANADA, ukRelease.getCountry());
+            assertEquals(DIGITAL, ukRelease.getType());
+        }
+
+
+        @Test
+        public void shouldReturnNullWhenNoReleaseDates() {
+
+            Movie movie = new Movie();
+            movie.setProductionCountries(new HashSet<>(asList(US, CANADA)));
+            movie.setReleaseDates(emptyList());
+
+            Release release = getRelease(movie, US);
+            assertNull(release);
+        }
+
+
+        @Test
+        public void shouldReturnNullWhenNoProductionCountriesAndNoMatchingLocale() {
+
+            Movie movie = new Movie();
+            movie.setProductionCountries(new HashSet<>());
+            movie.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), FRANCE)));
+
+            Release release = getRelease(movie, US);
+            assertNull(release);
+        }
     }
 
 
-    @Test
-    public void generateReleaseDateComparator() {
+    @Nested
+    class GetOriginalReleaseTests {
 
-        // Building test case
+        @Test
+        public void shouldGetOriginalReleaseFromProductionCountries() {
 
-        Movie movie01 = new Movie() {{
-            setId("id_01");
-            setTitle("title_z1");
-            setReleaseDates(singletonList(new Release(THEATRICAL, new Date(0L), CANADA_FRENCH)));
-        }};
+            Movie movie = new Movie();
+            movie.setProductionCountries(new HashSet<>(asList(US, CANADA)));
+            movie.setReleaseDates(Arrays.asList(
+                    new Release(TV, new Date(1L), US),
+                    new Release(DIGITAL, new Date(3L), US),
+                    new Release(THEATRICAL_LIMITED, new Date(1L), US),
+                    new Release(DIGITAL, new Date(2L), CANADA),
+                    new Release(THEATRICAL, new Date(4L), FRANCE)
+            ));
 
-        Movie movie02 = new Movie() {{
-            setId("id_02");
-            setTitle("title_z2");
-            setReleaseDates(singletonList(new Release(THEATRICAL, new Date(86400000L), CANADA_FRENCH)));
-        }};
+            Release originalRelease = ReleaseUtils.getOriginalRelease(movie);
+            assertNotNull(originalRelease);
+            assertEquals(CANADA, originalRelease.getCountry());
+            assertEquals(DIGITAL, originalRelease.getType());
+        }
 
-        Movie movie03 = new Movie() {{
-            setId("id_03");
-            setTitle("title_03");
-            setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
-        }};
 
-        Movie movie03bis = new Movie() {{
-            setId("id_03bis");
-            setTitle("title_03");
-            setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
-        }};
+        @Test
+        public void shouldReturnNullWhenNoReleaseDates() {
 
-        Movie movie03ter = new Movie() {{
-            setId("id_03ter");
-            setTitle(null);
-            setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
-        }};
+            Movie movie = new Movie();
+            movie.setProductionCountries(new HashSet<>(asList(US, CANADA)));
+            movie.setReleaseDates(emptyList());
 
-        Movie movie04 = new Movie() {{
-            setId("id_04");
-            setTitle("title_04");
-            setReleaseDates(emptyList());
-        }};
-
-        List<Movie> movieList = asList(movie04, movie02, movie03ter, movie01, movie03bis, movie03);
-
-        // Testing
-
-        movieList.sort(ReleaseUtils.generateMovieReleaseDateComparator(CANADA_FRENCH));
-        movieList.forEach(System.out::println);
+            Release originalRelease = ReleaseUtils.getOriginalRelease(movie);
+            assertNull(originalRelease);
+        }
     }
 
 
-    @Test
-    public void getOriginalReleaseDate_fullList() {
+    @Nested
+    class CheckForCalendarUpgradeNeedMovieTests {
 
-        Movie movie = new Movie();
-        movie.setProductionCountries(new HashSet<>(asList(US, CANADA)));
-        movie.setReleaseDates(Arrays.asList(
-                new Release(TV, new Date(1L), US),
-                new Release(DIGITAL, new Date(3L), US),
-                new Release(THEATRICAL_LIMITED, new Date(1L), US),
-                new Release(DIGITAL, new Date(2L), CANADA),
-                new Release(THEATRICAL, new Date(4L), FRANCE)
-        ));
+        @Test
+        public void shouldReturnTrueWhenPreviousIsNull() {
 
-        Release originalRelease = ReleaseUtils.getOriginalRelease(movie);
-        assertNotNull(originalRelease);
-        assertEquals(CANADA, originalRelease.getCountry());
-        assertEquals(DIGITAL, originalRelease.getType());
+            Movie recent = new Movie();
+            recent.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(null, recent);
+            assertTrue(needsUpgrade);
+        }
+
+
+        @Test
+        public void shouldReturnTrueWhenReleaseDatesChanged() {
+
+            Movie previous = new Movie();
+            previous.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+
+            Movie recent = new Movie();
+            recent.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2L), US)));
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
+            assertTrue(needsUpgrade);
+        }
+
+
+        @Test
+        public void shouldReturnFalseWhenReleaseDatesUnchanged() {
+
+            Movie previous = new Movie();
+            previous.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+
+            Movie recent = new Movie();
+            recent.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
+            assertFalse(needsUpgrade);
+        }
+
+
+        @Test
+        public void shouldReturnFalseWhenBothReleaseDatesAreEmpty() {
+
+            Movie previous = new Movie();
+            previous.setReleaseDates(emptyList());
+
+            Movie recent = new Movie();
+            recent.setReleaseDates(emptyList());
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
+            assertFalse(needsUpgrade);
+        }
+
+
+        @Test
+        public void shouldReturnTrueWhenReleaseDatesChangeFromEmptyToValue() {
+
+            Movie previous = new Movie();
+            previous.setReleaseDates(emptyList());
+
+            Movie recent = new Movie();
+            recent.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
+            assertTrue(needsUpgrade);
+        }
+
+
+        @Test
+        public void shouldReturnTrueWhenReleaseDatesChangeFromValueToEmpty() {
+
+            Movie previous = new Movie();
+            previous.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+
+            Movie recent = new Movie();
+            recent.setReleaseDates(emptyList());
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
+            assertTrue(needsUpgrade);
+        }
     }
 
 
-    @Test
-    public void getOriginalReleaseDate_emptyList() {
+    @Nested
+    class CheckForCalendarUpgradeNeedShowTests {
 
-        Movie movie = new Movie();
-        movie.setProductionCountries(new HashSet<>(asList(US, CANADA)));
-        movie.setReleaseDates(emptyList());
+        @Test
+        public void shouldReturnTrueWhenPreviousIsNull() {
 
-        Release originalRelease = ReleaseUtils.getOriginalRelease(movie);
-        assertNull(originalRelease);
+            Show recent = new Show();
+            recent.setNextEpisodeAirDate(1000L);
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(null, recent);
+            assertTrue(needsUpgrade);
+        }
+
+
+        @Test
+        public void shouldReturnTrueWhenAirDateChanged() {
+
+            Show previous = new Show();
+            previous.setNextEpisodeAirDate(1000L);
+
+            Show recent = new Show();
+            recent.setNextEpisodeAirDate(2000L);
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
+            assertTrue(needsUpgrade);
+        }
+
+
+        @Test
+        public void shouldReturnFalseWhenAirDateUnchanged() {
+
+            Show previous = new Show();
+            previous.setNextEpisodeAirDate(1000L);
+
+            Show recent = new Show();
+            recent.setNextEpisodeAirDate(1000L);
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
+            assertFalse(needsUpgrade);
+        }
+
+
+        @Test
+        public void shouldReturnFalseWhenBothAirDatesAreNull() {
+
+            Show previous = new Show();
+            previous.setNextEpisodeAirDate(null);
+
+            Show recent = new Show();
+            recent.setNextEpisodeAirDate(null);
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
+            assertFalse(needsUpgrade);
+        }
+
+
+        @Test
+        public void shouldReturnTrueWhenAirDateChangesFromNullToValue() {
+
+            Show previous = new Show();
+            previous.setNextEpisodeAirDate(null);
+
+            Show recent = new Show();
+            recent.setNextEpisodeAirDate(1000L);
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
+            assertTrue(needsUpgrade);
+        }
+
+
+        @Test
+        public void shouldReturnTrueWhenAirDateChangesFromValueToNull() {
+
+            Show previous = new Show();
+            previous.setNextEpisodeAirDate(1000L);
+
+            Show recent = new Show();
+            recent.setNextEpisodeAirDate(null);
+
+            boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
+            assertTrue(needsUpgrade);
+        }
     }
 
 
