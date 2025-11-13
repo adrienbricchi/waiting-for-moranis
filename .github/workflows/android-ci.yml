@@ -26,7 +26,7 @@ jobs:
 
     - name: Create apikey.properties
       run: |
-        echo "TMDB_KEY=${{ secrets.TMDB_KEY }}" > apikey.properties
+        echo "TMDB_KEY=dummy_api_key_for_ci_build_12345" > apikey.properties
 
     - name: Run unit tests
       run: ./gradlew test --stacktrace
