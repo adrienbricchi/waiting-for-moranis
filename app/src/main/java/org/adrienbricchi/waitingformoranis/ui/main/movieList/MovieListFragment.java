@@ -196,7 +196,7 @@ public class MovieListFragment extends Fragment implements SearchEventListener {
 
                                    @Override
                                    public String getSelectionKey() {
-                                       return adapter.getDataSet().get(getPosition()).getId();
+                                       return adapter.getMovieId(getPosition());
                                    }
 
                                })
