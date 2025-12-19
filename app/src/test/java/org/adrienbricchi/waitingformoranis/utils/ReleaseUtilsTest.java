@@ -331,6 +331,80 @@ public class ReleaseUtilsTest {
 
 
     @Nested
+    class CanceledMovieFirstComparatorTests {
+
+        @Test
+        public void shouldPutCanceledMovieBeforeNonCanceledMovie() {
+
+            Movie canceledMovie = new Movie();
+            canceledMovie.setProductionStatus(Movie.Status.CANCELED);
+
+            Movie releasedMovie = new Movie();
+            releasedMovie.setProductionStatus(Movie.Status.RELEASED);
+
+            int result = ReleaseUtils.CANCELED_MOVIE_FIRST_COMPARATOR.compare(canceledMovie, releasedMovie);
+            assertEquals(-1, result);
+        }
+
+
+        @Test
+        public void shouldPutNonCanceledMovieAfterCanceledMovie() {
+
+            Movie inProductionMovie = new Movie();
+            inProductionMovie.setProductionStatus(Movie.Status.IN_PRODUCTION);
+
+            Movie canceledMovie = new Movie();
+            canceledMovie.setProductionStatus(Movie.Status.CANCELED);
+
+            int result = ReleaseUtils.CANCELED_MOVIE_FIRST_COMPARATOR.compare(inProductionMovie, canceledMovie);
+            assertEquals(1, result);
+        }
+
+
+        @Test
+        public void shouldReturnZeroForTwoCanceledMovies() {
+
+            Movie canceledMovie1 = new Movie();
+            canceledMovie1.setProductionStatus(Movie.Status.CANCELED);
+
+            Movie canceledMovie2 = new Movie();
+            canceledMovie2.setProductionStatus(Movie.Status.CANCELED);
+
+            int result = ReleaseUtils.CANCELED_MOVIE_FIRST_COMPARATOR.compare(canceledMovie1, canceledMovie2);
+            assertEquals(0, result);
+        }
+
+
+        @Test
+        public void shouldReturnZeroForTwoNonCanceledMovies() {
+
+            Movie releasedMovie = new Movie();
+            releasedMovie.setProductionStatus(Movie.Status.RELEASED);
+
+            Movie inProductionMovie = new Movie();
+            inProductionMovie.setProductionStatus(Movie.Status.IN_PRODUCTION);
+
+            int result = ReleaseUtils.CANCELED_MOVIE_FIRST_COMPARATOR.compare(releasedMovie, inProductionMovie);
+            assertEquals(0, result);
+        }
+
+
+        @Test
+        public void shouldHandleNullStatuses() {
+
+            Movie movieWithNullStatus1 = new Movie();
+            movieWithNullStatus1.setProductionStatus(null);
+
+            Movie movieWithNullStatus2 = new Movie();
+            movieWithNullStatus2.setProductionStatus(null);
+
+            int result = ReleaseUtils.CANCELED_MOVIE_FIRST_COMPARATOR.compare(movieWithNullStatus1, movieWithNullStatus2);
+            assertEquals(0, result);
+        }
+    }
+
+
+    @Nested
     class CheckForCalendarUpgradeNeedShowTests {
 
         @Test
