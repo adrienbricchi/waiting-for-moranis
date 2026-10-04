@@ -32,10 +32,9 @@ import org.adrienbricchi.waitingformoranis.databinding.AddMovieListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static java.text.DateFormat.SHORT;
+import static java.time.format.FormatStyle.SHORT;
 import static org.adrienbricchi.waitingformoranis.R.string.unknown_release_date;
 
 
@@ -107,8 +106,7 @@ public class AddMovieDialogListAdapter extends RecyclerView.Adapter<AddMovieDial
         holder.binding.addMovieTitleTextView.setText(currentMovie.getTitle());
         holder.binding.addMovieDateTextView.setText(
                 Optional.ofNullable(currentMovie.getReleaseDate())
-                        .map(Date::new)
-                        .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
+                        .map(d -> d.format(SHORT, Locale.getDefault()))
                         .orElseGet(() -> currentContext.getString(unknown_release_date)));
 
         holder.binding.addMovieMaterialCheckBox.setOnCheckedChangeListener(null);

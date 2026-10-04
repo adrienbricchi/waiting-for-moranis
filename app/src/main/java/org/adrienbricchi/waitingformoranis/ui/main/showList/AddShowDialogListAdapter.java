@@ -32,10 +32,9 @@ import org.adrienbricchi.waitingformoranis.databinding.AddShowListCellBinding;
 import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.service.persistence.AppDatabase;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static java.text.DateFormat.SHORT;
+import static java.time.format.FormatStyle.SHORT;
 import static org.adrienbricchi.waitingformoranis.R.string.unknown_release_date;
 
 
@@ -107,8 +106,7 @@ public class AddShowDialogListAdapter extends RecyclerView.Adapter<AddShowDialog
         holder.binding.addShowTitleTextView.setText(currentShow.getTitle());
         holder.binding.addShowDateTextView.setText(
                 Optional.ofNullable(currentShow.getReleaseDate())
-                        .map(Date::new)
-                        .map(d -> SimpleDateFormat.getDateInstance(SHORT, Locale.getDefault()).format(d))
+                        .map(d -> d.format(SHORT, Locale.getDefault()))
                         .orElseGet(() -> currentContext.getString(unknown_release_date)));
 
         holder.binding.addShowMaterialCheckBox.setOnCheckedChangeListener(null);

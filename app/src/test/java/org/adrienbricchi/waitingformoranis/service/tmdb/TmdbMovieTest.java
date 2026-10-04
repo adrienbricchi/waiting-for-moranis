@@ -21,10 +21,9 @@ package org.adrienbricchi.waitingformoranis.service.tmdb;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.adrienbricchi.waitingformoranis.models.FuzzyDate;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.junit.jupiter.api.Test;
-
-import java.util.Date;
 
 import static org.adrienbricchi.waitingformoranis.models.Release.Type.THEATRICAL;
 import static org.adrienbricchi.waitingformoranis.utils.ReleaseUtils.countryLocale;
@@ -215,16 +214,14 @@ public class TmdbMovieTest {
         assertTrue(movie.getReleaseDates().stream().anyMatch(r -> r.getCountry().equals(countryLocale("US"))));
         assertTrue(movie.getReleaseDates().stream().anyMatch(r -> r.getCountry().equals(countryLocale("GB"))));
 
-        assertEquals(1594807200000L, movie.getReleaseDate().longValue());
-        assertEquals(1594944000000L, movie.getReleaseDates()
+        assertEquals(FuzzyDate.parse("2020-07-15"), movie.getReleaseDate());
+        assertEquals(FuzzyDate.parse("2020-07-17"), movie.getReleaseDates()
                                           .stream()
                                           .filter(r -> r.getType() == THEATRICAL)
                                           .filter(r -> r.getCountry().hashCode() == countryLocale("US").hashCode())
                                           .findFirst()
                                           .map(Release::getDate)
-                                          .map(Date::getTime)
-                                          .orElse(-1L)
-                                          .longValue());
+                                          .orElse(null));
     }
 
 }

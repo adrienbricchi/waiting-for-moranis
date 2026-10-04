@@ -26,14 +26,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.adrienbricchi.waitingformoranis.models.FuzzyDate;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.service.persistence.CustomTypeConverters;
 import org.adrienbricchi.waitingformoranis.utils.ReleaseUtils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
@@ -62,16 +62,7 @@ class TmdbMovie extends Movie {
 
     @JsonAlias("release_date")
     private void setReleaseDate(String date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        try {
-            releaseDate = Optional.ofNullable(format.parse(date))
-                                  .map(Date::getTime)
-                                  // We add 12 hours to it, to ease everything.
-                                  // We're getting the right date, at 00:00, and GMT+/-1 tends to change the day.
-                                  .map(t -> t + (12 * 60 * 60 * 1000))
-                                  .orElse(null);
-        }
-        catch (ParseException exp) { /* Not used */ }
+        releaseDate = FuzzyDate.parse(date);
     }
 
 
@@ -136,7 +127,13 @@ class TmdbMovie extends Movie {
             private String certification;
             private String note;
             private @JsonAlias("iso_639_1") String language;
-            private @JsonAlias("release_date") Date releaseDate;
+            private FuzzyDate releaseDate;
+
+
+            @JsonProperty("release_date")
+            private void parseReleaseDate(String date) {
+                releaseDate = FuzzyDate.of(OffsetDateTime.parse(date).toLocalDate());
+            }
 
 
             @JsonProperty("type")
