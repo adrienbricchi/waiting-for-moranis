@@ -213,8 +213,8 @@ public class CalendarService {
 
         ContentResolver cr = activity.getContentResolver();
         ContentValues values = new ContentValues();
-        values.put(DTSTART, release.getDate().getTime());
-        values.put(DTEND, release.getDate().getTime());
+        values.put(DTSTART, release.getDate().toEpochMillis());
+        values.put(DTEND, release.getDate().toEpochMillis());
         values.put(ALL_DAY, true);
         values.put(TITLE, activity.getString(hashtagged_movie, movie.getTitle()));
         values.put(CALENDAR_ID, calendarId);
@@ -315,8 +315,8 @@ public class CalendarService {
 
         ContentResolver cr = activity.getContentResolver();
         ContentValues values = new ContentValues();
-        values.put(DTSTART, release.getDate().getTime());
-        values.put(DTEND, release.getDate().getTime());
+        values.put(DTSTART, release.getDate().toEpochMillis());
+        values.put(DTEND, release.getDate().toEpochMillis());
         values.put(ALL_DAY, true);
         values.put(TITLE, activity.getString(hashtagged_movie, movie.getTitle()));
         values.put(CALENDAR_ID, calendarId);

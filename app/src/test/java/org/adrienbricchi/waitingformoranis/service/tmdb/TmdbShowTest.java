@@ -21,6 +21,7 @@ package org.adrienbricchi.waitingformoranis.service.tmdb;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.adrienbricchi.waitingformoranis.models.FuzzyDate;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -244,6 +245,7 @@ public class TmdbShowTest {
 
         assertEquals("1399", tvShow.getId());
         assertEquals("https://image.tmdb.org/t/p/w154/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg", tvShow.getImageUrl());
+        assertEquals(FuzzyDate.parse("2011-04-17"), tvShow.getReleaseDate());
     }
 
 }

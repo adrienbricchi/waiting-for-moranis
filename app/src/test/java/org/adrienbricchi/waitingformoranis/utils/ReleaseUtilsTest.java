@@ -19,6 +19,7 @@
 
 package org.adrienbricchi.waitingformoranis.utils;
 
+import org.adrienbricchi.waitingformoranis.models.FuzzyDate;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.adrienbricchi.waitingformoranis.models.Show;
@@ -26,7 +27,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -88,15 +88,15 @@ public class ReleaseUtilsTest {
             Movie movie1 = new Movie();
             movie1.setProductionCountries(new HashSet<>(asList(US, CANADA)));
             movie1.setReleaseDates(asList(
-                    new Release(THEATRICAL, new Date(1L), US),
-                    new Release(THEATRICAL, new Date(4L), FRANCE)
+                    new Release(THEATRICAL, FuzzyDate.parse("2020-01-02"), US),
+                    new Release(THEATRICAL, FuzzyDate.parse("2020-01-05"), FRANCE)
             ));
 
             Movie movie2 = new Movie();
             movie2.setProductionCountries(new HashSet<>(asList(US, CANADA)));
             movie2.setReleaseDates(asList(
-                    new Release(THEATRICAL, new Date(2L), US),
-                    new Release(THEATRICAL, new Date(3L), FRANCE)
+                    new Release(THEATRICAL, FuzzyDate.parse("2020-01-03"), US),
+                    new Release(THEATRICAL, FuzzyDate.parse("2020-01-04"), FRANCE)
             ));
 
             assertEquals(-1L, ReleaseUtils.generateMovieReleaseDateComparator(US).compare(movie1, movie2));
@@ -113,31 +113,31 @@ public class ReleaseUtilsTest {
             Movie movie01 = new Movie() {{
                 setId("id_01");
                 setTitle("title_z1");
-                setReleaseDates(singletonList(new Release(THEATRICAL, new Date(0L), CANADA_FRENCH)));
+                setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-01"), CANADA_FRENCH)));
             }};
 
             Movie movie02 = new Movie() {{
                 setId("id_02");
                 setTitle("title_z2");
-                setReleaseDates(singletonList(new Release(THEATRICAL, new Date(86400000L), CANADA_FRENCH)));
+                setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-02"), CANADA_FRENCH)));
             }};
 
             Movie movie03 = new Movie() {{
                 setId("id_03");
                 setTitle("title_03");
-                setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
+                setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-03"), CANADA_FRENCH)));
             }};
 
             Movie movie03bis = new Movie() {{
                 setId("id_03bis");
                 setTitle("title_03");
-                setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
+                setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-03"), CANADA_FRENCH)));
             }};
 
             Movie movie03ter = new Movie() {{
                 setId("id_03ter");
                 setTitle(null);
-                setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2 * 86400000L), CANADA_FRENCH)));
+                setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-03"), CANADA_FRENCH)));
             }};
 
             Movie movie04 = new Movie() {{
@@ -165,11 +165,11 @@ public class ReleaseUtilsTest {
             Movie movie = new Movie();
             movie.setProductionCountries(new HashSet<>(asList(US, CANADA)));
             movie.setReleaseDates(Arrays.asList(
-                    new Release(TV, new Date(1L), US),
-                    new Release(DIGITAL, new Date(3L), US),
-                    new Release(THEATRICAL_LIMITED, new Date(1L), US),
-                    new Release(DIGITAL, new Date(2L), CANADA),
-                    new Release(THEATRICAL, new Date(4L), FRANCE)
+                    new Release(TV, FuzzyDate.parse("2020-01-02"), US),
+                    new Release(DIGITAL, FuzzyDate.parse("2020-01-04"), US),
+                    new Release(THEATRICAL_LIMITED, FuzzyDate.parse("2020-01-02"), US),
+                    new Release(DIGITAL, FuzzyDate.parse("2020-01-03"), CANADA),
+                    new Release(THEATRICAL, FuzzyDate.parse("2020-01-05"), FRANCE)
             ));
 
             Release franceRelease = getRelease(movie, FRANCE);
@@ -201,7 +201,7 @@ public class ReleaseUtilsTest {
 
             Movie movie = new Movie();
             movie.setProductionCountries(new HashSet<>());
-            movie.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), FRANCE)));
+            movie.setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-02"), FRANCE)));
 
             Release release = getRelease(movie, US);
             assertNull(release);
@@ -218,11 +218,11 @@ public class ReleaseUtilsTest {
             Movie movie = new Movie();
             movie.setProductionCountries(new HashSet<>(asList(US, CANADA)));
             movie.setReleaseDates(Arrays.asList(
-                    new Release(TV, new Date(1L), US),
-                    new Release(DIGITAL, new Date(3L), US),
-                    new Release(THEATRICAL_LIMITED, new Date(1L), US),
-                    new Release(DIGITAL, new Date(2L), CANADA),
-                    new Release(THEATRICAL, new Date(4L), FRANCE)
+                    new Release(TV, FuzzyDate.parse("2020-01-02"), US),
+                    new Release(DIGITAL, FuzzyDate.parse("2020-01-04"), US),
+                    new Release(THEATRICAL_LIMITED, FuzzyDate.parse("2020-01-02"), US),
+                    new Release(DIGITAL, FuzzyDate.parse("2020-01-03"), CANADA),
+                    new Release(THEATRICAL, FuzzyDate.parse("2020-01-05"), FRANCE)
             ));
 
             Release originalRelease = ReleaseUtils.getOriginalRelease(movie);
@@ -252,7 +252,7 @@ public class ReleaseUtilsTest {
         public void shouldReturnTrueWhenPreviousIsNull() {
 
             Movie recent = new Movie();
-            recent.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+            recent.setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-02"), US)));
 
             boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(null, recent);
             assertTrue(needsUpgrade);
@@ -263,10 +263,10 @@ public class ReleaseUtilsTest {
         public void shouldReturnTrueWhenReleaseDatesChanged() {
 
             Movie previous = new Movie();
-            previous.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+            previous.setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-02"), US)));
 
             Movie recent = new Movie();
-            recent.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(2L), US)));
+            recent.setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-03"), US)));
 
             boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
             assertTrue(needsUpgrade);
@@ -277,10 +277,10 @@ public class ReleaseUtilsTest {
         public void shouldReturnFalseWhenReleaseDatesUnchanged() {
 
             Movie previous = new Movie();
-            previous.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+            previous.setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-02"), US)));
 
             Movie recent = new Movie();
-            recent.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+            recent.setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-02"), US)));
 
             boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
             assertFalse(needsUpgrade);
@@ -308,7 +308,7 @@ public class ReleaseUtilsTest {
             previous.setReleaseDates(emptyList());
 
             Movie recent = new Movie();
-            recent.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+            recent.setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-02"), US)));
 
             boolean needsUpgrade = ReleaseUtils.checkForCalendarUpgradeNeed(previous, recent);
             assertTrue(needsUpgrade);
@@ -319,7 +319,7 @@ public class ReleaseUtilsTest {
         public void shouldReturnTrueWhenReleaseDatesChangeFromValueToEmpty() {
 
             Movie previous = new Movie();
-            previous.setReleaseDates(singletonList(new Release(THEATRICAL, new Date(1L), US)));
+            previous.setReleaseDates(singletonList(new Release(THEATRICAL, FuzzyDate.parse("2020-01-02"), US)));
 
             Movie recent = new Movie();
             recent.setReleaseDates(emptyList());

@@ -71,7 +71,7 @@ public class Movie {
     protected @NonNull Set<Locale> productionCountries = new HashSet<>();
     protected @NonNull List<Release> releaseDates = new ArrayList<>();
 
-    protected Long releaseDate;
+    protected FuzzyDate releaseDate;
     protected boolean isUpdateNeededInCalendar = false;
 
     protected Movie.Status productionStatus;

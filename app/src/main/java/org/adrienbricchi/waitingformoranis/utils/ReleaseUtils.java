@@ -22,6 +22,7 @@ package org.adrienbricchi.waitingformoranis.utils;
 import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import org.adrienbricchi.waitingformoranis.models.FuzzyDate;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.adrienbricchi.waitingformoranis.models.Show;
@@ -77,7 +78,7 @@ public class ReleaseUtils {
 
     public static Comparator<Movie> generateMovieReleaseDateComparator(@NonNull Locale locale) {
 
-        Function<Movie, Date> movieReleaseExtractor = movie -> Optional.ofNullable(getRelease(movie, locale))
+        Function<Movie, FuzzyDate> movieReleaseExtractor = movie -> Optional.ofNullable(getRelease(movie, locale))
                                                                        .map(Release::getDate)
                                                                        .orElse(null);
 

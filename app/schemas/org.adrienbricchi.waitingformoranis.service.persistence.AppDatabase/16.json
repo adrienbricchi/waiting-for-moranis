@@ -1,0 +1,175 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 16,
+    "identityHash": "81e6e9259672be1a06ead8ae9d02fc07",
+    "entities": [
+      {
+        "tableName": "movie",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT, `imageUrl` TEXT, `calendarEventId` INTEGER, `productionCountries` TEXT NOT NULL, `releaseDates` TEXT NOT NULL, `releaseDate` TEXT, `isUpdateNeededInCalendar` INTEGER NOT NULL, `productionStatus` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "calendarEventId",
+            "columnName": "calendarEventId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "productionCountries",
+            "columnName": "productionCountries",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "releaseDates",
+            "columnName": "releaseDates",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "releaseDate",
+            "columnName": "releaseDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isUpdateNeededInCalendar",
+            "columnName": "isUpdateNeededInCalendar",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productionStatus",
+            "columnName": "productionStatus",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_movie_id",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_movie_id` ON `${TABLE_NAME}` (`id`)"
+          }
+        ]
+      },
+      {
+        "tableName": "show",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT, `imageUrl` TEXT, `productionStatus` TEXT, `releaseDate` TEXT, `lastEpisodeAirDate` INTEGER, `lastEpisodeNumber` INTEGER, `lastEpisodeSeasonNumber` INTEGER, `nextEpisodeAirDate` INTEGER, `nextEpisodeNumber` INTEGER, `nextEpisodeSeasonNumber` INTEGER, `calendarEventId` INTEGER, `isUpdateNeededInCalendar` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "imageUrl",
+            "columnName": "imageUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "productionStatus",
+            "columnName": "productionStatus",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "releaseDate",
+            "columnName": "releaseDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastEpisodeAirDate",
+            "columnName": "lastEpisodeAirDate",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastEpisodeNumber",
+            "columnName": "lastEpisodeNumber",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastEpisodeSeasonNumber",
+            "columnName": "lastEpisodeSeasonNumber",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "nextEpisodeAirDate",
+            "columnName": "nextEpisodeAirDate",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "nextEpisodeNumber",
+            "columnName": "nextEpisodeNumber",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "nextEpisodeSeasonNumber",
+            "columnName": "nextEpisodeSeasonNumber",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "calendarEventId",
+            "columnName": "calendarEventId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "isUpdateNeededInCalendar",
+            "columnName": "isUpdateNeededInCalendar",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_show_id",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_show_id` ON `${TABLE_NAME}` (`id`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '81e6e9259672be1a06ead8ae9d02fc07')"
+    ]
+  }
+}

@@ -22,10 +22,12 @@ package org.adrienbricchi.waitingformoranis.service.persistence;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.adrienbricchi.waitingformoranis.models.FuzzyDate;
 import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.adrienbricchi.waitingformoranis.models.Show;
@@ -133,6 +135,18 @@ public class CustomTypeConverters {
             Log.w(LOG_TAG, getStackTraceString(e));
             return "[]";
         }
+    }
+
+
+    @TypeConverter
+    public @Nullable FuzzyDate fromFuzzyDateString(@Nullable String value) {
+        return FuzzyDate.parse(value);
+    }
+
+
+    @TypeConverter
+    public @Nullable String toFuzzyDateString(@Nullable FuzzyDate date) {
+        return Optional.ofNullable(date).map(FuzzyDate::toString).orElse(null);
     }
 
 

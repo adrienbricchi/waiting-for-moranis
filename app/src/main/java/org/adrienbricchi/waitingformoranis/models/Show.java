@@ -70,7 +70,7 @@ public class Show {
     protected String imageUrl;
 
     protected Status productionStatus;
-    protected Long releaseDate;
+    protected FuzzyDate releaseDate;
 
     protected Long lastEpisodeAirDate;
     protected Integer lastEpisodeNumber;

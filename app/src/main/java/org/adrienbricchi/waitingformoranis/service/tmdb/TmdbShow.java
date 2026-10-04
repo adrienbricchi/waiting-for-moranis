@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.adrienbricchi.waitingformoranis.models.FuzzyDate;
 import org.adrienbricchi.waitingformoranis.models.Show;
 import org.adrienbricchi.waitingformoranis.service.persistence.CustomTypeConverters;
 
@@ -89,16 +90,7 @@ public class TmdbShow extends Show {
 
     @JsonAlias("first_air_date")
     private void setReleaseDate(String date) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        try {
-            releaseDate = Optional.ofNullable(format.parse(date))
-                                  .map(Date::getTime)
-                                  // We add 12 hours to it, to ease everything.
-                                  // We're getting the right date, at 00:00, and GMT+/-1 tends to change the day.
-                                  .map(t -> t + (12 * 60 * 60 * 1000))
-                                  .orElse(null);
-        }
-        catch (ParseException exp) { /* Not used */ }
+        releaseDate = FuzzyDate.parse(date);
     }
 
 

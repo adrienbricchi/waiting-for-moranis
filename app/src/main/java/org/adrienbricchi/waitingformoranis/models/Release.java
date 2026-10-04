@@ -23,7 +23,6 @@ import androidx.annotation.Keep;
 import androidx.annotation.StringRes;
 import lombok.*;
 
-import java.util.Date;
 import java.util.Locale;
 
 import static org.adrienbricchi.waitingformoranis.R.string.*;
@@ -55,7 +54,7 @@ public class Release {
 
 
     private @NonNull Type type;
-    private @NonNull Date date;
+    private @NonNull FuzzyDate date;
     private @NonNull Locale country;
     private String description = null;
 

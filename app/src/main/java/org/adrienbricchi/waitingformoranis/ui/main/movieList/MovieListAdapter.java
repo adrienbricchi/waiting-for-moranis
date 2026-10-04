@@ -37,14 +37,13 @@ import org.adrienbricchi.waitingformoranis.models.Movie;
 import org.adrienbricchi.waitingformoranis.models.Release;
 import org.adrienbricchi.waitingformoranis.utils.ReleaseUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import static java.text.DateFormat.FULL;
+import static java.time.format.FormatStyle.FULL;
 import static java.util.stream.Collectors.toList;
 import static org.adrienbricchi.waitingformoranis.R.drawable.ic_local_movies_color_background_48dp;
 import static org.adrienbricchi.waitingformoranis.R.string.*;
@@ -102,7 +101,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieViewHolder> {
                         .map(r -> {
                             boolean isWeirdType = (r.getType() != THEATRICAL);
                             boolean isLocal = r.getCountry().equals(currentLocale);
-                            String dateString = SimpleDateFormat.getDateInstance(FULL, Locale.getDefault()).format(r.getDate());
+                            String dateString = r.getDate().format(FULL, Locale.getDefault());
 
                             if (isWeirdType && !isLocal) {
                                 return currentContext.getString(
